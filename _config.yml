@@ -81,5 +81,4 @@ deploy:
   type: git
   repo: 
     github: https://github.com/wutaotao2015/wutaotao2015.github.io.git,master
-    tencent: git@git.dev.tencent.com:wutaotao/wutaotao.git,master
 
