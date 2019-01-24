@@ -6,10 +6,8 @@ categories: 学习
 toc: true
 mathjax: true
 ---
-[TOC]
 #### 前言
 ---
-preface
 #### 正文
 1. 实现hexo博客源码托管，新机器都可以更新博客。
 网上有教程说在hexo部署的github仓库下新建一个分支来管理源码，但是这样配置文件中的key都泄露出去了，还是不好，
@@ -23,7 +21,7 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
         git add .
         git commit -m "hexo source code"
         git push -u origin master   // -u是将当前分支追踪到origin主机master分支
-    ```
+    	```
     4. 新电脑先clone代码到本地，再npm install一下就可以发布了。
     5. 以后修改前也是先拉取源码再进行修改。
 	6. 由于源码这样被托管后，下面的主题theme就不能同时有自己的仓库了（这样对主题包的修改无法push成功),所以需要另外建一个目录来获取最新的next主题,完后再把相应的包拷贝到theme包下来实现更新。next主题的github地址为https://github.com/theme-next/hexo-theme-next.git
