@@ -40,7 +40,7 @@ git push origin --all
 最后，执行`git branch -a`看到remotes/origin/head指向的是origin/master,因为origin/master只是本地一个副本，
 可以用`git remote set-head origin source`即可修改。
 
-#### 因为我的源码之前托管到coding上了，所以也算迁移回github上，如果是全新的hexo项目，可以直接这样
+5. 因为我的源码之前托管到coding上了，所以也算迁移回github上，如果是全新的hexo项目，可以直接这样
 ```txt
 git init
 git remote add origin git@...
@@ -48,4 +48,17 @@ git checkout --orphan source
 git add -A  // 所有文件,追踪和未追踪的
 git commit -m "source"
 git push -u origin source
+```
+6. 回到家，发现本地电脑还是blog的origin/master追踪着coding的master,进行一番尝试，最后也成功了。
+```
+git remote set-url origin git@...  // 切换到github仓库
+git checkout -b source
+git branch -u origin/source source
+git branch -vv     // 查看当前分支追踪情况
+git branch -a
+git branch -d master
+git remote set-url --add origin git@git...   // coding仓库
+git remote -v
+git pull
+git push
 ```
