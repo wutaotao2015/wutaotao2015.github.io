@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: 吴涛涛个人博客
-subtitle: 分享是最好的学习
-description: 形成知识体系，一点一滴的积累
-keywords: java,开源,技术博客,IT
-author: 吴涛涛
+title: TaoBlog
+subtitle: Sharing makes us better
+description: wutaotao personal blog
+keywords: taoblog,java,开源,技术博客,IT
+author: wutaotao
 language: zh-CN
 timezone: Asia/Shanghai
 
@@ -15,7 +15,7 @@ timezone: Asia/Shanghai
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://www.taoblog.cn
 root: /
-permalink: :year/:month/:day/:title/
+permalink: :category/:title/
 permalink_defaults:
 
 # Directory
@@ -67,7 +67,7 @@ time_format: HH:mm:ss
 
 # Pagination
 ## Set per_page to 0 to disable pagination
-per_page: 10
+per_page: 5
 pagination_dir: page
 
 # Extensions
