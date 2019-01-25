@@ -1,9 +1,12 @@
 ---
 title: markdown基本语法
 date: 2019-01-22 21:51:18
-tags:
+tags: markdown
+categories: markdown
 ---
-[TOC]
+{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
+markdown基本语法
+<!-- more -->
 这里介绍的是基本markdown语法，使用工具为Typora.
 #### 标题
 

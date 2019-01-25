@@ -1,11 +1,12 @@
 ---
 title: Hexo托管源文件办法
 date: 2019-01-23 10:11:32
-tags: [Hexo,Git]
-categories: 学习
-toc: true
-mathjax: true
+tags: hexo,git
+categories: hexo
 ---
+{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
+hexo源码管理
+<!-- more -->
 #### 前言
 ---
 #### 正文
@@ -46,24 +47,4 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
 需要编写jenkinsfile，还没搞懂这个怎么写，用简易模块手动构建可以成功，但push代码代码却报找不到jenkinsfile的错误；又发现它有
 一天只能构建20次的限制，现在觉得没什么，也还行，手动部署倒是没有限制，anyway,还是先把服务器放在github上，等其他博客的其他功能都
 搞得差不多了，再迁移到国内来。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

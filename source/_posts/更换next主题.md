@@ -1,8 +1,12 @@
 ---
-title: 更换next主题
+title: 域名
 date: 2019-01-20 22:01:36
-tags:
+tags: hexo
+categories: thought
 ---
+{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
+更换主题
+<!-- more -->
 域名搞好了，先搞了一年的，
 我的是[http://www.taoblog.cn/](http://www.taoblog.cn/),
 女朋友的是[http://www.lingblog.net/](http://www.lingblog.net/)(目前还没开通)。

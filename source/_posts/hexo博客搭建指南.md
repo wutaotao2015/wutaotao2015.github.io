@@ -1,8 +1,12 @@
 ---
 title: hexo博客搭建指南
 date: 2019-01-22 21:51:18
-tags:
+tags: hexo,
+categories: hexo
 ---
+{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
+hexo + github静态博客搭建
+<!-- more -->
 #### 需要材料
 1. github账号及仓库
 2. node.js
