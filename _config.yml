@@ -82,3 +82,8 @@ deploy:
   repo: 
     github: https://github.com/wutaotao2015/wutaotao2015.github.io.git,master
 
+sitemap:
+    path: sitemap.xml
+baidusitemap:
+    path: baidusitemap.xml
+
