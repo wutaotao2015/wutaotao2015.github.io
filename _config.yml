@@ -7,7 +7,7 @@ title: TaoBlog
 subtitle: Sharing makes us better
 description: wutaotao personal blog
 keywords: taoblog,java,开源,技术博客,IT
-author: wutaotao
+author: 吴涛涛
 language: zh-CN
 timezone: Asia/Shanghai
 
@@ -29,7 +29,7 @@ i18n_dir: :lang
 skip_render:
 
 # Writing
-new_post_name: :title.md # File name of new posts
+new_post_name: :month:day:year-:title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
