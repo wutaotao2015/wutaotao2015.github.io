@@ -1,7 +1,9 @@
 ---
 title: hexo源码托管及travis自动部署
 date: 2019-01-25 14:39:16
-tags: hexo,travis
+tags: 
+- hexo
+- travis
 categories: hexo
 ---
 {% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
