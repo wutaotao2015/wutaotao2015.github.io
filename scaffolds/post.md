@@ -1,12 +1,22 @@
 ---
 title: {{ title }}
 date: {{ date }}
+categories: c
 tags:
 - t
-categories:
-- c
+- t
+images: http://ploojkqh4.bkt.clouddn.com/me.jpg
 ---
-{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
-简介
+
+<p class="description">t</p>
+
 <!-- more -->
+
+##
+
+##
+
+##
+
+<hr />
 
