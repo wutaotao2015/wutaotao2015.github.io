@@ -144,7 +144,7 @@ menu:
   archives: /archives/ || archive
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
-  commonweal: /404/ || heartbeat
+  #commonweal: /404/ || heartbeat
 
 # Enable/Disable menu icons / item badges.
 menu_settings:
@@ -175,9 +175,9 @@ site_state: true
 # Key is the link label showing to end users.
 # Value before `||` delimeter is the target permalink.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
-#social:
-  #GitHub: https://github.com/yourname || github
-  #E-Mail: mailto:yourname@gmail.com || envelope
+social:
+  GitHub: https://github.com/wutaotao2015 || github
+  E-Mail: mailto:531618500@qq.com || envelope
   #Weibo: https://weibo.com/yourname || weibo
   #Google: https://plus.google.com/yourname || google
   #Twitter: https://twitter.com/yourname || twitter
@@ -256,7 +256,7 @@ sidebar:
   # Back to top in sidebar.
   b2t: false
   # Scroll percent label in b2t button.
-  scrollpercent: false
+  scrollpercent: true
   # Enable sidebar on narrow view (only for Muse | Mist).
   onmobile: false
 
@@ -860,7 +860,7 @@ pace_theme: pace-theme-minimal
 # Canvas-nest
 # Dependencies: https://github.com/theme-next/theme-next-canvas-nest
 canvas_nest:
-  enable: false
+  enable: true
   onmobile: true # display on mobile or not
   color: '0,0,255' # RGB values, use ',' to separate
   opacity: 0.5 # the opacity of line: 0~1
@@ -947,9 +947,9 @@ vendors:
   # Internal version: 4.6.2
   # See: https://fontawesome.com
   # Example:
-  # fontawesome: //cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css
+  fontawesome: //cdn.jsdelivr.net/npm/font-awesome@4/css/font-awesome.min.css
   # fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css
-  fontawesome:
+  # fontawesome:
 
   # Internal version: 2.4.1
   # See: https://www.algolia.com
@@ -972,10 +972,10 @@ vendors:
   # Internal version: 1.0.0
   # See: https://github.com/theme-next/theme-next-canvas-nest
   # Example:
-  # canvas_nest: //cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js
-  # canvas_nest_nomobile: //cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest-nomobile.min.js
-  canvas_nest:
-  canvas_nest_nomobile:
+  canvas_nest: //cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js
+  canvas_nest_nomobile: //cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest-nomobile.min.js
+  # canvas_nest:
+  # canvas_nest_nomobile:
 
   # Internal version: 1.0.0
   # See: https://github.com/theme-next/theme-next-three
@@ -1060,3 +1060,7 @@ vendors:
 css: css
 js: js
 images: images
+
+passage_end_tag:
+    enabled: true
+
