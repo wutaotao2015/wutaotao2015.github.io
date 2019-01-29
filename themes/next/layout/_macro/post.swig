@@ -293,9 +293,9 @@
         {% elif post.excerpt %}
           {{ post.excerpt }}
 
-          {% if post.images %}
+          {% if post.image %}
     <div class="out-img-topic">
-        <img src={{ post.images }} class="img-topic">
+        <img src={{ post.image }} class="img-topic">
     </div>
 {% endif %}
 

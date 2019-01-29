@@ -1,17 +1,14 @@
 ---
-title: hexo源码托管及travis自动部署
+title: hexo源码托管
 tags:
   - hexo
-  - travis
 categories: hexo
+image: http://ploojkqh4.bkt.clouddn.com/201901296.jpg
 abbrlink: 65f9a4be
 date: 2019-01-25 14:39:16
 ---
-{% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
-hexo源码托管,travis集成来省去hexo d -g部署步骤
+<p class="description">hexo源码托管</p>
 <!-- more -->
-
-**因为travis只支持github,本地部署`hexo d -g`较慢,所以还是得改造**
 
 coding上已有私有库，再切换回github上
 ```txt
