@@ -99,3 +99,10 @@ sitemap:
 baidusitemap:
     path: baidusitemap.xml
 
+google_site_verification: GNI8KNzHxdOObg1xzQwHXPStlrnPJHC4Cw1iZMCCe9U
+
+algolia:
+  applicationID: LEJ8JV9ZSY
+  apiKey: 9572d9f139c3c642cdbaaa2caf3123c9
+  indexName: searchIndex
+
