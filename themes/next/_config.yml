@@ -702,12 +702,12 @@ firestore:
 # Show Views/Visitors of the website/page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi
 busuanzi_count:
-  enable: false
+  enable: true
   total_visitors: true
   total_visitors_icon: user
   total_views: true
   total_views_icon: eye
-  post_views: true
+  post_views: false
   post_views_icon: eye
 
 # Tencent analytics ID
@@ -1007,8 +1007,8 @@ vendors:
   # See: https://github.com/vinta/pangu.js
   # Example:
   # pangu: //cdn.jsdelivr.net/npm/pangu@3/dist/browser/pangu.min.js
-  # pangu: //cdnjs.cloudflare.com/ajax/libs/pangu/3.3.0/pangu.min.js
-  pangu:
+  pangu: //cdnjs.cloudflare.com/ajax/libs/pangu/3.3.0/pangu.min.js
+  # pangu:
 
   # Internal version: 1.0.0
   # See: https://github.com/revir/need-more-share2
@@ -1027,8 +1027,8 @@ vendors:
   # Internal version: 1.1
   # See: https://github.com/theme-next/theme-next-reading-progress
   # Example:
-  reading_progress: //cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1/reading_progress.min.js
-  # reading_progress:
+  # reading_progress: //cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1/reading_progress.min.js
+  reading_progress:
 
   # leancloud-storage
   # See: https://www.npmjs.com/package/leancloud-storage
