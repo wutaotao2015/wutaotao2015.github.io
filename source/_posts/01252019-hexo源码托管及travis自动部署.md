@@ -1,10 +1,11 @@
 ---
 title: hexo源码托管及travis自动部署
-date: 2019-01-25 14:39:16
-tags: 
-- hexo
-- travis
+tags:
+  - hexo
+  - travis
 categories: hexo
+abbrlink: 65f9a4be
+date: 2019-01-25 14:39:16
 ---
 {% img full-image http://ploojkqh4.bkt.clouddn.com/maya.jpg 180 180 hello %}
 hexo源码托管,travis集成来省去hexo d -g部署步骤
