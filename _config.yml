@@ -106,3 +106,8 @@ algolia:
   apiKey: 9572d9f139c3c642cdbaaa2caf3123c9
   indexName: searchIndex
 
+lazyload:
+  enable: true 
+  onlypost: false
+  loadingImg: # eg. ./images/loading.png
+
