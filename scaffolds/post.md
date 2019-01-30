@@ -4,7 +4,7 @@ categories: c
 tags:
 - t
 - t
-images: http://ploojkqh4.bkt.clouddn.com/me.jpg
+image: http://ploojkqh4.bkt.clouddn.com/hexo.jpg
 abbrlink: 
 date: {{ date }}
 ---
@@ -14,4 +14,4 @@ date: {{ date }}
 ##
 ##
 <hr />
-
+{% fi http://ploojkqh4.bkt.clouddn.com/hexo.jpg, "", "" %}
