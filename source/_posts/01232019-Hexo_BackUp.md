@@ -1,9 +1,9 @@
 ---
 title: Hexo托管源文件办法
 tags:
-  - hexo
-  - git
-categories: hexo
+  - Hexo
+  - Git
+categories: Hexo
 image: http://ploojkqh4.bkt.clouddn.com/201901295.jpg
 abbrlink: 576ffe4
 date: 2019-01-23 10:11:32

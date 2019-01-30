@@ -1,8 +1,8 @@
 ---
-title: hexo源码托管
+title: Hexo源码托管
 tags:
-  - hexo
-categories: hexo
+  - Hexo
+categories: Hexo
 image: http://ploojkqh4.bkt.clouddn.com/201901296.jpg
 abbrlink: 65f9a4be
 date: 2019-01-25 14:39:16

@@ -1,7 +1,7 @@
 ---
 title: 域名
-tags: hexo
-categories: thought
+tags: Hexo
+categories: Thought
 image: http://ploojkqh4.bkt.clouddn.com/back.jpg
 abbrlink: c5f0d6d
 date: 2019-01-20 22:01:36

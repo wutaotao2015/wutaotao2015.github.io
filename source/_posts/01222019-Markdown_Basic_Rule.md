@@ -1,7 +1,7 @@
 ---
-title: markdown基本语法
-tags: markdown
-categories: markdown
+title: Markdown基本语法
+tags: Markdown
+categories: Markdown
 image: http://ploojkqh4.bkt.clouddn.com/201901292.jpg
 abbrlink: 47caaf1e
 date: 2019-01-22 21:51:18

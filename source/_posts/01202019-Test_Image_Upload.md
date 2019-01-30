@@ -1,10 +1,10 @@
 ---
 title: 测试图片上传
 categories:
-  - hexo
+  - Hexo
 tags:
-  - hexo
-  - qshell
+  - Hexo
+  - Qshell
 image: http://ploojkqh4.bkt.clouddn.com/201901291.jpg
 abbrlink: 79a6148d
 date: 2019-01-20 23:13:25
