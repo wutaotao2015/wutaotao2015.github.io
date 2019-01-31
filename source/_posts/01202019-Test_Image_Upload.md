@@ -11,6 +11,7 @@ date: 2019-01-20 23:13:25
 ---
 <p class="description">hexo博客图片上传方法</p>
 <!-- more -->
+
 看看玛雅人的智慧，多霸气！
 <div align="center">
     <img src="http://ploojkqh4.bkt.clouddn.com/maya.jpg" width="300" alt="No Picture, No NetWork"/>
@@ -26,10 +27,8 @@ date: 2019-01-20 23:13:25
 
 2019-01-21加：
 
-终于搞好了七牛图床问题，使用管理台只能单个上传文件，比较麻烦，而使用七牛云自己的命令行工具qshell可以
-
-在本地进行批量上传操作，非常方便。
-
+终于搞好了七牛图床问题，使用管理台只能单个上传文件，比较麻烦，而使用七牛云自己的命令行工具
+qshell可以在本地进行批量上传操作，非常方便。
 简记如下：
 
 1. 下载qshell包
@@ -66,10 +65,12 @@ date: 2019-01-20 23:13:25
    OK，上传成功，赶紧到管理台看看成功没？在图片后方点击复制外链，愉快的粘贴到md文件中吧！
 
    参考[qshell gitHub地址](https://github.com/qiniu/qshell)，[qshell 使用指南](https://developer.qiniu.com/kodo/kb/1685/using-qshell-synchronize-directories)
+
 4. 2019.1.24日补：
-   上传完以后可以通过`qshell listbucket bucketname`来查看仓库里的图片列表，判断是否上传成功。
-   实际编写博客时，这样上传图片肯定很麻烦，我的thinkpad上装的是windows系统，用cmder来模拟linux终端操作，自带git,vim,grep,sed等命令，也是个神器，
-   研究了半天它的别名alias操作，最后发现非常简单。
+   上传完以后可以通过`qshell listbucket bucketname`来查看仓库里的图片列表， 判断是否上传成功。
+   实际编写博客时，这样上传图片肯定很麻烦，我的thinkpad上装的是windows系统，用cmder来模拟
+   linux终端操作，自带git, vim, grep, sed等命令，也是个神器， 研究了半天它的别名alias操作，
+   最后发现非常简单。
    ```txt
    cd /d/cmder/config    # 到cmder安装目录下
    vi user_profile.sh
@@ -79,7 +80,8 @@ date: 2019-01-20 23:13:25
    alias post='cd /e/taoblogSource/source/_posts'
    alias img='cd /e/imageTmp/' 
    # 需要先清缓存
-   alias upimg='cd /c/Users/LYPC/.qshell && rm -rf qupload/ && qshell qupload /c/Users/LYPC/.qshell/upload.conf && echo "done"'
+   alias upimg='cd /c/Users/LYPC/.qshell && rm -rf qupload/ 
+     && qshell qupload /c/Users/LYPC/.qshell/upload.conf && echo "done"'
    alias sub='/d/SublimeText3/sublime_text.exe'
    alias ..='cd ..'
    function pull(){
@@ -97,7 +99,9 @@ date: 2019-01-20 23:13:25
    ```
    设置好以后，windows重启cmder,mac需要执行source命令来启用别名。
    这样以后写博客可以这样
+
    1. post
+
    2. hexo n postname
       这里修改下新建post的默认模板
       ```
@@ -105,12 +109,48 @@ date: 2019-01-20 23:13:25
       cd scaffolds/
       vi post.md
       ```
+
    3. 写完后用`hexo s -g`查看效果
+
    4. push
+
    5. pub
+
 5. 可以用`hexo list post`查看所有博客基本情况
+
 6. 修改配置文件中的new_post_name来默认新的post的文件名，可以默认为月日年-名字.md
+
 7. 提交注释有空格时用单引号括起来`push 'comment space'`
+
+8. git在windows和mac系统的换行符问题
+> Git can handle this by auto-converting CRLF line endings into LF when you add a file to 
+the index, and vice versa when it checks out code onto your filesystem. You can turn on 
+this functionality with the core.autocrlf setting. If you're on a Windows machine, set it 
+to true – this converts LF endings into CRLF when you check out code:
+`$ git config --global core.autocrlf true`
+If you're on a Linux or Mac system that uses LF line endings, then you don't want Git to 
+automatically convert them when you check out files; however, if a file with CRLF endings 
+accidentally gets introduced, then you may want Git to fix it. You can tell Git to convert 
+CRLF to LF on commit but not the other way around by setting core.autocrlf to input:
+`$ git config --global core.autocrlf input`
+
+9. git的大小写问题
+windows和Mac系统都是大小写不敏感的系统，Hexo在生成tags和categories文件时如果后来修改了文件
+夹名字就会报404错误。一般可以用`git add -A`解决，这里可以用
+`$ git config core.ignorecase false`
+来使git支持大小写，并可以使用`git mv oldname newname`来实现改名并暂存的功能。
+
+10. 排版问题，给vim设置`set colorcolumn=90`
+
+11. git命令
+```txt
+git diff   // workspace and index's diff
+git diff head  // workspace and repo's diff
+git diff --cached  // index and repo's diff
+git diff --name-only  // show the changed file names
+git diff <system file path>  // show the file's diff
+git checkout <system file path>  // get stashed file to workspace
+```
 
 <hr />
 {% fi http://ploojkqh4.bkt.clouddn.com/201901291.jpg, "", "" %}
