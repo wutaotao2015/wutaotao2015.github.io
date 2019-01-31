@@ -151,6 +151,7 @@ git diff --cached  // index and repo's diff
 git diff --name-only  // show the changed file names
 git diff <system file path>  // show the file's diff
 git checkout <system file path>  // get stashed file to workspace
+git revert head   // 重做上一次commit
 ```
 
 <hr />
