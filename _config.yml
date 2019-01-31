@@ -93,7 +93,6 @@ deploy:
 - type: git
   repo: 
     github: https://github.com/wutaotao2015/wutaotao2015.github.io.git,master
-- type: leancloud_counter_security_sync
 
 sitemap:
     path: sitemap.xml
@@ -117,12 +116,4 @@ symbols_count_time:
   time: true
   total_symbols: true
   total_time: true
-
-leancloud_counter_security:
-  enable_sync: true
-  app_id: NCCFA0S02dv1PFmmODBJeCQO-gzGzoHsz
-  app_key: bAOsL8XKUXH3zST74CQcodSm
-  username: wttwtt2019 
-  password: wttwtt2019
-
 
