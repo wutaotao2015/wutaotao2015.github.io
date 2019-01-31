@@ -1,10 +1,10 @@
 ---
 title: {{ title }}
-categories: c
+categories: C
 tags:
-- t
-- t
-image: http://ploojkqh4.bkt.clouddn.com/hexo.jpg
+- T
+- T
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901311.jpg
 abbrlink: 
 date: {{ date }}
 ---
@@ -14,4 +14,4 @@ date: {{ date }}
 ##
 ##
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/hexo.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901311.jpg, "", "" %}
