@@ -153,6 +153,15 @@ git diff <system file path>  // show the file's diff
 git checkout <system file path>  // get stashed file to workspace
 git revert head   // 重做上一次commit
 ```
+12. 七牛云测试域名1个月就要回收了，本想转又拍云，但是它需要植入广告，云服务器控制台又太挫
+了，搞了搞还是算了，转OSS!下面是一些简单命令：
+```txt
+# 上传
+./ossutilmac64 cp -r stuff/image oss://wutaotaospace/image/
+
+# 查看图片列表
+./ossutilmac64 ls oss://wutaotaospace/image/
+```
 
 <hr />
 {% fi http://ploojkqh4.bkt.clouddn.com/201901291.jpg, "", "" %}
