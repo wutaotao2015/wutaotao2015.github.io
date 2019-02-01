@@ -63,6 +63,47 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
 > [git module1](http://saili.science/2017/04/02/github-for-win/#more)
 > [git module2](https://segmentfault.com/a/1190000003076028)
 
+git module是可以一个公共仓库在自己的项目下存在的解决方案，子项目在git操作上是完全独立的，
+它在父项目中只是记录了一个commitId，当子项目提交(要记得推送)后，父项目会在`git status`中
+检测到子项目的变化，这是父项目再进行提交加相当于更新了它保存的commitId,这样就实现了更新子
+项目的目的。我之前已经把next文件夹的.git文件夹删除了以进行统一git管理，这时就只能另外建一个
+新的子项目，内容拷贝到新项目后再将老的next主题包删除。
+
+   1. 新建自己的next theme仓库
+
+   2. 博客源目录下执行命令
+   `git submodule add git@github:... themes/myNext`
+
+   3. 拷贝文件
+   `cp -r ../next/ ./`
+
+   4. 推送到新仓库
+   ```txt
+   git add -A
+   git commit -m 'my next theme'
+   git push
+   ```
+
+   5. 添加原有的next theme为自己的仓库源
+   `git remote add nextOrigin git@github...`
+
+   6. 拉取最新的next theme代码，看看你有没有冲突！
+   `git pull nextOrigin master`
+
+   7. 推送到自己的主题库，别忘了还有父项目！！！
+   ```txt
+   git add .
+   git commit -m 'next主题更新'
+   git push
+   blog
+   git status
+   git add .
+   git commit -m 'next theme update'
+   git push
+   ```
+
+4. travis对子模块的处理
+
 
 <hr />
 {% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg, "", "" %}
