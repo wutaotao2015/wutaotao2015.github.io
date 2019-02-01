@@ -139,7 +139,8 @@ windows和Mac系统都是大小写不敏感的系统，Hexo在生成tags和categ
 夹名字就会报404错误。一般可以用`git add -A`解决，这里可以用
 `$ git config core.ignorecase false`
 来使git支持大小写，并可以使用`git mv -f oldname newname`来实现大小写的更改，同时该命令会
-将文件暂存起来。
+将文件暂存起来,可以通过git status发现只有旧文件已经被删除的信息，这时通过commit可以将新
+文件提交成功。
 
 10. 排版问题，给vim设置`set colorcolumn=90`
 
