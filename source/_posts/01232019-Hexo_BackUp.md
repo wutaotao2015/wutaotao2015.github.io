@@ -102,7 +102,13 @@ git module是可以一个公共仓库在自己的项目下存在的解决方案�
    git push
    ```
 
-4. travis对子模块的处理
+4. travis对子模块的处理, 在CIShell脚本中加入--recurse-submodules同步拉取主题更新！
+`git clone --recuse-submodules http://.. .deploy`
+
+
+5. 经过上面的子模块操作后，next主题文件夹的名字变成了MyNext,导致hexo s -g进去直接白屏，
+报没有index的错，原来想直接`mv MyNext next`,发现它不是一个git仓库了，好吧，想一想又跑去改
+站点配置文件_config中的theme配置项为MyNext,成功了！
 
 
 <hr />
