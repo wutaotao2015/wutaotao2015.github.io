@@ -174,5 +174,4 @@ sed -i "s #http://ploojkqh4.bkt.clouddn.com/
 ```
 
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901291.jpg, "", "" %}
-
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901291.jpg" class="full-image" />

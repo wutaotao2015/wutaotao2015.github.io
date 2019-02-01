@@ -63,4 +63,5 @@ git pull
 git push
 ```
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901296.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901296.jpg" class="full-image" />
+

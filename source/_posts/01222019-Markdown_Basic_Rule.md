@@ -176,4 +176,5 @@ operation,condition,inputoutput等单词注意不要写错。
 3. df
 ```
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg" class="full-image" />
+

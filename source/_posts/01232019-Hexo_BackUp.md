@@ -106,5 +106,6 @@ git module是可以一个公共仓库在自己的项目下存在的解决方案�
 
 
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg" class="full-image" />
+
 

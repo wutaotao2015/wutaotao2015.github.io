@@ -13,4 +13,5 @@ date: 2019-01-30 17:17:17
 ## sd
 ## sdf
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
+

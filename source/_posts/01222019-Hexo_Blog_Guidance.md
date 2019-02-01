@@ -77,4 +77,5 @@ leanCloud还可以对评论进行后台管理，可以删除差评，这个以�
 但是字体太小了，调整字体的快捷键option+U没有效果。。。。，用鼠标在标题栏上点个3次也
 能看吧，vim模式确实很强，比typora好。
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg" class="full-image" />
+

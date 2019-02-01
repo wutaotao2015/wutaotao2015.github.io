@@ -14,4 +14,4 @@ date: {{ date }}
 ##
 ##
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901311.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901311.jpg" class="full-image" />

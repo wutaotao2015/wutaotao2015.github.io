@@ -13,5 +13,5 @@ date: 2019-01-20 22:01:36
 女朋友的是[http://www.lingblog.net/](http://www.lingblog.net/)(目前还没开通)。
 
 <hr />
-{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/back.jpg, "", "" %}
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/back.jpg" class="full-image" />
 
