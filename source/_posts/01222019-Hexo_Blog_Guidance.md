@@ -2,7 +2,7 @@
 title: Hexo博客搭建指南
 tags: Hexo
 categories: Hexo
-image: http://ploojkqh4.bkt.clouddn.com/201901293.jpg
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg
 abbrlink: 938b0578
 date: 2019-01-22 21:51:18
 ---
@@ -77,4 +77,4 @@ leanCloud还可以对评论进行后台管理，可以删除差评，这个以�
 但是字体太小了，调整字体的快捷键option+U没有效果。。。。，用鼠标在标题栏上点个3次也
 能看吧，vim模式确实很强，比typora好。
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/201901293.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg, "", "" %}

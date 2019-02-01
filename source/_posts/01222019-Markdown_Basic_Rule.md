@@ -2,7 +2,7 @@
 title: Markdown基本语法
 tags: Markdown
 categories: Markdown
-image: http://ploojkqh4.bkt.clouddn.com/201901292.jpg
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg
 abbrlink: 47caaf1e
 date: 2019-01-22 21:51:18
 ---
@@ -48,7 +48,7 @@ date: 2019-01-22 21:51:18
 
    `![图片名](图片存放目录)`
 
-   ![maya](http://ploojkqh4.bkt.clouddn.com/maya.jpg)
+   ![maya](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/maya.jpg)
 
 ####  代码引用
 
@@ -176,4 +176,4 @@ operation,condition,inputoutput等单词注意不要写错。
 3. df
 ```
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/201901292.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg, "", "" %}

@@ -3,7 +3,7 @@ title: Hexo源码托管
 tags:
   - Hexo
 categories: Hexo
-image: http://ploojkqh4.bkt.clouddn.com/201901296.jpg
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901296.jpg
 abbrlink: 65f9a4be
 date: 2019-01-25 14:39:16
 ---
@@ -63,4 +63,4 @@ git pull
 git push
 ```
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/201901296.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901296.jpg, "", "" %}

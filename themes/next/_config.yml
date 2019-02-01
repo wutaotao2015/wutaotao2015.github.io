@@ -149,7 +149,7 @@ menu:
 # Enable/Disable menu icons / item badges.
 menu_settings:
   icons: true
-  badges: false
+  badges: true
 
 
 # ---------------------------------------------------------------
@@ -157,9 +157,9 @@ menu_settings:
 # ---------------------------------------------------------------
 
 # Schemes
-#scheme: Muse
+scheme: Muse
 #scheme: Mist
-scheme: Pisces
+#scheme: Pisces
 #scheme: Gemini
 
 
@@ -213,7 +213,7 @@ avatar:
   # in theme directory(source/images): /images/avatar.gif
   # in site  directory(source/uploads): /uploads/avatar.gif
   # You can also use other linking images.
-  url: http://ploojkqh4.bkt.clouddn.com/maya.jpg
+  url: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/maya.jpg
   # If true, the avatar would be dispalyed in circle.
   rounded: true
   # The value of opacity should be choose from 0 to 1 to set the opacity of the avatar.
@@ -240,16 +240,16 @@ sidebar:
   # If commented, will be default for:
   # Muse | Mist: 320
   # Pisces | Gemini: 240
-  width: 200
+  width: 320
 
   # Sidebar Display, available values (only for Muse | Mist):
   #  - post    expand on posts automatically. Default.
   #  - always  expand for all pages automatically
   #  - hide    expand only when click on the sidebar toggle icon.
   #  - remove  Totally remove sidebar including sidebar toggle.
-  display: post
+  #display: post
   #display: always
-  #display: hide
+  display: hide
   #display: remove
 
   # Sidebar offset from top menubar in pixels (only for Pisces | Gemini).
@@ -259,7 +259,7 @@ sidebar:
   # Scroll percent label in b2t button.
   scrollpercent: true
   # Enable sidebar on narrow view (only for Muse | Mist).
-  onmobile: false
+  onmobile: true
 
 
 # ---------------------------------------------------------------
@@ -328,8 +328,8 @@ codeblock:
 reward:
   enable: true
   comment:
-  wechatpay: http://ploojkqh4.bkt.clouddn.com/wechat.jpg
-  alipay: http://ploojkqh4.bkt.clouddn.com/alipay.jpg
+  wechatpay: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/wechat.jpg
+  alipay: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/alipay.jpg
   #bitcoin: /images/bitcoin.jpg
 
 # Related popular posts
@@ -586,7 +586,7 @@ gitalk:
 
 # AddThis Share, See: https://www.addthis.com
 # Go to https://www.addthis.com/dashboard to customize your tools
-add_this_id: ra-5c5078f179b3a0c0
+add_this_id: 
 
 # NeedMoreShare2
 # Dependencies: https://github.com/theme-next/theme-next-needmoreshare2
@@ -1061,7 +1061,4 @@ vendors:
 css: css
 js: js
 images: images
-
-passage_end_tag:
-    enabled: true
 

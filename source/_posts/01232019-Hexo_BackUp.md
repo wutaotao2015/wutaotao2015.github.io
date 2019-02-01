@@ -4,7 +4,7 @@ tags:
   - Hexo
   - Git
 categories: Hexo
-image: http://ploojkqh4.bkt.clouddn.com/201901295.jpg
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg
 abbrlink: 576ffe4
 date: 2019-01-23 10:11:32
 ---
@@ -51,5 +51,5 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
 一天只能构建20次的限制，现在觉得没什么，也还行，手动部署倒是没有限制，anyway,还是先把服务器放在github上，等其他博客的其他功能都
 搞得差不多了，再迁移到国内来。
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/201901295.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg, "", "" %}
 

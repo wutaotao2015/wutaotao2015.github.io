@@ -5,7 +5,7 @@ categories:
 tags:
   - Hexo
   - Qshell
-image: http://ploojkqh4.bkt.clouddn.com/201901291.jpg
+image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901291.jpg
 abbrlink: 79a6148d
 date: 2019-01-20 23:13:25
 ---
@@ -14,12 +14,12 @@ date: 2019-01-20 23:13:25
 
 看看玛雅人的智慧，多霸气！
 <div align="center">
-    <img src="http://ploojkqh4.bkt.clouddn.com/maya.jpg" width="300" alt="No Picture, No NetWork"/>
+    <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/maya.jpg" width="300" alt="No Picture, No NetWork"/>
 </div>
 
 下面就放下本人的玉照，就拿他当头像了！
 <div align="center">
-    <img src="http://ploojkqh4.bkt.clouddn.com/me.jpg" width="300" alt="No Picture, No NetWork"/>
+    <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/me.jpg" width="300" alt="No Picture, No NetWork"/>
 </div>
 
 目前是用了hexo-asset-image插件本地上传的图片，
@@ -164,6 +164,15 @@ git revert head   // 重做上一次commit
 ./ossutilmac64 ls oss://wutaotaospace/image/
 ```
 
+13. 统一将七牛外链替换为oss命令：
+```txt
+#  sed -i "s#old#new#g" `grep old -rl ./`
+
+sed -i "s #http://ploojkqh4.bkt.clouddn.com/
+#http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/#g" 
+`grep http://ploojkqh4.bkt.clouddn.com/ -rl ./`
+```
+
 <hr />
-{% fi http://ploojkqh4.bkt.clouddn.com/201901291.jpg, "", "" %}
+{% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901291.jpg, "", "" %}
 
