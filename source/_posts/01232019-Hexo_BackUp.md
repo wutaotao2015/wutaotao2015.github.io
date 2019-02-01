@@ -50,6 +50,20 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
 需要编写jenkinsfile，还没搞懂这个怎么写，用简易模块手动构建可以成功，但push代码代码却报找不到jenkinsfile的错误；又发现它有
 一天只能构建20次的限制，现在觉得没什么，也还行，手动部署倒是没有限制，anyway,还是先把服务器放在github上，等其他博客的其他功能都
 搞得差不多了，再迁移到国内来。
+
+2月1日:
+1. Hexo + Next主题优化受益最大也最靠谱的2个网站：
+> [打造个性超赞Hexo](https://reuixiy.github.io/technology/computer/computer-aided-art/2017/06/09/hexo-next-optimization.html)
+> [Hexo搭建博客2018心得汇总](https://zealot.top/Hexo-Github%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A22.html)
+
+2. Hexo部署travis集成
+> [Hexo + Travis](https://www.itfanr.cc/2017/08/09/using-travis-ci-automatic-deploy-hexo-blogs/)
+
+3. 主题Next作为git module
+> [git module1](http://saili.science/2017/04/02/github-for-win/#more)
+> [git module2](https://segmentfault.com/a/1190000003076028)
+
+
 <hr />
 {% fi http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg, "", "" %}
 
