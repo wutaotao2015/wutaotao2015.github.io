@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 
-git clone --recurse-submodules https://${GH_REF} .deploy_git
+git clone --recursive https://${GH_REF} .deploy_git
 cd .deploy_git
 git checkout master
 
