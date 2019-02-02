@@ -103,13 +103,67 @@ git module是可以一个公共仓库在自己的项目下存在的解决方案�
    ```
 
 4. travis对子模块的处理, 在CIShell脚本中加入--recurse-submodules同步拉取主题更新！
-`git clone --recuse-submodules http://.. .deploy`
+`git clone --recursive http://.. .deploy`
 
 
 5. 经过上面的子模块操作后，next主题文件夹的名字变成了MyNext,导致hexo s -g进去直接白屏，
 报没有index的错，原来想直接`mv MyNext next`,发现它不是一个git仓库了，好吧，想一想又跑去改
 站点配置文件_config中的theme配置项为MyNext,成功了！
 
+6. 前面我是先新建了一个自己的next theme仓库，再用git submodule add https://... themes/MyNext
+来建立子模块，结果发现没有教程中说的.gitmodules文件产生，后来反应过来应该是这个新的远程仓库
+的问题导致的，不过即使这样，MyNext也和新仓库建立了联系，我已将本地代码冲突解决后提交到远程仓库，
+这时只要将产生的.git/modules/下和themes/MyNext包删除，推送后，再使用`git submodule add`命令
+即可以产生.gitmodules, .git/config, .git/modules/这3个变动的文件，再add, commit, push即可成功
+产生子模块。
+
+7. 在父项目中用`git status`看不到子模块的变化，可以用命令来显示相关信息：
+`git config --global status.submoduleSummary true`
+参考来源[Mastering Git submodules](https://medium.com/@porteneuve/mastering-git-submodules-34c65e940407)
+
+8. git submodules常用命令
+```txt
+# add
+git submodule add https://... ./sub
+cd ..
+git add . && git commit -m 'add new submodule' && git push
+
+
+# clone
+git clone --recursive https://...   //  whole has not been cloned
+git submodule upate --init         // whole has been cloned
+
+# modify
+cd ./module
+git add . && git commit -m 'update submodule' && git push
+cd ..
+git status
+git commit -m 'submodule has been updated'
+git push
+
+# update
+git submodule foreach git pull
+git submodule foreach --recursive git pull   // many submodules recursive existed 
+
+# delete(whole code delete)
+git submodule deinit -f -- ./submodule
+rm -rf .git/modules  
+git rm -f ./submodule    // this command delete both worktree and index,--cached only index
+git add . &&  git commit -m 'delete submodule'
+
+# delete(remove the submodule but code remains as common folder)
+mv ./submodule ./subTmp
+git submodule deinit -f -- ./submodule
+rm -rf .git/modules  
+git rm --cached ./submodule  // only delete cache, files remains
+mv ./subTmo ./submodule
+
+# delete explanation
+[stack overflow git delete submodule](https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule)
+git submodule deinit   // change the .git/config
+git rm                 // change the .gitmdules
+rm -rf .git/modules    // manual delete .git/modules
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg" class="full-image" />
