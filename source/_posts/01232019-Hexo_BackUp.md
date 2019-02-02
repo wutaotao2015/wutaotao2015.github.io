@@ -160,12 +160,16 @@ git rm --cached ./submodule  // only delete cache, files remains
 mv ./subTmo ./submodule
 
 # delete explanation
-[stack overflow git delete submodule](https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule)
 git submodule deinit   // change the .git/config
 git rm                 // change the .gitmdules
 rm -rf .git/modules    // manual delete .git/modules
 ```
+[stack overflow git delete submodule](https://stackoverflow.com/questions/1260748/how-do-i-remove-a-submodule)
 
+9. 发现travis生成的文章的修改时间都是当前时间，应该是travis的集成环境影响到了渲染生成的
+html更新时间的缘故，开始想成了是travis部署脚本的问题，后来发现并没有关系，它只是移动了一个
+.git文件夹，并没有移动其他文件，而且生成后的html文件时间都固定了......无论如何，搜索文章
+发现这个更新时间是记录在db.json文件里的，
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg" class="full-image" />
 
