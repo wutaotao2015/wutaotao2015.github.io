@@ -1,0 +1,3 @@
+[submodule "themes/MyNext"]
+	path = themes/MyNext
+	url = https://github.com/wutaotao2015/wutaotao-hexo-next-theme.git
