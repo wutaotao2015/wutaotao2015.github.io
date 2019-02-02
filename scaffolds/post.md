@@ -5,6 +5,7 @@ tags:
 - T
 - T
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901311.jpg
+updated: {{ date }}
 abbrlink: 
 date: {{ date }}
 ---
