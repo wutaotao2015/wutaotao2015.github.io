@@ -169,7 +169,12 @@ rm -rf .git/modules    // manual delete .git/modules
 9. 发现travis生成的文章的修改时间都是当前时间，应该是travis的集成环境影响到了渲染生成的
 html更新时间的缘故，开始想成了是travis部署脚本的问题，后来发现并没有关系，它只是移动了一个
 .git文件夹，并没有移动其他文件，而且生成后的html文件时间都固定了......无论如何，搜索文章
-发现这个更新时间是记录在db.json文件里的，
+这个更新时间updated是记录在db.json文件里的一个update参数，travis是每次都是全新的环境，这样
+每篇文章都是最新的了，所以这样我们可以在post模版中手动添加updated参数，这样就不用依赖db.json
+来记录更新时间了。同时文章修改的具体时间直接修改站点配置文件即可
+`date_format: YYYY-MM-DD HH:mm:ss`
+
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901295.jpg" class="full-image" />
 
