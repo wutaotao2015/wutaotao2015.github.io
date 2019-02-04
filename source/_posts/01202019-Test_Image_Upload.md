@@ -6,7 +6,7 @@ tags:
   - Hexo
   - Qshell
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901291.jpg
-updated: 2019-01-20 23:13:25
+updated: 2019-02-04 10:57:08
 abbrlink: 79a6148d
 date: 2019-01-20 23:13:25
 ---
@@ -172,6 +172,23 @@ git revert head   // 重做上一次commit
 sed -i "s #http://ploojkqh4.bkt.clouddn.com/
 #http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/#g" 
 `grep http://ploojkqh4.bkt.clouddn.com/ -rl ./`
+```
+
+14. vim配置
+```txt
+set colorcolumn=90
+map <leader>t i<Space><C-R>=strftime("\%Y-\%m-\%d \%H:\%M:\%S")<CR><Esc>
+
+autocmd BufWrite,BufWritePre *.md ks|call LastModified()|'s
+func LastModified()
+    if line("$") > 20
+        let l = 20
+    else
+        let l = line("$")
+    endif
+    exe "1,".l."g/updated: /s/updated: .*/updated:".
+        \strftime(" \%Y-\%m-\%d \%H:\%M:\%S" ) . "/e"
+endfunc'
 ```
 
 <hr />
