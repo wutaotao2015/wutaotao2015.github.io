@@ -3,13 +3,13 @@ title: Hexo博客搭建指南
 tags: Hexo
 categories: Hexo
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg
-updated: 2019-02-04 11:27:22
+updated: 2019-02-05 21:22:03
 abbrlink: 938b0578
 date: 2019-01-22 21:51:18
 ---
 <p class="description">hexo + github静态博客搭建</p>
 <!-- more -->
-#### 需要材料
+## 需要材料
 1. github账号及仓库
 2. node.js
    (建议从官网上下载安装包安装，homebrew等下载速度太慢)
@@ -17,14 +17,14 @@ date: 2019-01-22 21:51:18
 3. git
    安装好后用git --version查看是否安装成功
 
-#### 简易步骤
-##### 登录github创建仓库（username.github.io)
+## 简易步骤
+### 登录github创建仓库（username.github.io)
 在本地生成公钥并上传到github上，输入命令
 `ssh-keygen -t rsa -C "github注册邮箱地址"`
 
-##### 在本地任意目录下初始化博客，输入命令
+### 在本地任意目录下初始化博客，输入命令
 
-##### `hexo init blog`
+`hexo init blog`
 
 这样创建了目录blog,这就是博客的项目
 hexo常用命令有
@@ -35,26 +35,18 @@ hexo n maven源码解析 // new,新建文章，后面为题目，默认是md格�
 hexo s -g   // 生成静态文件并启动本地服务，默认端口4000
 hexo d -g   // 生成静态文件并发布到github仓库中
 ```
-##### 启动服务前需要修改blog根目录下的配置文件deploy选项
+### 启动服务前需要修改blog根目录下的配置文件deploy选项
 ```txt
 deploy:
 type: git
 repo: XXXX.github.io
 branch: master
 ```
-##### 修改完配置文件并保存后，直接起服务hexo s报错
+### 修改完配置文件并保存后，直接起服务hexo s报错
 `deployer not found: git`
 这是正常的，需要安装hexo部署到git的插件，命令为
 `npm install hexo-deployer-git --save`
 
-##### 更换主题
-##### 添加评论功能
-##### 添加阅读次数
-##### 打开标签等其他功能
-##### 增加点赞功能
-##### 文章字数统计
-##### 头像显示
-##### 收录到百度和谷歌
 [七牛云批量获取文件外链接](https://developer.qiniu.com/kodo/kb/4072/batch-obtains-download-chain-method/)
 [不同电脑更新博客](https://www.zhihu.com/question/21193762/)
 
@@ -125,11 +117,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 # -R 递归改变下属文件权限
 ```
 
-
-
-
-
-
+### 测试图片上传
 看看玛雅人的智慧，多霸气！
 <div align="center">
     <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/maya.jpg" width="300" alt="No Picture, No NetWork"/>
@@ -308,14 +296,9 @@ func LastModified()
 endfunc'
 ```
 
-
-
-
-
-#### 正文
+### Hexo源码托管
 1. 实现hexo博客源码托管，新机器都可以更新博客。
-网上有教程说在hexo部署的github仓库下新建一个分支来管理源码，但是这样配置文件中的key都泄露出去了，还是不好，
-github私有仓库收费，所以还是在腾讯开发平台（coding)上新建了一个私有仓库来管理源码。
+网上有教程说在hexo部署的github仓库下新建一个分支来管理源码，但是这样配置文件中的key都泄露出去了，还是不好， github私有仓库收费，所以还是在腾讯开发平台（coding)上新建了一个私有仓库来管理源码。
 主要步骤为
 	1. 删除theme下主题的.git/文件夹内容，防止影响push,同一个git仓库下不能有2个.git配置文件。
 	2. 在源码hexo目录下执行`git init`命令生成git仓库环境
@@ -339,9 +322,7 @@ github私有仓库收费，所以还是在腾讯开发平台（coding)上新建�
 6. 如果还有时间，可以搞下自动部署，不过这样也只是省略了hexo d -g这一步？还得看看自动部署到底做了啥。
 7. 文章阅读次数，文章字数统计
 8. 访客地图
----
-#### 结语
----
+
 1月23日：
 1. 今天把hexo的源码托管到coding上去了，可以在thinkpad上更新博客了，但是域名解析还没这么快，只能明天再看看效果，现在博客是404状态。
 2. 发现coding上push了静态文件后，不像github一样有自动部署的功能，它需要手动部署，上网搜索发现它提供了一个webhook可以进行自动部署，还得看看怎么搞。不管持续集成省略了hexo d -g这一步，coding静态文件有更新都不能自动部署，在国内访问走的coding服务器，所以这个自动化还是必须要搞的,等域名解析出来以后再试试。
@@ -479,11 +460,7 @@ html更新时间的缘故，开始想成了是travis部署脚本的问题，后�
 
 
 
-
-
-
-
-coding上已有私有库，再切换回github上
+### coding上已有私有库，再切换回github上
 ```txt
 git remote -v
 git remote set-url origin https://github.com/wutaotao2015/wutaotao2015.github.io.git
