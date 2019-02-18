@@ -1,6 +1,6 @@
 ---
 title: 域名
-tags: Hexo
+tags: Thought
 categories: Thought
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/back.jpg
 updated: 2019-01-20 22:01:36
