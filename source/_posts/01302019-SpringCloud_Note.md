@@ -4,7 +4,7 @@ categories: SpringCloud
 tags:
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-18 17:59:12
+updated: 2019-02-20 09:32:42
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -73,11 +73,11 @@ Region and availability zone:
 
 实战：
 1. 建立Eureka服务器
-   1. 依赖spring-cloud-starter-eureka-server 
+   1. 依赖<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
    2. 配置文件Eureka
    3. @EnableEurekaServer
 2. 提供者注册到Eureka
-   1. 依赖spring-cloud-starter-eureka
+   1. 依赖<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
    2. 配置文件：项目名作为Eureka实例名及注册到的Eureka实例
    3. @EnableEurekaClient或@EnableDiscoveryClient
 
@@ -93,8 +93,8 @@ ribbon与eureka联合使用
 
 实战：
 
-1. 依赖spring-cloud-starter-ribbon,该依赖已经包含在spring-cloud-starter-eureka中，
-所以无需重复引入。
+1. 依赖spring-cloud-starter-netflix-ribbon,该依赖已经包含在
+spring-cloud-starter-netflix-eureka-client中，所以无需重复引入。
 2. @loadBalanced
 3. 请求地址改为`http://servicename/`, ribbon 与 eureka配合使用时，
 会将虚拟主机名映射成服务地址。
@@ -105,7 +105,7 @@ ribbon与eureka联合使用
 
 实战:
 
-1. 依赖spring-cloud-starter-feign
+1. 依赖spring-cloud-starter-openfeign
 2. 创建Feign接口，添加@FeignClient注解
 3. 将Feign接口注入到controller中进行调用
 4. 修改启动类，添加@EnableFeignClients注解
@@ -142,7 +142,7 @@ ribbon与eureka联合使用
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201902187.png" class="full-image" />
 
 实战：
-1. 依赖spring-cloud-starter-hystrix
+1. 依赖spring-cloud-starter-netflix-hystrix
 2. 启动类上添加@EnableCircuitBreaker或@EnableHystrix。
 3. controller方法上添加@HystrixCommand(fallbackMethod = "XXXFallBack")
 
@@ -158,7 +158,7 @@ ribbon与eureka联合使用
 （通过RxJava响应式编程实现）。
 
 实战：
-1. 依赖spring-cloud-starter-zuul
+1. 依赖spring-cloud-starter-netflix-zuul
 2. 启动类上添加@EnableZuulProxy， 它声明了一个Zuul代理，使用ribbon定位微服务，
 同时整合了hystrix。
 3. 编写配置文件注册到eureka。
@@ -171,6 +171,14 @@ ribbon与eureka联合使用
 
 记录微服务运行情况的日志工具。
 
+#### 部署
+
+springboot想要部署到生产服务器中需要打成war包，并生成需要的servlet启动类。
+
+1. 配置SpringBootServletInitializer类的子类。
+2. 修改maven打包方式为war。
+3. 执行maven package命令。
+4. 同一个tomcat部署多个不同端口的项目
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
