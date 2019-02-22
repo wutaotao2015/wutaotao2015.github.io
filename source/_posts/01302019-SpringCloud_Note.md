@@ -4,7 +4,7 @@ categories: SpringCloud
 tags:
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-20 09:32:42
+updated: 2019-02-22 10:06:12
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -32,11 +32,22 @@ classpath中有tomcat(webStarter依赖而来),它会自动启动一个tomcat容�
 如果想要自定义配置，可以显式自己的spring配置，或通过环境变量，属性文件等进行调整。
 
 #### Actuator监控工具
-
-[springboot actuator监控端点详解](http://blog.didispace.com/spring-boot-actuator-1/)
+提供了各个端点对应用情况进行监控。
+由于安全问题，springboot 2.0版本将所有端点都移动到/autoconfig后，且只暴露了info和health
+2个端口，其余端口需要在项目配置文件中进行配置才可以访问。
+```txt
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+```
 
 #### 命令行工具
 略
+
+注： 最简单的springboot项目hello world需要配置controller和html页面才能访问到，在前台页面
+使用thymeleaf的情况下。
 
 ### springCloud微服务
 
