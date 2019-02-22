@@ -4,7 +4,7 @@ categories: SpringCloud
 tags:
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-22 10:06:12
+updated: 2019-02-22 10:09:02
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -33,7 +33,7 @@ classpath中有tomcat(webStarter依赖而来),它会自动启动一个tomcat容�
 
 #### Actuator监控工具
 提供了各个端点对应用情况进行监控。
-由于安全问题，springboot 2.0版本将所有端点都移动到/autoconfig后，且只暴露了info和health
+由于安全问题，springboot 2.0版本将所有端点都移动到/actuator后，且只暴露了info和health
 2个端口，其余端口需要在项目配置文件中进行配置才可以访问。
 ```txt
 management:
