@@ -191,6 +191,15 @@ springboot想要部署到生产服务器中需要打成war包，并生成需要�
 3. 执行maven package命令。
 4. 同一个tomcat部署多个不同端口的项目
 
+#### 版本问题
+
+在实际应用过程中，springboot, jdk, springcloud的版本问题造成了很多困扰，这里总结一下:
+
+1. springboot 2.0以后要求是jdk 1.8, jdk 1.7只能适用于springboot2.0以前的版本，不然内部自动
+引用的jar包会产生版本问题。
+2. springcloud Finchley版本需要和springboot 2.0版本合作,更早的boot版本也会出现问题。
+
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
 
