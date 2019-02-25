@@ -4,7 +4,7 @@ categories: SpringCloud
 tags:
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-22 10:09:02
+updated: 2019-02-25 20:30:56
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -46,8 +46,8 @@ management:
 #### 命令行工具
 略
 
-注： 最简单的springboot项目hello world需要配置controller和html页面才能访问到，在前台页面
-使用thymeleaf的情况下。
+注： 最简单的springboot项目hello world需要配置controller,使用@RestController(内含
+@ResponseBody)来输出Hello World.
 
 ### springCloud微服务
 
