@@ -3,11 +3,11 @@ title: Markdown基本语法
 tags: Markdown
 categories: Markdown
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg
-updated: 2019-01-22 21:51:18
+updated: 2019-02-26 21:07:14
 abbrlink: 47caaf1e
 date: 2019-01-22 21:51:18
 ---
-<p class="description">markdown基本语法</p>
+markdown基本语法
 <!-- more -->
 这里介绍的是基本markdown语法，使用工具为Typora.
 #### 标题

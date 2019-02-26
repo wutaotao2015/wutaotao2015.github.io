@@ -1,13 +1,23 @@
 ---
 title: Hexo博客搭建指南
-tags: Hexo
+tags: 
+  - Hexo
+  - Qshell
+  - Node
+  - Git
+  - Ossutil
+  - Sed
+  - Vim
+  - Travis
+  - Git submodule
 categories: Hexo
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg
-updated: 2019-02-05 21:22:03
+updated: 2019-02-26 21:07:02
 abbrlink: 938b0578
 date: 2019-01-22 21:51:18
 ---
-<p class="description">hexo + github静态博客搭建</p>
+hexo + github静态博客搭建,七牛云,qshell,卸载node,npm权限问题,cmder alias,git,ossutil,
+sed,vim,travis,git submodule
 <!-- more -->
 ## 需要材料
 1. github账号及仓库
@@ -74,6 +84,8 @@ leanCloud还可以对评论进行后台管理，可以删除差评，这个以�
 今天在旧的电脑上又重新建立博客，原以为是很轻松的事情，毕竟之前在thinkpad上已经成功了一次，
 但是还是折腾了一会儿，还是对安装hexo这个基本命令没有认识清楚。
 
+#### 卸载npm
+
 1. 先完全卸载npm, node
 > To completely uninstall node + npm is to do the following:
 go to /usr/local/lib and delete any node and node_modules
@@ -111,6 +123,8 @@ npm -v
 7. 经过以上折腾，第二天再查找，终于找对了npm的官网，上面有说改变npm默认全局目录来解决的，
 不过感觉略麻烦，可以看看[Resoving EACCES permissions errors](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally/),不过后来又找到了中文版的npm，
 上面改变权限命令更直接[npm中文文档](https://www.kancloud.cn/shellway/npm-doc/199985/):
+
+#### npm权限
 ```txt
 npm config get prefix   // output /usr/local
 sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share} 
@@ -137,6 +151,7 @@ sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
 qshell可以在本地进行批量上传操作，非常方便。
 简记如下：
 
+#### qshell
 1. 下载qshell包
 
 2. 将目录添加到环境变量
@@ -177,6 +192,8 @@ qshell可以在本地进行批量上传操作，非常方便。
    实际编写博客时，这样上传图片肯定很麻烦，我的thinkpad上装的是windows系统，用cmder来模拟
    linux终端操作，自带git, vim, grep, sed等命令，也是个神器， 研究了半天它的别名alias操作，
    最后发现非常简单。
+
+#### 博客操作alias命令
    ```txt
    cd /d/cmder/config    # 到cmder安装目录下
    vi user_profile.sh
@@ -228,6 +245,8 @@ qshell可以在本地进行批量上传操作，非常方便。
 
 7. 提交注释有空格时用单引号括起来`push 'comment space'`
 
+#### git的2个问题
+
 8. git在windows和mac系统的换行符问题
 > Git can handle this by auto-converting CRLF line endings into LF when you add a file to 
 the index, and vice versa when it checks out code onto your filesystem. You can turn on 
@@ -250,7 +269,7 @@ windows和Mac系统都是大小写不敏感的系统，Hexo在生成tags和categ
 
 10. 排版问题，给vim设置`set colorcolumn=90`
 
-11. git命令
+#### git命令
 ```txt
 git diff   // workspace and index's diff
 git diff head  // workspace and repo's diff
@@ -258,10 +277,14 @@ git diff --cached  // index and repo's diff
 git diff --name-only  // show the changed file names
 git diff <system file path>  // show the file's diff
 git checkout <system file path>  // get stashed file to workspace
-git revert head   // 重做上一次commit
+git revert head   // 生成新的commit重做上一次commit
+git reset --hard commitId   // 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，
+                            // 与指定commit一致
 ```
 12. 七牛云测试域名1个月就要回收了，本想转又拍云，但是它需要植入广告，云服务器控制台又太挫
 了，搞了搞还是算了，转OSS!下面是一些简单命令：
+
+#### 阿里云OSS命令
 ```txt
 # 上传
 ./ossutilmac64 cp -r stuff/image oss://wutaotaospace/image/
@@ -271,6 +294,7 @@ git revert head   // 重做上一次commit
 ```
 
 13. 统一将七牛外链替换为oss命令：
+#### sed命令替换多个文件
 ```txt
 #  sed -i "s#old#new#g" `grep old -rl ./`
 
@@ -280,6 +304,7 @@ sed -i "s #http://ploojkqh4.bkt.clouddn.com/
 ```
 
 14. vim配置
+#### vim退出时自动修改更新时间
 ```txt
 set colorcolumn=90
 map <leader>t i<Space><C-R>=strftime("\%Y-\%m-\%d \%H:\%M:\%S")<CR><Esc>
@@ -291,7 +316,7 @@ func LastModified()
     else
         let l = line("$")
     endif
-    exe "1,".l."g/updated: /s/updated: .*/updated:".
+    exe "1,".l."g/updated: 2019-02-26 21:07:02
         \strftime(" \%Y-\%m-\%d \%H:\%M:\%S" ) . "/e"
 endfunc'
 ```
@@ -333,13 +358,17 @@ endfunc'
 搞得差不多了，再迁移到国内来。
 
 2月1日:
+#### hexo搭建2大神站
 1. Hexo + Next主题优化受益最大也最靠谱的2个网站：
 > [打造个性超赞Hexo](https://reuixiy.github.io/technology/computer/computer-aided-art/2017/06/09/hexo-next-optimization.html)
 > [Hexo搭建博客2018心得汇总](https://zealot.top/Hexo-Github%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A22.html)
 
+#### Travis
 2. Hexo部署travis集成
 > [Hexo + Travis](https://www.itfanr.cc/2017/08/09/using-travis-ci-automatic-deploy-hexo-blogs/)
+> [Travis](https://andyliwr.github.io/2017/12/05/travis_nodejs_publish/)
 
+#### git submodule
 3. 主题Next作为git module
 > [git module1](http://saili.science/2017/04/02/github-for-win/#more)
 > [git module2](https://segmentfault.com/a/1190000003076028)
@@ -402,7 +431,7 @@ git module是可以一个公共仓库在自己的项目下存在的解决方案�
 `git config --global status.submoduleSummary true`
 参考来源[Mastering Git submodules](https://medium.com/@porteneuve/mastering-git-submodules-34c65e940407)
 
-8. git submodules常用命令
+#### git submodules常用命令
 ```txt
 # add
 git submodule add https://... ./sub
@@ -456,6 +485,7 @@ html更新时间的缘故，开始想成了是travis部署脚本的问题，后�
 
 10. 使用发现手动增加updated标签值相当于写死了更新时间，所以还是需要手动修改，可以用vim的
 键位映射,我设置成,t来生成。
+#### vim快速生成当前时间
 `map <leader>t i<C-R>=strftime("\%Y-\%m-\%d \%H:\%M:\%S")<CR><Esc>`
 
 
@@ -500,6 +530,7 @@ git commit -m "source"
 git push -u origin source
 ```
 6. 回到家，发现本地电脑还是blog的origin/master追踪着coding的master,进行一番尝试，最后也成功了。
+#### git常用命令
 ```
 git remote set-url origin git@...  // 切换到github仓库
 git checkout -b source

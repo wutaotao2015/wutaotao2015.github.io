@@ -2,13 +2,15 @@
 title: SpringCloud学习笔记
 categories: SpringCloud
 tags:
+  - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-25 20:30:56
+updated: 2019-02-26 21:09:40
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
-<p class="description">SpringCloud学习笔记一</p>
+spring boot, SpringCloud, Actuator, Eureka, ribbon, Feign, hystrix, zuul, 
+sleuth, spring cloud config, jdk, spring boot与spring cloud版本问题
 <!-- more -->
 ### springBoot简介
 

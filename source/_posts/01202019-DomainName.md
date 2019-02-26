@@ -3,11 +3,11 @@ title: 域名
 tags: Thought
 categories: Thought
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/back.jpg
-updated: 2019-01-20 22:01:36
+updated: 2019-02-26 20:42:02
 abbrlink: c5f0d6d
 date: 2019-01-20 22:01:36
 ---
-<p class="description">购买域名</p>
+购买域名
 <!-- more -->
 域名搞好了，先搞了一年的，
 我的是[http://www.taoblog.cn/](http://www.taoblog.cn/),
