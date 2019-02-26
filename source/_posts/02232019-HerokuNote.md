@@ -8,7 +8,7 @@ tags:
   - PostgreSQL
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg'
 abbrlink: fe2ee907
-updated: 2019-02-26 21:14:42
+updated: 2019-02-26 21:30:56
 date: 2019-02-23 21:03:08
 ---
 Heroku学习笔记, JDK与JRE, clean add path variable(环境变量),PostgreSQL
@@ -36,7 +36,7 @@ than a JDK`,无语,用`mvn -v`查看始终是那个plugin的jre目录，网上�
 > JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home
 
 搞定！
-### JDK和JRE的区别:
+## JDK和JRE的区别:
 > 1.JVM -- java virtual machineJVM就是我们常说的java虚拟机，
 它是整个java实现跨平台的最核心的部分，所有的java程序会首先被编译为.class的类文件，
 这种类文件可以在虚拟机上执行，也就是说class并不直接与机器的操作系统相对应，
@@ -61,7 +61,7 @@ eclipse、idea等其他IDE有自己的编译器而不是用JDK bin目录中自�
 注：查看path变量时发现有很多重复的路径，但我只有.bash_profile中定义了path变量，后来发现是多次
 source .bash_profile文件它多次追加上去的，重启终端就可以看见没有重复的了，网上有个简单的
 方法可以判断path是否已经包含该路径，若没有，才进行追加。
-### 干净添加环境变量
+## 干净添加环境变量
 ```txt
 add() { case ":${PATH:=$1}:" in *:$1:*) ;; *) PATH="$1:$PATH" ;; esac; }
 add $JAVA_HOME
@@ -104,7 +104,7 @@ $ heroku pg      # show database information
 Done!
 
 5. 将h2数据库改造成postgresql
-### PostgreSQL
+## PostgreSQL
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg" class="full-image" />
