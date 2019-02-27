@@ -8,7 +8,7 @@ tags:
   - PostgreSQL
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg'
 abbrlink: fe2ee907
-updated: 2019-02-26 21:30:56
+updated: 2019-02-27 23:17:13
 date: 2019-02-23 21:03:08
 ---
 Heroku学习笔记, JDK与JRE, clean add path variable(环境变量),PostgreSQL
@@ -89,8 +89,10 @@ $ heroku pg      # show database information
 1. 项目根目录下新建system.properties文件
 > java.runtime.version=1.8
 
-2. 项目根目录下新建Procfile文件
+2. 项目根目录下新建Procfile文件和app.json文件
 > web: java -jar target/XXX-YYY.jar   # web代表接受外面的http请求
+
+app.json中写明app名字，描述和使用的addon信息。
 
 3. 创建heroku app,这一步主要是创建heroku的git仓库。
 > $ heroku create appname
@@ -102,6 +104,33 @@ $ heroku pg      # show database information
 > $ heroku open
 
 Done!
+### heroku发布后出问题时版本回退办法
+> $ heroku releases   # 查看发布版本记录
+> $ heroku releases:rollback v102  # v102改成相应版本记录
+
+这里也就是说不管是改动代码(code),环境配置(config vars),插件(add-ons)都会产生一个新的release。
+
+### Addons
+Dyno可以看成是一个文件系统中包含了release的虚拟unix容器，比如说可以有3个web,2个queue的
+dyno,具体情况通过`heroku ps`查看。
+因为各个Dyno之间的文件状态是隔绝的，所以可以通过addOn来进行Dyno之间的通信，比如web Dyno
+存储数据到数据库的addon中，queue Dyno可以从数据库addon中查询数据来进行操作。
+> 通过hello的例子可以看出，addons信息配置在根目录下的app.json文件里。
+
+### logging and monitoring
+所有dyno的所有进程的信息会汇聚到一个高性能日志系统logplex中，使用命令
+> $ heroku logs
+
+查看所有dyno的日志信息,如包括router路由，web1,web2等,可以只查看某个dyno日志
+> $ heroku logs --ps web.1 --tail   # --tail可以实时更新日志 
+
+多个web dyno可以实现负载均衡。
+> heroku ps:scale web+5
+
+```txt
+A single dyno runs a single instance of a process type (which itself can then spawn 
+and manage several sub-processes). 
+```
 
 5. 将h2数据库改造成postgresql
 ## PostgreSQL
