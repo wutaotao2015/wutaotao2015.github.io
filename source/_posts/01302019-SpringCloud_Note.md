@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-26 21:09:40
+updated: 2019-02-28 17:40:34
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -201,6 +201,43 @@ springboot想要部署到生产服务器中需要打成war包，并生成需要�
 引用的jar包会产生版本问题。
 2. springcloud Finchley版本需要和springboot 2.0版本合作,更早的boot版本也会出现问题。
 
+#### springboot集成mybatis, 数据库使用mysql
+此项目在微服务microservice-provider-user项目基础上修改。
+1. pom.xml中添加mybatis,mysql依赖
+```txt
+    <!-- Spring Boot Mybatis 依赖 -->
+    <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>${mybatis-spring-boot}</version>
+    </dependency>
+
+    <!-- MySQL 连接驱动依赖 -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-connector}</version>
+    </dependency>
+```
+2. 在配置文件application.yml中添加数据库和mybatis配置
+```txt
+spring:
+  application:
+    name: microservice-provider-user
+  datasource:                           # 指定数据源
+    url: jdbc:mysql://localhost:3306/springbootdb?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  typeAliasesPackage: com.itmuch.cloud.study.entity    # 实体类
+  mapperLocations: classpath:mapper/*.xml             # mapper配置文件
+```
+3. 编写UserDao,UserService,UserServiceImpl(@Service),UserMapper.xml
+4. 最后发现UserServiceImpl注入UserDao报错，在UserApplication类上加上注解
+> @MapperScan("com.itmuch.cloud.study.dao")
+
+Done!
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
