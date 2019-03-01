@@ -4,27 +4,27 @@ categories: Tool
 tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
-updated: 2019-03-01 18:03:59
+updated: 2019-03-01 21:33:06
 date: 2019-03-01 10:21:17
 abbrlink:
 ---
 IntelliJ Idea Note
 <!-- more -->
 ## 安装
-![20190301_2](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_2.jpg)
-![20190301_3](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_3.jpg)
-![20190301_4](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_4.jpg)
-![20190301_5](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_5.jpg)
-![20190301_6](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_6.jpg)
+![20190301_2](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_2.jpg)
+![20190301_3](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_3.jpg)
+![20190301_4](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_4.jpg)
+![20190301_5](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_5.jpg)
+![20190301_6](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_6.jpg)
 注册激活码，如果失效去这个网站获取[http://idea.lanyus.com/](http://idea.lanyus.com/)
-![20190301_7](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_7.jpg)
+![20190301_7](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_7.jpg)
 ## 导入项目
 1. 新建一个文件夹，可以命名为ideaWorkspace(已经有父子模块项目关系的可以直接open即可)
 2. 将需要导入的项目文件夹拷贝到里面
 3. open该工作空间文件夹
 4. 设置成maven项目
-![20190301_9](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_9.jpg)
-![20190301_10](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_10.jpg)
+![20190301_9](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_9.jpg)
+![20190301_10](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_10.jpg)
 到此项目就算导入完成了。
 
 Idea中没有workspace的概念，它顶级目录叫Project,次级目录是Module,每个project都有自己的
@@ -32,36 +32,36 @@ Idea中没有workspace的概念，它顶级目录叫Project,次级目录是Modul
 
 ## 设置
 1. 设置jdk
-![20190301_11](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_11.jpg)
-![20190301_12](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_12.jpg)
+![20190301_11](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_11.jpg)
+![20190301_12](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_12.jpg)
 到这里就可以直接运行项目了。
-![20190301_13](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_13.jpg)
+![20190301_13](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_13.jpg)
 
 2. 修改字体大小
-![20190301_14](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_14.jpg)
+![20190301_14](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_14.jpg)
 
 3. 修改文件编码
-![20190301_15](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_15.jpg)
+![20190301_15](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_15.jpg)
 注：如果Tomcat 控制台输出乱码，并且控制台字体设置的字体包含中文，可以在 Tomcat 的 VM 
 参数上加上：-Dfile.encoding=UTF-8
-![20190301_16](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_16.jpg)
+![20190301_16](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_16.jpg)
 
 4. 清楚缓存和索引
 Idea利用缓存和索引来加快搜索查询的速度，但有时也会出现问题，这时可以清除缓存来解决问题：
-![20190301_17](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_17.jpg)
+![20190301_17](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_17.jpg)
 一般选择第一个就可以，清除并重启，这里实际上就是删除了system文件夹，可以手动删除，重启
 Idea它会自动创建新的system文件夹，system路径位于自己的用户目录下：
 > /c/Users/LYPC/.IntelliJIdea2018.3/system
 
 5. 自动编译
 因为自动编译比较耗费资源，所以idea默认没有开启自动编译，可以手动设置：
-![20190301_18](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_18.jpg)
+![20190301_18](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_18.jpg)
 注意：这里的自动编译不是保存后自动编译，而是在编辑器里输入代码的时候自动编译，
 所以比较耗费资源，可以用快捷键`ctrl + F9`来进行项目编译。
 
 ## 常用快捷键
 idea默认快捷键查看及修改地址：
-![20190301_8](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_8.jpg)
+![20190301_8](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_8.jpg)
 在设置前，应注意快捷键冲突，关掉搜狗输入法等的快捷键。
 ```txt
 ctrl + f,z,c,x,/  功能不变: 搜索，撤销，复制，剪切,粘贴, 注释
@@ -124,9 +124,9 @@ ctrl + shift + c   复制当前文件路径到剪贴板
 inject language
 
 注：如习惯vim操作，可以下载插件IdeaVim
-![20190301_19](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_19.jpg)
+![20190301_19](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_19.jpg)
 安装后重启，设置开关vim模式快捷键,默认ctrl+alt+v,改成F1,同时把context help的remove掉。
-![20190301_20](C:\Users\LYPC\AppData\Roaming\Typora\typora-user-images\20190301_20.jpg)
+![20190301_20](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_20.jpg)
 
 
 
