@@ -8,7 +8,7 @@ tags:
   - PostgreSQL
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg'
 abbrlink: fe2ee907
-updated: 2019-02-27 23:17:13
+updated: 2019-03-01 10:20:23
 date: 2019-02-23 21:03:08
 ---
 Heroku学习笔记, JDK与JRE, clean add path variable(环境变量),PostgreSQL
@@ -134,6 +134,9 @@ and manage several sub-processes).
 
 5. 将h2数据库改造成postgresql
 ## PostgreSQL
+windows 64位安装postgreSQL,直接双击安装运行包报一个安装runtime错误,网上搜索得知可以
+跳过安装该runtime,用命令行安装
+> ./postgresql-9.6.12-1-windows-x64.exe --install_runtimes 0 
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg" class="full-image" />
