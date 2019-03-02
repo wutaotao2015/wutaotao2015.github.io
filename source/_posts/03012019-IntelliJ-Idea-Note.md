@@ -4,7 +4,7 @@ categories: Tool
 tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
-updated: 2019-03-02 21:24:34
+updated: 2019-03-02 23:16:58
 date: 2019-03-01 10:21:17
 abbrlink:
 ---
@@ -68,99 +68,115 @@ idea默认快捷键查看及修改地址：
 ```txt
 windows版：
 
-ctrl + f,z,c,x,/  功能不变: 搜索，撤销，复制，剪切,粘贴, 注释
+搜索：
+ctrl + e  最近打开的文件列表->列表大小可调->在settings->editor->general->limits->recent files limit
+ctrl + n  搜索java类文件
+ctrl + f  当前文件搜索
+ctrl + shift + f   查找整个项目或指定目录内文件
+ctrl + shift + v   拷贝历史记录板
+ctrl + shift + e   最近修改文件列表
+
+窗口处理：
+ctrl + alt + s     打开idea setting 设置
+alt + 1            显示project视图
+ctrl + F4          关闭当前编辑文件
+ctrl + shift + F12 最大化编辑器
+
+tab可以多行显示或只显示一个tab,在settings->editor->General->Editor tabs->placement
+
+光标选择：
+ctrl + w  智能选择代码块
+ctrl + shift + w   与ctrl+w配合使用，是递进取消选择单词
+ctrl + alt + 左   退回上一个操作地方  可以改成alt + [
+ctrl + alt + 右   前进到上一个操作地方  可以改成alt + ]
+ctrl + shift + backspace   退回上次修改的地方
+F2  跳转到下一个错误或警告位置
+
+编辑：
+ctrl + z,c,x,/  功能不变: 搜索，撤销，复制，剪切,粘贴, 注释
 ctrl + shift + z  恢复撤销，相当于前进
 ctrl + r  替换
 ctrl + y  删除光标所在行 或 选中的行
 ctrl + d  复制当前行并粘贴到下一行 或 复制选中内容并粘贴到光标后,可以改成粘贴到下一行而不是
             光标后，修改为duplicate entire lines
-ctrl + w  智能选择代码块
-ctrl + e  最近打开的文件列表->列表大小可调->在settings->editor->general->limits->recent files limit
-ctrl + n  搜索java类文件
-ctrl + F4 关闭当前编辑文件
-ctrl + F9  make project编译项目
-
-ctrl + space  这个windows系统上时切换输入法，可修改为ctrl + ; 表示基本代码补全
-ctrl + shift + space   智能代码补全 可改为ctrl + shift + ;
-ctrl + shift + enter   自动补全代码，收尾处理 如if语句自动生成
-postfix code completion:
-for,nn,null,var
-自定义：settings->editor->general->postfix completion
-
-alt + enter   智能辅助，跟据位置不同提示结果不同，可用于生成get/set方法，生成接口或实现类，
-              还可以进行重构
-alt + insert  同eclipse,生成set/get,constructor,toString()等
-alt + 1        显示project视图
-
-tab可以多行显示或只显示一个tab,在settings->editor->General->Editor tabs->placement
-
-ctrl + alt + s     打开idea setting 设置
+alt + shift + 上   当前行向上移动一行
+alt + shift + 下   当前行向下移动一行
 ctrl + alt + o  优化import的包
 ctrl + alt + l  格式化代码，可以对当前文件或整个包目录使用
 ctrl + alt + t  对选中代码弹出环绕层，有if/else, try/catch等
-ctrl + alt + 左   退回上一个操作地方  可以改成alt + [
-ctrl + alt + 右   前进到上一个操作地方  可以改成alt + ]
-
-ctrl + shift + f   查找整个项目或指定目录内文件
-ctrl + shift + r   替换内容 整个项目或指定目录
-ctrl + shift + v   拷贝历史记录板
-ctrl + shift + e   最近修改文件列表
 ctrl + shift + /   代码块注释
-ctrl + shift + F12 最大化编辑器
-ctrl + shift + backspace   退回上次修改的地方
-ctrl + shift + w   与ctrl+w配合使用，是递进取消选择单词
 
-alt + shift + 上   当前行向上移动一行
-alt + shift + 下   当前行向下移动一行
+代码提示：
+ctrl + space  这个windows系统上时切换输入法，可修改为ctrl + ; 表示基本代码补全
+ctrl + shift + space   智能代码补全 可改为ctrl + shift + ;
+postfix code completion:  for,nn,null,var
+自定义：settings->editor->general->postfix completion
+alt + enter   智能辅助，跟据位置不同提示结果不同，可用于生成get/set方法，生成接口或实现类，
+              还可以进行重构
+alt + insert  同eclipse,生成set/get,constructor,toString()等
+
+编译：
+ctrl + F9       make project编译项目
+
+重构：
+ctrl + shift + r   替换内容 整个项目或指定目录
 alt + shift + f    加入到收藏夹中
-
-F2  跳转到下一个错误或警告位置
-shift + F6    重构: 重新命名
+shift + F6       重构: 重新命名
 ctrl + alt + m   重构: 提取方法
 
 
 mac 版：
-command + f,z,c,x    #   find,undo,copy,cut
+
+搜索：
+command + e          #   recent files
+command + o          #   navigate class
+command + f          #   edit: Find find
+command + shift + f   # find in path
+command + shift + v   # paste from history
+command + shift + e   # recently changed files
+
+窗口处理：
+command + ,      # file setting
+command + 1      # tool windows Project
+command + w      # editor tabs close
+command + shift + F12 # hide all tool windows
+
+光标选择：
+option + up          #   extend selection
+option + down   # shrink selection
+command + [     # navigation back
+command + ]     # navigation forward
+command + shift + backspace # last edit location
+F2  # next highlighted error
+
+编辑：
+command + z,c,x,/    #   find,undo,copy,cut,comment
 command + shift + z  #   redo
 command + r          #   replace
-command + backspace  # ctrl + y     delete line
-command + d          # ctrl + d     duplicate lines
-option + up          # ctrl + w     extend selection
-command + e          # ctrl + e     recent files
-command + o          # ctrl + n     navigate class
-command + w          # ctrl + F4    editor tabs close
-command + F9         # ctrl + F9    build project
+command + backspace  #   delete line
+command + d          #   duplicate lines
+option + shift + up  # code move line up
+option + shift + down  # code move line down
+ctrl + option + o     # optimize imports
+command + option + l  # reformat code
+command + option + t  # code surround with
+ctrl + shift + /     # comment with block comment
 
+代码提示：
 ctrl + ;     # basic code complete
 ctrl + shift + ;  # smart code complete
 command + shift + enter  # complete current statement
 option + enter     # show intention actions
 ctrl + enter     # code generate
-command + 1      # tool windows Project
 
-command + ,      # file setting
-ctrl + option + o     # optimize imports
-command + option + l  # reformat code
-command + option + t  # code surround with
-command + [     # navigation back
-command + ]     # navigation forward
-
-command + shift + f   # find in path
+重构：
 command + shift + r   # replace in path
-command + shift + v   # paste from history
-command + shift + e   # recently changed files
-ctrl + shift + /     # comment with block comment
-command + shift + F12 # hide all tool windows
-command + shift + backspace # last edit location
-option + down   # shrink selection
+option + shift + f    # other add to favourites
+shift + F6           # refactor rename
+command + option + m  # refactor extract method
 
-option + shift + up  # code move line up
-option + shift + down  # code move line down
-option + shift + f # other add to favourites
-F2  # next highlighted error
-shift + F6   # refactor rename
-command + option + m   # refactor extract method
-
+编译：
+command + F9         #   build project
 ```
 
 注：如习惯vim操作，可以下载插件IdeaVim
