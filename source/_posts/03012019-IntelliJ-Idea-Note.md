@@ -4,7 +4,7 @@ categories: Tool
 tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
-updated: 2019-03-02 23:16:58
+updated: 2019-03-03 00:11:00
 date: 2019-03-01 10:21:17
 abbrlink:
 ---
@@ -130,6 +130,7 @@ mac 版：
 搜索：
 command + e          #   recent files
 command + o          #   navigate class
+command + F12        #   file structure
 command + f          #   edit: Find find
 command + shift + f   # find in path
 command + shift + v   # paste from history
@@ -157,10 +158,10 @@ command + backspace  #   delete line
 command + d          #   duplicate lines
 option + shift + up  # code move line up
 option + shift + down  # code move line down
-ctrl + option + o     # optimize imports
 command + option + l  # reformat code
 command + option + t  # code surround with
 ctrl + shift + /     # comment with block comment
+ctrl + option + o     # optimize imports
 
 代码提示：
 ctrl + ;     # basic code complete
@@ -187,9 +188,14 @@ vim默认寄存器和系统剪贴板共享:
 在c:\Users\用户名\下新建文件_ideavimrc文件(mac是~目录.ideavimrc):
 > set clipboard+=unnamed
 
+热部署插件JRebel
+
 ## 小设置
 scroll from source
 inject language
+设置自动导包: settings->editor->general->auto import->check 2
+代码提示忽略大小写：settings->editor->general->code completion->match case uncheck
+
 
 
 <hr />
