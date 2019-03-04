@@ -4,9 +4,9 @@ categories: Tool
 tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
+abbrlink: 481236cd
 updated: 2019-03-04 09:20:54
 date: 2019-03-01 10:21:17
-abbrlink:
 ---
 IntelliJ Idea Note
 <!-- more -->
