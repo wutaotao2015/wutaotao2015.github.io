@@ -4,7 +4,7 @@ categories: Tool
 tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
-updated: 2019-03-03 14:42:49
+updated: 2019-03-04 09:20:54
 date: 2019-03-01 10:21:17
 abbrlink:
 ---
@@ -83,7 +83,7 @@ ctrl + f  当前文件搜索
 ctrl + alt + s     打开idea setting 设置
 alt + 1            显示project视图
 alt + 2      # 收藏夹
-ctrl + F4          关闭当前编辑文件 window+w
+ctrl + F4          关闭当前编辑文件 
 ctrl + shift + F12 最大化编辑器
 
 tab可以多行显示或只显示一个tab,在settings->editor->General->Editor tabs->placement
