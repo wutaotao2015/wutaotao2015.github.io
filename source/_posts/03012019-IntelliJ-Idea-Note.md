@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-04 09:20:54
+updated: 2019-03-08 11:17:16 
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -95,6 +95,10 @@ ctrl + alt + 左   退回上一个操作地方  可以改成alt + [
 ctrl + alt + 右   前进到上一个操作地方  可以改成alt + ]
 ctrl + shift + backspace   退回上次修改的地方
 F2  跳转到下一个错误或警告位置
+shift + F2   上一个错误
+ctrl + b   navigate-declaration  类的定义或变量的使用处显示
+ctrl + alt + b   navigate-implementations 接口或抽象方法实现
+ctrl + u    super method  父类方法
 
 编辑：
 ctrl + z,c,x,/  功能不变: 搜索，撤销，复制，剪切,粘贴, 注释
