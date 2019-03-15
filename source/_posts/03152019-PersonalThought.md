@@ -4,11 +4,11 @@ categories: Thought
 tags:
   - Thought
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190315_1.jpg'
-updated: 2019-03-15 20:21:14
+abbrlink: b703434b
+updated: 2019-03-15 20:33:06
 date: 2019-03-15 20:05:01
-abbrlink:
 ---
-description
+Test-driven Coding
 <!-- more -->
 ## 测试驱动开发
 问题:
