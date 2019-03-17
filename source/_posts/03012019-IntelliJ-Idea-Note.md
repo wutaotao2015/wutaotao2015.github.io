@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-08 11:17:16 
+updated: 2019-03-17 22:37:16
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -202,6 +202,11 @@ vim默认寄存器和系统剪贴板共享:
 > set clipboard+=unnamed
 
 热部署插件JRebel
+修改java文件后可以不用重启，重新编译后即可生效，xml等配置文件仍然需要重启项目。
+
+编辑器可视区域快速跳转神器AceJump
+该插件提供了按行和按单词跳转功能,但是没什么太大作用，
+最主要的功能还是自身的active acejump mode功能，可设置快捷键为ctrl + j
 
 ## 小设置
 scroll from source
@@ -210,6 +215,26 @@ scroll from source
 显示内存使用情况：settings->apperance->window options->show memory indication
 inject language  json, xpath, regex
 
+## 小问题
+新建项目没有new java class选项？
+> idea不同目录右键下有一个`mark directory as` 的功能，对应了maven通常项目结构,
+> 有sources,tests,resources,test resources,excluded等不同的项目，将需要的包进行设定
+> 即可。
+
+光标处和相同变量颜色如何设置？
+> settings -> editor -> color scheme -> general中
+> code identifier under caret 相同变量名处
+> code identifier under caret(write) 光标所在处  # 可以设置成黄底黑字
+> editor caret -> 光标颜色 # 红色
+> editor caret row -> 光标所在行 # 5D5973 或其他较深的颜色,区别黑色就可
+> editor selection background -> 选中的文本颜色 绿底
+> editor selection foreground -> 选中的文本颜色 黑字
+
+自动生成的注释如何不在开头？
+> settings -> editor -> code style -> java -> code generation -> comment code uncheck 2
+
+每行最大字数的限制？
+> settings -> editor -> code style首页 hard wrap, visual guides,建议100
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />

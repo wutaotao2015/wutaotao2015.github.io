@@ -3,7 +3,7 @@ title: Markdown基本语法
 tags: Markdown
 categories: Markdown
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg
-updated: 2019-02-26 21:07:14
+updated: 2019-03-16 17:52:22
 abbrlink: 47caaf1e
 date: 2019-01-22 21:51:18
 ---
@@ -176,6 +176,9 @@ operation,condition,inputoutput等单词注意不要写错。
 
 3. df
 ```
+
+2019.03.16注：插入表格时也需要在表格上方空一行来实现渲染效果。
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg" class="full-image" />
 
