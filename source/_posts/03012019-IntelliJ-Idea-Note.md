@@ -208,6 +208,14 @@ vim默认寄存器和系统剪贴板共享:
 该插件提供了按行和按单词跳转功能,但是没什么太大作用，
 最主要的功能还是自身的active acejump mode功能，可设置快捷键为ctrl + j
 
+转换大小写插件String manipulation 可设置快捷键为alt + s
+
+console日志警告或错误信息高亮颜色显示插件grep console
+设置warn和error的前景色和背景色即可。
+
+git提交commit模板idea插件git commit template
+
+
 ## 小设置
 scroll from source
 设置自动导包: settings->editor->general->auto import->check 2
