@@ -200,6 +200,35 @@ alt + shift + f    # other add to favourites   %同windows
 vim默认寄存器和系统剪贴板共享:
 在c:\Users\用户名\下新建文件_ideavimrc文件(mac是~目录.ideavimrc):
 > set clipboard+=unnamed
+let mapleader = ","
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch 
+set showmatch 
+set background=dark
+set encoding=utf8
+set nobackup
+set nowb
+set noswapfile
+set smarttab
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+noremap <leader>v "0p
+noremap <leader>V "0P
+noremap <leader>ay "ay
+noremap <leader>ap "ap
+noremap <leader>by "by
+noremap <leader>bp "bp
+noremap <leader>cy "cy
+noremap <leader>cp "cp
+imap ,, <Esc>la
+noremap <leader>z G50o<Esc>M
+
 
 热部署插件JRebel
 修改java文件后可以不用重启，重新编译后即可生效，xml等配置文件仍然需要重启项目。
