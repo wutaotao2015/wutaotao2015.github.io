@@ -227,7 +227,7 @@ noremap <leader>bp "bp
 noremap <leader>cy "cy
 noremap <leader>cp "cp
 imap ,, <Esc>la
-noremap <leader>z G50o<Esc>M
+noremap <leader>z ifj<Esc>G60o<Esc>M<C-J>
 
 
 热部署插件JRebel
