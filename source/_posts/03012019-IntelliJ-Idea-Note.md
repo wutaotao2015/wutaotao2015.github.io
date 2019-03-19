@@ -227,8 +227,7 @@ noremap <leader>bp "bp
 noremap <leader>cy "cy
 noremap <leader>cp "cp
 imap ,, <Esc>la
-noremap <leader>z ifj<Esc>G60o<Esc>M<C-J>
-
+noremap <leader>z ifj<Esc>G60o<Esc>M
 
 热部署插件JRebel
 修改java文件后可以不用重启，重新编译后即可生效，xml等配置文件仍然需要重启项目。
