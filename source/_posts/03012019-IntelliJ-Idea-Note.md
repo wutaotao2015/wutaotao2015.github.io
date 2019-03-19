@@ -247,6 +247,7 @@ console日志警告或错误信息高亮颜色显示插件grep console
 
 git提交commit模板idea插件git commit template
 
+代码区小地图插件CodeGlance
 
 ## 小设置
 scroll from source
