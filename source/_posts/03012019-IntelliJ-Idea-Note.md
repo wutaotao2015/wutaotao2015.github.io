@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-17 22:37:16
+updated: 2019-03-26 23:24:21
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -286,16 +286,8 @@ windows上使用gvim来实现，mac上可以使用iterm2(to be continued)
 2. 安装
 3. 打开发现菜单都是乱码，网上说修改配置文件`_vimrc`,但是修改后并没有用，于是用另外一种
 方法：直接删除vim/vim81/lang包下所有文件，菜单按钮全部回复到默认英文。
-4. 设置默认的配色和字体，在`_vimrc`中设置了无效，网上搜索gvim配置界面是在另一个文件
-`_gvimrc`中，于是新建这样一个文件，在其中写入:
-
-> set guifont=Source\ Code\ Pro\ for\ Powerline:h11
-colorscheme darkblue
-"设置gvim隐藏菜单栏，工具栏，滚动条
-set guioptions-=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
+(后来发现是安装包的问题....另外下的一个包是好的)
+4. 设置默认的配色和字体,见下面的完整配置
 
 5. 在idea中配置gvim
 settings - external tool - + - 配置
@@ -303,10 +295,99 @@ settings - external tool - + - 配置
 > arguments: +$LineNumber$ $FilePath$
 > 其他默认，去掉advanced options - open console
 
-6. 经过测试发现gvim中的`_vimrc`设置无效(如mapleader)，在`_gvimrc`中设置才有效果，目前完整设置如下
+6. `_vimrc`完整配置如下，需要新建环境变量VIM为E:\Vim来安装Vundle,
 
 ```txt
-set guifont=Source\ Code\ Pro\ for\ Powerline:h11
+let mapleader = ","
+source $VIMRUNTIME/vimrc_example.vim
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg1 = substitute(arg1, '!', '\!', 'g')
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg2 = substitute(arg2, '!', '\!', 'g')
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  let arg3 = substitute(arg3, '!', '\!', 'g')
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  let cmd = substitute(cmd, '!', '\!', 'g')
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+"set rtp+=~/.vim/bundle/Vundle.vim
+"call vundle#begin()
+set rtp+=$VIM/vimfiles/bundle/Vundle.vim/
+call vundle#begin('$VIM/vimfiles/bundle/')
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+"Plugin 'tpope/vim-fugitive'
+" plugin from http://vim-scripts.org/vim/scripts.html
+" Plugin 'L9'
+" Git plugin not hosted on GitHub
+""Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+""Plugin 'file:///home/gmarik/path/to/plugin'
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+""Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+" Install L9 and avoid a Naming conflict if you've already installed a
+" different version somewhere else.
+" Plugin 'ascenator/L9', {'name': 'newL9'}
+Plugin 'scrooloose/nerdtree'
+map <Leader>n :NERDTreeToggle<CR>
+
+Plugin 'terryma/vim-multiple-cursors'
+
+Plugin 'kien/ctrlp.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
+set guifont=Consolas:h16
 colorscheme darkblue
 
 "设置gvim隐藏菜单栏，工具栏，滚动条
@@ -315,8 +396,6 @@ set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
 set guioptions-=L  "remove left-hand scroll bar
 
-
-let mapleader = ","
 set clipboard+=unnamed
 set ignorecase
 set smartcase
@@ -326,6 +405,7 @@ set showmatch
 set nobackup
 set nowb
 set noswapfile
+set noundofile
 set smarttab
 map <C-j> <C-W>j
 map <C-k> <C-W>k
