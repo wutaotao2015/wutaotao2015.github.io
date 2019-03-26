@@ -277,5 +277,80 @@ inject language  json, xpath, regex
 每行最大字数的限制？
 > settings -> editor -> code style首页 hard wrap, visual guides,建议100
 
+## External Tools
+因为ideaVim插件毕竟不是真正的vim，所以有些vim的功能支持不了，或者不全，
+今天在网上发现了idea还支持将vim作为外部工具使用，即在vim中打开现在正在编辑的文件，
+并将改动同步回idea中。
+windows上使用gvim来实现，mac上可以使用iterm2(to be continued)
+1. 下载gvim，直接官网上下载,版本为8.1
+2. 安装
+3. 打开发现菜单都是乱码，网上说修改配置文件`_vimrc`,但是修改后并没有用，于是用另外一种
+方法：直接删除vim/vim81/lang包下所有文件，菜单按钮全部回复到默认英文。
+4. 设置默认的配色和字体，在`_vimrc`中设置了无效，网上搜索gvim配置界面是在另一个文件
+`_gvimrc`中，于是新建这样一个文件，在其中写入:
+
+> set guifont=Source\ Code\ Pro\ for\ Powerline:h11
+colorscheme darkblue
+"设置gvim隐藏菜单栏，工具栏，滚动条
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+
+5. 在idea中配置gvim
+settings - external tool - + - 配置
+> program: vim/vim81/gvim.exe
+> arguments: +$LineNumber$ $FilePath$
+> 其他默认，去掉advanced options - open console
+
+6. 经过测试发现gvim中的`_vimrc`设置无效(如mapleader)，在`_gvimrc`中设置才有效果，目前完整设置如下
+
+```txt
+set guifont=Source\ Code\ Pro\ for\ Powerline:h11
+colorscheme darkblue
+
+"设置gvim隐藏菜单栏，工具栏，滚动条
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+
+
+let mapleader = ","
+set clipboard+=unnamed
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch 
+set showmatch 
+set nobackup
+set nowb
+set noswapfile
+set smarttab
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+noremap <Leader>v "0p
+noremap <Leader>V "0P
+noremap <Leader>ay "ay
+noremap <Leader>ap "ap
+noremap <Leader>by "by
+noremap <Leader>bp "bp
+noremap <Leader>cy "cy
+noremap <Leader>cp "cp
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+inoremap " ""<Esc>i
+imap ,, <Esc>la
+
+```
+
+7. 目前暂时发现的ideaVim插件不能实现的功能有:
+   1. visual block paste, idea中需要配合idea自带的列模式才能实现，没有原生的vim好用。
+   2. to be continued
+
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
