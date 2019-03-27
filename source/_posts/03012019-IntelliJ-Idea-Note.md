@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-27 08:31:54
+updated: 2019-03-27 17:52:18
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -482,6 +482,32 @@ imap ,, <Esc>la
   2. 将_vimrc放到用户目录下，我的为C:\Users\LYPC\下，生效了！！！
   另：重新安装gvim8发现Vim包下没有了vimfiles文件夹，只好手动复制进去。
 
+再注：gvim可以正常使用了，但我真正想使用的是可以任意定位到一个项目下，方便的使用nerdtree来
+查看项目代码。从这一点来看还是需要结合babun来实现快速打开项目,或者可以打开vim时自动打开
+nerdTree,下面来讲这2种方法：
+   1. 用babun打开gvim,在网上找到大神写的一个gvim别名，对环境变量的控制做的很好，结合我自己
+   的$VIM变量配置，结果如下，可以正常使用插件nerdtree, ctrlp
+   ```txt
+gvim() {
+   OLD_HOME=$HOME
+   OLD_VIMRUNTIME=$VIMRUNTIME
+   OLD_VIM=$VIM
+   export HOME=/cygdrive/c/Users/LYPC/
+   export VIMRUNTIME="E:\Vim\vim81"
+   export VIM="E:\Vim"
+   TARGET=$(cygpath -w $1)   
+   (/cygdrive/e/Vim/vim81/gvim.exe $TARGET &)
+   export HOME=$OLD_HOME
+   export VIMRUNTIME=$OLD_VIMRUNTIME
+   export VIM=$OLD_VIM
+} 
+   ```
+   2. 启动gvim时自动打开指定位置的nerdTree, 这里指我的项目集中地code
+  在`_vimrc`中添加配置:
+  > autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+这样在babun中用code定位到code目录，用命令`gvim`即可打开带有nerdTree的gvim窗口了
 
 7. 目前暂时发现的ideaVim插件不能实现的功能有:
    1. visual block paste, idea中需要配合idea自带的列模式才能实现，没有原生的vim好用。
