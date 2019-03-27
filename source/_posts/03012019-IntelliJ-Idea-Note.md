@@ -299,6 +299,21 @@ settings - external tool - + - 配置
 
 ```txt
 let mapleader = ","
+
+set encoding=utf-8
+set fileencodings=utf-8,chinese,latin-1
+if has("win32")
+set fileencoding=chinese
+else
+set fileencoding=utf-8
+endif
+"解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+"解决consle输出乱码
+language messages zh_CN.utf-8
+
+
 source $VIMRUNTIME/vimrc_example.vim
 
 set diffexpr=MyDiff()
@@ -348,6 +363,23 @@ call vundle#begin('$VIM/vimfiles/bundle/')
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
+
+" The following are examples of different formats supported.
+" Keep Plugin commands between vundle#begin/end.
+" plugin on GitHub repo
+"Plugin 'tpope/vim-fugitive'
+" plugin from http://vim-scripts.org/vim/scripts.html
+" Plugin 'L9'
+" Git plugin not hosted on GitHub
+""Plugin 'git://git.wincent.com/command-t.git'
+" git repos on your local machine (i.e. when working on your own plugin)
+""Plugin 'file:///home/gmarik/path/to/plugin'
+" The sparkup vim script is in a subdirectory of this repo called vim.
+" Pass the path to set the runtimepath properly.
+""Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+" Install L9 and avoid a Naming conflict if you've already installed a
+" different version somewhere else.
+" Plugin 'ascenator/L9', {'name': 'newL9'}
 Plugin 'scrooloose/nerdtree'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'kien/ctrlp.vim'
@@ -374,7 +406,7 @@ filetype plugin indent on    " required
 let g:ctrlp_working_path_mode = 0
 
 let g:ctrlp_map = '<c-f>'
-map <leader>j :CtrlP<cr>
+map <leader>p :CtrlP<cr>
 map <c-b> :CtrlPBuffer<cr>
 
 let g:ctrlp_max_height = 20
@@ -396,8 +428,6 @@ map <leader>nf :NERDTreeFind<cr>
 " 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:multi_cursor_next_key="\<C-s>"
-set guifont=Consolas:h16
-colorscheme darkblue
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => surround.vim config
@@ -407,13 +437,9 @@ vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
 
-
-" General Settings"
-
-set guifont=Consolas:h16
-colorscheme darkblue
-
 "设置gvim隐藏菜单栏，工具栏，滚动条
+set guifont=Source\ Code\ Pro\ for\ Powerline:h11
+colorscheme darkblue
 set guioptions-=m  "remove menu bar
 set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
