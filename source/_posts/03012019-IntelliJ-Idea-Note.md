@@ -450,6 +450,13 @@ imap ,, <Esc>la
 
 ```
 
+注: 回到公司电脑上重新安装gvim8,装在E:\Vim下,修改_vimrc怎么都不生效，又搞了很久做了
+以下两步终于生效了：
+  1. 添加用户变量VIM为E:\Vim,VIMRUNTIME为D:\Vim\vim81
+  2. 将_vimrc放到用户目录下，我的为C:\Users\LYPC\下，生效了！！！
+  另：重新安装gvim8发现Vim包下没有了vimfiles文件夹，只好手动复制进去。
+
+
 7. 目前暂时发现的ideaVim插件不能实现的功能有:
    1. visual block paste, idea中需要配合idea自带的列模式才能实现，没有原生的vim好用。
    2. to be continued
