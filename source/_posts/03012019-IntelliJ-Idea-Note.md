@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-27 17:52:18
+updated: 2019-03-28 15:56:48
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -508,6 +508,34 @@ gvim() {
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 这样在babun中用code定位到code目录，用命令`gvim`即可打开带有nerdTree的gvim窗口了
+
+   3. 像之前说的一样，babun里面包装了cygwin, 而vundle对cygwin里的安装现在官方不
+   给予支持，它只提供了windows里gvim的支持，所以我上面通过别名的方式来调用windows
+   里面的gvim.exe程序，这样通过gvim里的vundle来实现插件管理，这样曲线救国也能实现
+   目的，同时babun里自带的vim也能使用，这种方式对于有多个插件来说比较好，但目前我
+   需要的只是nerdTree一个插件，所以今天又发现可以手工把这个插件安装到vim里面:
+
+      1. cd ~/.vim
+      2. mkdir bundle
+      3. cd bundle
+      4. git clone https://github.com/scrooloose/nerdtree.git nerdtree
+      5. 在.vimrc中添加
+      > set runtimepath+=~/.vim/bundle/nerdtree
+let g:NERDTreeWinPos = "left"
+let NERDTreeShowHidden=0
+let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+let g:NERDTreeWinSize=35
+map <leader>nn :NERDTreeToggle<cr>
+map <leader>nb :NERDTreeFromBookmark<Space>
+map <leader>nf :NERDTreeFind<cr>
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+   注：先命令行cd到相要的目录，直接vim打开，或者先打开，再,nf来打开nerdTree,
+   有`<c-h>,<c-l>`来快速切换nerdtree和编辑窗口.
+   退出时用:qa来一起关闭nerdtree和编辑器。
+   同理安装ctrlp插件后ctrlp插件报错，nerdtree正常使用，网上说是依赖问题，还是
+   需要插件管理软件，所以还是先用nerdtree吧，文件搜索可以放在命令行里find寻找。
 
 7. 目前暂时发现的ideaVim插件不能实现的功能有:
    1. visual block paste, idea中需要配合idea自带的列模式才能实现，没有原生的vim好用。
