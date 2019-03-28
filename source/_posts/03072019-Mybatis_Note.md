@@ -8,7 +8,7 @@ tags:
   - SLF4J
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190307_1.jpg'
 abbrlink: 7fd48667
-updated: 2019-03-17 23:09:55
+updated: 2019-03-28 23:30:42
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
@@ -439,88 +439,38 @@ configuration 子节点为 appender、logger、root
    3. java中使用
    同slf4j
    
+## mybatis mapper.xml
+1. select查询
+
+   1. mapper.xml与mapper接口配合使用时，mapper.xml中的namespace必须为相应接口的全限定名，mybatis
+通过这个关系才能找到对应mapper的实现xml(也正因为这样mapper接口才不需要实现类)
+   2. 另外之前在mybatis-config.xml中是用`<mapper resource=XXX>`标签指定了具体的mapper.xml位置来实现映射，使用接口后可以使用`<package name=XXX>`来指定接口类所在的包。
+   3. mapper.xml中的id与mapper接口方法名也要一一对应。
+   4. mapper.xml中resultMap标签中的id和result标签中有javaType和jdbcType2个容易混淆的属性：
+   > javaType: 如果resultMap映射到的是一个javabean,id和result所指字段的java类型不用指明，
+   > 如果resultMap映射的是一个hashmap,需要用javaType来指明键的java类型。
+   > jdbcType: 指定列对应的数据库类型，是JDBC的需要，仅对insert,update,delete可能为空的列
+   > 进行处理。
+   > 以上2个属性的区别还有待以后实战补充整理。
+
+   5. 查询结果可以用resultMap和resultType这两种方式来映射返回结果，其中resultType需要在
+   sql中指定别名实现与java属性的映射关系，可以设置mybatis属性mapUnderscoreToCamelCase=
+   true来统一实现下划线转驼峰命名，设置好以后就不需要给sql字段添加别名了。不过这样需要
+   字段命名都很规范才可以。
+
+   6. 使用sqlsession.selectList来测试时mapper.xml所在包的位置也需要和mapper接口
+   所在包的路径一致，这是因为在mybatis-config中配置的是mapper接口的包路径，
+   mybatis按路径如com.mapper.UserMapper转化为com/mapper/UserMapper.xml，
+   mybatis找到该路径即进行解析该xml。
+   在其他项目中使用得到mapper.xml的包路径和mapper包路径不同，namespace相同项目也能跑
+   起来，具体原因后面看了原理再来探究。
+
+   7. mysql的BLOB类型java类中为byte[],需要在resultMap的result标签中指定jdbcType=BLOB,
+   java.util.Date类型可以指定jdbcType=TIMESTAMP或其他org.apache.ibatis.type.DATE,TIME.
+
+   8. 可以用sqlSession.getMapper(UserMapper.class)来获取得到mapper接口进行测试。
+
+2. 
 ## 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190307_1.jpg" class="full-image" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
