@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-28 15:56:48
+updated: 2019-03-29 09:40:58
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -520,7 +520,8 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
       3. cd bundle
       4. git clone https://github.com/scrooloose/nerdtree.git nerdtree
       5. 在.vimrc中添加
-      > set runtimepath+=~/.vim/bundle/nerdtree
+```txt      
+set runtimepath+=~/.vim/bundle/nerdtree
 let g:NERDTreeWinPos = "left"
 let NERDTreeShowHidden=0
 let NERDTreeIgnore = ['\.pyc$', '__pycache__']
@@ -530,6 +531,7 @@ map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+```
 
    注：先命令行cd到相要的目录，直接vim打开，或者先打开，再,nf来打开nerdTree,
    有`<c-h>,<c-l>`来快速切换nerdtree和编辑窗口.
