@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-02-28 17:40:34
+updated: 2019-03-29 14:23:59
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -238,6 +238,21 @@ mybatis:
 > @MapperScan("com.itmuch.cloud.study.dao")
 
 Done!
+
+#### 工作中发现的问题
+
+1. Feign发送请求时，由于bean属性的首字母是大写的，如UserName, feign打印日志发现发送的
+json属性为userName,后来经过搜索，发现可以在setter方法上用@JsonProperty注解，但这需要加
+很多个，更方便的是在bean类上加注解,(看注解源码知道这叫PascalCaseStrategy)
+> @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy.class)
+
+注：有个全大写的属性字段如MULLINE,只使用@JsonNaming注解时发现发送的json属性是Mulline,
+看UpperCamelCaseStrategy的源码知道在该策略执行前该字段已经被转化为全部小写，因为只有这
+一个全大写字段，其他字段扔使用PascalStrategy,所以在SetMULLINE方法上使用@JsonProperty
+注解即可。
+另：在字段上使用@JsonProperty注解发现会产生2个相同的json属性，一个小写，一个大写
+
+2. tbd
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
