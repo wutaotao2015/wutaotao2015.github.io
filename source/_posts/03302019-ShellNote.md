@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-03-31 18:09:18
+updated: 2019-03-31 23:00:35
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -170,7 +170,33 @@ apt-get --purge remove <package>
 apt-get autoremove <package>
 ```
 
-   12. tbd
+   12. gnome用上面的gnome-tweak-tool软件可以成功，但后面又看到阮一峰推荐的fish+Xfce+
+   xmonad+vim的工作套件，尤其是xmonad窗口管理工具简直是分屏利器，于是把我的老mac也整
+   这样一套。
+     1. ubantu上安装xfce桌面，登录时可以选择桌面系统，ubantu(gnome)或xfce(更轻更快)
+     > sudo apt install xfce4  #xfce最新的为2015年的4.2版本
+
+     2. 交换xfce中的esc和capslock键，新建文件~/.Xmodmap,其中内容为
+```txt
+clear Lock
+keysym Caps_Lock = Escape
+keysym Escape = Caps_Lock
+add Lock = Caps_Lock
+```
+    3. 重启后修改也生效！蓝灯和google浏览器也能访问之前安装的程序。
+
+    4. 安装fish shell.
+    > sudo apt-get install fish
+    > fish  #启动shell,不建议设置为默认shell
+
+    5. 安装xmonad
+    > sudo apt-get install xmonad
+    > sudo apt-get install xmobar dmenu  #小工具
+
+    安装完之后只logout发现没有xmonad桌面，重启后才出来那个全黑的界面，果断alt+shift+enter,
+    当当！终端出来了，vim看看capslock和esc也已经交换了，证明了它确实只是一个窗口管理软件，
+    至此，fish+xfce+xmonad+vim的一套已经搞定，具体使用和问题后面再写，今天到点睡觉了！
+    -- 2019-03-31 23:00:21 
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
