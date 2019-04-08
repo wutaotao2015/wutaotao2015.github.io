@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-03-29 09:40:58
+updated: 2019-04-08 21:02:27
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -542,6 +542,27 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 7. 目前暂时发现的ideaVim插件不能实现的功能有:
    1. visual block paste, idea中需要配合idea自带的列模式才能实现，没有原生的vim好用。
    2. to be continued
+
+## 使用idea操作mysql数据库
+idea提供了console控制台进行sql语句的操作，相当于命令行一样，同样可以使用ideaVim插件和其他
+快捷键来编写和执行命令，所以后来我基本放弃了navicat的使用，而且有次使用32位的navicat也出现
+了问题，idea成功的进行了操作。
+常用命令：
+```txt
+show grants;
+show processlist;
+select create table tablename;
+show full columns from tablename;
+delete t from tablename t where t.id = '1';
+```
+导入数据到表中：右键选择表，import data from files... 支持csv(comma-separated values)文件
+tsv(tab-separated values)文件。
+
+导出表结构：
+用mysql自带的bin工具mysqldump.exe,有多个命令参数，
+其中勾选第一个multiple rows insert后，只会生成一条insert语句，可以全部都不选。
+
+只导出数据时，选择表右键有dump data to file选项。
 
 
 <hr />

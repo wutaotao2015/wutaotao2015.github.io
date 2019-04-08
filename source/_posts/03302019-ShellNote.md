@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-03-31 23:00:35
+updated: 2019-04-08 22:16:54
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -184,6 +184,9 @@ keysym Escape = Caps_Lock
 add Lock = Caps_Lock
 ```
     3. 重启后修改也生效！蓝灯和google浏览器也能访问之前安装的程序。
+    注：xfce下之前测了可以，但在ubantu默认的gnome3下该交换重启后又不行了，gnome3下重启后
+    仍生效的是执行下面这个命令，使用gnome3默认安装的dconf工具：
+    > dconf write "/org/gnome/desktop/input-sources/xkb-options" "['caps:swapescape']"
 
     4. 安装fish shell.
     > sudo apt-get install fish
@@ -197,6 +200,9 @@ add Lock = Caps_Lock
     当当！终端出来了，vim看看capslock和esc也已经交换了，证明了它确实只是一个窗口管理软件，
     至此，fish+xfce+xmonad+vim的一套已经搞定，具体使用和问题后面再写，今天到点睡觉了！
     -- 2019-03-31 23:00:21 
+
+    xmonad下蓝灯无效果，而且中文输入法也出不来，只能暂时放弃，等以后有需求和时间再来折腾
+    一下。
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
