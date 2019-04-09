@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-09 15:51:00
+updated: 2019-04-09 15:56:07
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -233,7 +233,7 @@ vi fcitx-pinyin.config
  funcsave post     #可以在.config/fish/config.fish/functions下找到生成的fish文件
  alias pull 'git pull; and echo "done"'
  funcsave pull
- alias push 'git add . ;and git commit -m "$1";and git push origin source; and echo "done"'
+ alias push 'git add . ;and git commit -m $argv[1];and git push origin source; and echo "done"'
  funcsave push
  alias pub 'git push github source;and echo "done"'
  funcsave pub
