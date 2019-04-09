@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-04-08 21:02:27
+updated: 2019-04-09 14:17:52
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -564,6 +564,9 @@ tsv(tab-separated values)文件。
 
 只导出数据时，选择表右键有dump data to file选项。
 
+## 小问题
+idea记住git密码,在项目目录下执行
+> git config --global credential.helper store
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />

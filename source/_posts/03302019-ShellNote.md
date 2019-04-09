@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-08 22:16:54
+updated: 2019-04-09 15:51:00
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -203,6 +203,41 @@ add Lock = Caps_Lock
 
     xmonad下蓝灯无效果，而且中文输入法也出不来，只能暂时放弃，等以后有需求和时间再来折腾
     一下。
+
+   13. 安装fcitx来使用小鹤双拼，以及vim中输入中文输入的插件
+```txt
+sudo apt install fcitx
+sudo apt install fcitx-pinyin
+fcitx
+在桌面图标上选择config current input method
+为配合插件使用，第一位选择keyboard-English,第一个加上Shuangpin,
+这里加上以后默认的不是小鹤双拼，需要修改默认双拼方案
+cd ~/.config/fcitx/conf
+vi fcitx-pinyin.config
+设置为DefaultShuangpinSchema=XiaoHe
+```
+
+   14. 在ubantu系统启动时执行某些命令，如`sudo tlp start`软件减少散热的，还有命令别名
+   设置等，之前放到.bash_profile中不行，网上搜索到可以放在.bashrc中，查看.bashrc文件，发现
+   它有检查.bash_aliases文件，于是新建该文件，将命令放入其中即可。
+
+   15. shell基本使用
+
+      1. 不建议设置为默认shell,在.bashrc或.bash_aliases中写入`exec fish`来实现启动终端时执行
+   fish。
+      2. 执行命令`fish_config`进入网页配置界面，默认8000端口打开的本地网页，可以设置颜色
+      主题和提示符prompt等。
+      3. 自定义别名
+      ```txt
+ alias post 'cd /home/tao/wtt/blog/source/_posts'
+ funcsave post     #可以在.config/fish/config.fish/functions下找到生成的fish文件
+ alias pull 'git pull; and echo "done"'
+ funcsave pull
+ alias push 'git add . ;and git commit -m "$1";and git push origin source; and echo "done"'
+ funcsave push
+ alias pub 'git push github source;and echo "done"'
+ funcsave pub
+      ```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
