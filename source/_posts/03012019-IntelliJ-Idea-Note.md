@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-04-09 14:17:52
+updated: 2019-04-09 17:28:26
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -235,6 +235,18 @@ noremap <leader>z G33o<Esc>H
 
 热部署插件JRebel
 修改java文件后可以不用重启，重新编译后即可生效，xml等配置文件仍然需要重启项目。
+注：将resources下文件纳入jrebel监管范围，从而避免重启项目，
+生成的rebel.xml文件中可以看到
+```txt
+<classpath><dir name="xxx"></dir></classpath>
+改为
+<classpath>
+<dirset dir="/path_to_project_root/">
+   <include name="**/target/classes"/>
+   <include name="**/src/main/resources"/>
+</dirset> 
+</classpath>
+```
 
 编辑器可视区域快速跳转神器AceJump
 该插件提供了按行和按单词跳转功能,但是没什么太大作用，

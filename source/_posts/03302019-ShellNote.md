@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-09 15:56:07
+updated: 2019-04-09 17:26:28
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -238,6 +238,40 @@ vi fcitx-pinyin.config
  alias pub 'git push github source;and echo "done"'
  funcsave pub
       ```
+   16. vim中输入中文的插件，实现插入模式中自动切换为中文，leave insertMode时切换为英文，
+   按教程安装vundle,plugin有
+  ```txt
+Plugin 'scrooloose/nerdtree'
+Plugin 'lilydjwg/fcitx.vim'
+  ```
+  fcitx.vim针对的是fcitx下的中文输入，其脚本中也是切换键盘输入，所以前面设置fcitx时需要
+  将第一位设置为英文，第二位设置为双拼。其插件脚本为
+```txt
+"##### auto fcitx  ###########
+let g:input_toggle = 1
+function! Fcitx2en()
+   let s:input_status = system("fcitx-remote")
+   if s:input_status == 2
+      let g:input_toggle = 1
+      let l:a = system("fcitx-remote -c")
+   endif
+endfunction
+
+function! Fcitx2zh()
+   let s:input_status = system("fcitx-remote")
+   if s:input_status != 2 && g:input_toggle == 1
+      let l:a = system("fcitx-remote -o")
+      let g:input_toggle = 0
+   endif
+endfunction
+
+set ttimeoutlen=150
+"退出插入模式
+autocmd InsertLeave * call Fcitx2en()
+"进入插入模式
+autocmd InsertEnter * call Fcitx2zh()
+"##### auto fcitx end ######
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
