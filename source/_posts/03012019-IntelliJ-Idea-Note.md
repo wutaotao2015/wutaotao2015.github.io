@@ -199,7 +199,8 @@ alt + shift + f    # other add to favourites   %同windows
 ![20190301_20](http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_20.jpg)
 vim默认寄存器和系统剪贴板共享:
 在c:\Users\用户名\下新建文件_ideavimrc文件(mac是~目录.ideavimrc):
-> set clipboard+=unnamed
+```txt
+set clipboard+=unnamed
 let mapleader = ","
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
@@ -232,6 +233,7 @@ inoremap { {}<Esc>i
 inoremap " ""<Esc>i
 imap ,, <Esc>la
 noremap <leader>z G33o<Esc>H
+```
 
 热部署插件JRebel
 修改java文件后可以不用重启，重新编译后即可生效，xml等配置文件仍然需要重启项目。

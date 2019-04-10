@@ -8,7 +8,7 @@ tags:
   - SLF4J
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190307_1.jpg'
 abbrlink: 7fd48667
-updated: 2019-03-28 23:30:42
+updated: 2019-04-09 22:04:36
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
