@@ -4,7 +4,7 @@ categories: Shell
 tags:
   - Shell
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-09 17:26:28
+updated: 2019-04-10 11:14:23
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -271,6 +271,24 @@ autocmd InsertLeave * call Fcitx2en()
 "进入插入模式
 autocmd InsertEnter * call Fcitx2zh()
 "##### auto fcitx end ######
+```
+
+## ubantu下vim的粘贴复制问题
+昨天使用ubantu默认的gnome-teminal时，发现多个tab间无法进行复制粘贴操作，经网上搜索发现
+以前gnome-terminal确实有这个bug,但是后来已经修复了，回到家用自己电脑下了一个terminator
+来替代gnome-terminal，发现还是有这个问题。本来已经放弃了，但是今天无意中搜索到原来是vim的
+问题，原生的vim不能与系统剪切板进行交互，需要下载vim-gnome！
+```txt
+sudo apt --purge remove vim
+sudo apt install vim-gnome
+```
+
+OK!将原来的.vimrc中
+```txt
+#set clipboard+=unnamed
+noremap <Leader>y "+y
+noremap <Leader>v "+p
+noremap <Leader>V "+P
 ```
 
 <hr />
