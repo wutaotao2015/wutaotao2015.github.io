@@ -3,12 +3,14 @@ title: Shell笔记
 categories: Shell
 tags:
   - Shell
+  - ubantu
+  - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-10 11:14:23
+updated: 2019-04-11 10:21:04
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
-Shell
+Shell,ubantu,vmware workstation
 <!-- more -->
 ## 使用shell脚本来重启sprintboot应用
 通过查资料和以前的一些印象终于搞出个能用的......
@@ -290,6 +292,55 @@ noremap <Leader>y "+y
 noremap <Leader>v "+p
 noremap <Leader>V "+P
 ```
+
+## ubantu下vmware虚拟机网络设置问题
+终于这个困扰本人许久的问题终于正式解决了！
+首先看一下引发解决的关键点：
+1. vmware workstation的editor->virtual network editor
+2. bridge,nat,host等概念
+3. 有限网络的默认网关屏蔽
+
+首先介绍一下操作背景，银行通过有线网线来链接内网，平时查资料需要通过个人热点来链接外网，
+同时因本人喜欢终端命令行操作及vim编辑等功能，打算放弃windows操作系统，但银行内部需要
+windows来进行工作，所以是重装了ThinkPad T540P笔记本为ubantu LTS 18.04系统，安装了
+linux版的vmware workstation,其中安装了用于工作的windows10系统————这就是操作环境。
+
+1. 插上网线和链接上个人热点后，通过`ip route show`看到有两个默认网关，链接外网失败。
+在网络设置中-wired connected-settings-ipv4中，先关闭链接，再勾选
+use this connection only for resources on its network
+再链接后，可以发现默认网关只有一个热点了，此时可以上外网。
+
+2. 配置vmware workstation的网络设置，在editor->virtual network editor中进行配置，可以
+选择对应的网卡。
+```txt
+Bridge mode:This connects the virtual network adapter directly to the physical network
+NAT: This allows the virtual network adapter to share the host’s IP address
+Host Only: This creates a private network that the virtual network adapter shares with the host
+Custom: This allows you to create your own virtual network
+
+Note: Although VMnet0, VMnet1 and VMnet8 are technically available in this menu, 
+they are usually used for bridged, host-only, and NAT configurations, respectively.
+```
+由以上概念可知，这里实际需要的就只是桥接模式，直接接入物理网络，nat模式选择时还需要进行
+手动网络转换，而且之前使用也达不到目地，就不选这个了，host模式只能宿主机访问，也不满足要求。
+这里为避开0,1,8的默认名字，可以取名VMnet11,12代表有线和无线2个网卡。
+
+3. 为工作的虚拟机配置里选择网络设置为custom，选择刚才新建的虚拟有限网卡，为自己玩的
+centos配置虚拟无线网卡。
+
+4. 登录工作虚拟机，发现链接内网成功！
+
+5. 登录centos7,这里时新建的minimal安装，执行以下命令：
+```txt
+cd /etc/sysconfig/network-scripts/
+ip addr // 查看除了lo外的另一个网卡名字如ens33
+su root  // enter password
+vi ifcfg-ens33
+onboot=no 改为 yes
+systemctl restart network
+ping www.baidu.com   // done!
+```
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
