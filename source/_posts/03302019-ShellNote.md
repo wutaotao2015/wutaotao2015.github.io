@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-11 10:21:04
+updated: 2019-04-12 15:39:48
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -341,6 +341,17 @@ systemctl restart network
 ping www.baidu.com   // done!
 ```
 
+## ubantu修改swap文件
+```txt
+sudo swapoff /swapfile
+sudo rm -rf /swapfile
+sudo dd if=/dev/zero of=swap bs=1024 count=2000000^C  #建立swap文件
+sudo chmod -R 600 /swapfile     
+sudo mkswap /swapfile    #创建系统
+sudo swapon /swapfile   # 开启swap
+sudo vi /etc/fstab
+/swapfile   none     swap    sw      0       0
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
