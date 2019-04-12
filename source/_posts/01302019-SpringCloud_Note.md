@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-03-29 14:23:59
+updated: 2019-04-12 17:32:40
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -253,6 +253,22 @@ json属性为userName,后来经过搜索，发现可以在setter方法上用@Jso
 另：在字段上使用@JsonProperty注解发现会产生2个相同的json属性，一个小写，一个大写
 
 2. tbd
+
+#### springcloud config server
+1. server app 配置
+   1. 启动类上注解@EnableConfigServer
+   2. 修改application.yml
+```txt
+server.port: 8888
+spring.cloud.config.server.git.uri: file://${user.home}/config-repo  #应为实际的git仓库地址
+```
+
+2. client app
+   1. spring-cloud-starter-config依赖
+   2. 修改bootstrap.yml
+```txt
+spring.cloud.config.uri: http://myconfigserver.com
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
