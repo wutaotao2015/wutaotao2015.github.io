@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-12 15:39:48
+updated: 2019-04-13 11:41:29
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -352,6 +352,11 @@ sudo swapon /swapfile   # 开启swap
 sudo vi /etc/fstab
 /swapfile   none     swap    sw      0       0
 ```
+## ubantu备份和还原
 
+```txt
+#!/bin/bash
+tar cvpzf /media/tao/ExFAT/backup.tgz --exclude=/media/* --exclude=/sys/* --exclude=/proc/* --exclude=/dev/* --exclude=/run/* --exclude=/snap/* --exclude=/home/tao/vmware/* --exclude=/home/tao/Documents/CentOS-7-x86_64-DVD-1804.iso /
+```
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
