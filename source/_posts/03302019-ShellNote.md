@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-13 11:41:29
+updated: 2019-04-13 15:00:18
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -353,10 +353,63 @@ sudo vi /etc/fstab
 /swapfile   none     swap    sw      0       0
 ```
 ## ubantu备份和还原
-
+终于完美从thinkpad迁移到mac的虚拟机上！
+1. 备份老系统
+由于我是默认用的fish,所以为防止报错，写了一个bash shell脚本来执行打包命令
 ```txt
+vi bashShell.sh
+
+内容如下
 #!/bin/bash
-tar cvpzf /media/tao/ExFAT/backup.tgz --exclude=/media/* --exclude=/sys/* --exclude=/proc/* --exclude=/dev/* --exclude=/run/* --exclude=/snap/* --exclude=/home/tao/vmware/* --exclude=/home/tao/Documents/CentOS-7-x86_64-DVD-1804.iso /
+tar cvpzf /media/tao/ExFAT/backup.tgz --exclude=/media/* --exclude=/sys/* 
+--exclude=/proc/* --exclude=/dev/* --exclude=/run/* --exclude=/snap/* 
+--exclude=/home/tao/vmware/* 
+--exclude=/home/tao/Documents/CentOS-7-x86_64-DVD-1804.iso /
+
+sudo su
+chmod +x bashShell.sh
+sudo ./bashShell.sh
 ```
+
+2.如果是原来机子回复系统，可以这样做（未测试）
+```txt
+cd /
+sudo su
+sudo tar -xvpzf /media/tao/ExFAT/backup.tgz -C /
+sudo reboot 0
+```
+done!
+注： tar命令只会覆盖已有的文件，备份后新增的文件不会修改或删除。
+
+3.如果是虚拟机或其他电脑，因为硬盘的uuid不同，所以需要多些步骤
+```txt
+备份fstab,得到其中的uuid
+cd /etc/
+sudo cp fsta /home/tao/
+
+恢复备份
+cd /
+sudo su
+sudo tar -xvpzf /media/tao/ExFAT/backup.tgz -C /
+
+回复fstab和修改grub
+sudo cp /home/tao/fstab /etc/
+vi /boot/grub/grub.cfg
+
+得到root后跟的uuid，使用sed命令来统一替换为之前保存的fstab中的uuid，也可以用命令`blkid`来
+得到，用vim的replace也可以
+sed -i "s/grub.cfg中的uuid/fstab中的uuid/g" boot/grub/grub.cfg
+
+更新grub
+sudo update-grub
+
+sudo reboot 0
+```
+done!
+ 
+4. 卸载ubantu虚拟机上的vmware-workstation软件
+sudo ./VMware-Workstation-Full-15.0.3-12422535.x86_64.bundle -u vmware-workstaion
+
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
