@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-13 15:00:18
+updated: 2019-04-14 00:29:11
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -409,6 +409,33 @@ done!
  
 4. 卸载ubantu虚拟机上的vmware-workstation软件
 sudo ./VMware-Workstation-Full-15.0.3-12422535.x86_64.bundle -u vmware-workstaion
+
+## vmware workstation上修改ubantu分辨率
+27寸的HKC屏幕最佳分辨率是2560X1440,ubantu虚拟机给出的最大分辨率是2560X1600,网上找到可以
+修改的方案，记录如下：
+```txt
+xrandr   # 得到第二行的第一个单词，connected primary前的单词为显示设备名称Virtual1
+
+cvt 2560 1440   # 输入需要的分辨率
+# 得到一行modeline
+# Modeline "2560x1440_60.00"  312.25  2560 2752 3024 3488  1440 1443 1448 1493 -hsync +vsync
+
+# 添加新mode, --newmode后为前面的modeline
+sudo xrandr --newmode "2560x1440_60.00"  312.25  2560 2752 3024 3488  1440 1443 1448 1493 -hsync +vsync
+
+# 将新模式应用到显示设备中,设备名和分辨率分别取前面的值
+sudo xrandr --addmode Virtual1 "2560x1440_60.00"
+
+# 在settings->resolution中可以看到需要的分辨率了，apply即可成功！
+
+# 编辑～/.profile使ubantu下次以这个分辨率启动
+加入上面2行命令
+sudo xrandr --newmode "2560x1440_60.00"  312.25  2560 2752 3024 3488  1440 1443 1448 1493 -hsync +vsync
+sudo xrandr --addmode Virtual1 "2560x1440_60.00"
+```
+注！按以上配置，重新登录后黑屏，只好在登录界面按ctrl+alt+F3进入命令登录界面，
+删除刚才修改的~/.profile文件。
+具体原因明天再看吧！
 
 
 <hr />
