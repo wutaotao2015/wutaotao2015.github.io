@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-14 00:29:11
+updated: 2019-04-14 14:30:18
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -385,24 +385,20 @@ done!
 ```txt
 备份fstab,得到其中的uuid
 cd /etc/
-sudo cp fsta /home/tao/
+sudo cp fsta ~/back
+备份grub.cfg
+sudo cp /boot/grub/grub.cfg ~/back
 
-恢复备份
+恢复旧系统备份
 cd /
 sudo su
 sudo tar -xvpzf /media/tao/ExFAT/backup.tgz -C /
 
-回复fstab和修改grub
-sudo cp /home/tao/fstab /etc/
-vi /boot/grub/grub.cfg
+回复fstab和grub
+sudo cp ~/back/fstab /etc/
+sudo cp ~/back/grub.cfg /boot/grub/
 
-得到root后跟的uuid，使用sed命令来统一替换为之前保存的fstab中的uuid，也可以用命令`blkid`来
-得到，用vim的replace也可以
-sed -i "s/grub.cfg中的uuid/fstab中的uuid/g" boot/grub/grub.cfg
-
-更新grub
-sudo update-grub
-
+重启
 sudo reboot 0
 ```
 done!
