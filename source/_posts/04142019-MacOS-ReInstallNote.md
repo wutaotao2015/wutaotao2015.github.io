@@ -3,12 +3,12 @@ title: MacOS 重装笔记
 categories: Mac
 tags:
   - Mac
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190131_1.jpg'
-updated: 2019-04-14 19:16:25
+image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190415_1.jpg'
+updated: 2019-04-15 10:16:09
 date: 2019-04-14 15:30:26
 abbrlink:
 ---
-description
+MacOS
 <!-- more -->
 ## 重装mac
 1. 重启mac,command+R进入恢复模式
@@ -39,11 +39,20 @@ curl等其他工具http代理
 export http_proxy=http://127.0.0.1:49612
 export https_proxy=http://127.0.0.1:49612
 ```
-5. 本来想装insomniax来使得合盖外接显示屏，但始终没有找到，后来反应过来这只是让笔记本不
-要在合盖时休眠即可，又在网上查到mac系统已经集成了以前用过的一个工具caffeinate,只要
-在终端中输入该命令即可实现合盖不休眠。
-6. 安装vmware fusion 11,并安装ubantu 18.04 LTS,恢复备份等。
-7. 安装parallel Desktop 14, 安装带了office 2019的win10.
-##
+5. 本来想装insomniax来使得合盖外接显示屏，highSeria上可以正常运行，但Mojava上就运行不了，
+无论是开启允许任意来源`sudo spctl --master-enable`,还是辅助功能里允许InsomniaX完全控制都
+不能实现合盖不休眠的功能，只能解释为Mojave把相应功能屏蔽了。习惯了合盖模式外接显示屏的我
+甚至想装回原来的High Seira,但女朋友说辛苦装的，还是用几天，早上醒来想想，还是正常升级系统，
+用不了合盖模式也行，苹果只支持充电的时候可以合盖，合盖容易引起发热问题等，所以我就把大显示
+屏用鞋盒垫高，下面放笔记本，就用双屏吧，以后看看能实现Xmonad在ubantu虚拟机内的多屏显示功能
+么，或者macOS的实现-Amethyst能支持么-----To be continued.
+
+6. 安装vmware fusion 11,并安装ubantu 18.04 LTS,恢复备份等,想想还是不装parallel desktop了，
+目前我的thinkpad用的是vmware workstation,为了以后迁移方便，就统一使用vm吧。
+
+7. vmware中给ubantu虚拟机安装vmware-tools,在虚拟机选项中选择安装vmware-tools,ubantu中出现
+一个外接光盘，将压缩包拷贝到download目录后解压(不能直接解压)，执行命令`sudo ./vmware-tool
+-install.pl`, 一直回车即可。
+
 <hr />
-<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190131_1.jpg" class="full-image" />
+<img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190415_1.jpg" class="full-image" />
