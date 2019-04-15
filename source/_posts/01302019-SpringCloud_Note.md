@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-04-12 17:32:40
+updated: 2019-04-15 18:01:17
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -255,17 +255,40 @@ json属性为userName,后来经过搜索，发现可以在setter方法上用@Jso
 2. tbd
 
 #### springcloud config server
-1. server app 配置
-   1. 启动类上注解@EnableConfigServer
-   2. 修改application.yml
+
+1. 新建配置文件git仓库，master分支下新建2个文件
 ```txt
-server.port: 8888
-spring.cloud.config.server.git.uri: file://${user.home}/config-repo  #应为实际的git仓库地址
+pra-request.yml
+pra-request-prd.yml
+```
+新建分支dev,修改2个文件，push到仓库中
+
+2. server app 配置
+   1. 添加spring-cloud-config-server依赖
+   2. 启动类上注解@EnableConfigServer
+   3. 修改application.yml
+```txt
+server.port: 8080
+spring.cloud.config.server.git.uri: http://XXX  #配置文件的git仓库地址
+```
+   4. 启动应用，访问端点，如
+```txt
+# 默认master分支
+http://localhost:8080/pra-request/default
+http://localhost:8080/pra-request/prod
+http://localhost:8080/pra-request-default.yml
+http://localhost:8080/pra-request-prod.yml
+
+# 指定dev分支
+# http://localhost:8080/dev/pra-request/default  （不支持）
+http://localhost:8080/dev/pra-request-default.yml
+http://localhost:8080/dev/pra-request-prod.yml
 ```
 
-2. client app
-   1. spring-cloud-starter-config依赖
-   2. 修改bootstrap.yml
+3. client app
+   1. 添加spring-cloud-starter-config，spring-boot-starter-actuator依赖。
+   3. 修改application.yml，保留如端口号等不变的配置，需要变动的配置都放到配置中心去。
+   2. 新增bootstrap.yml
 ```txt
 spring.cloud.config.uri: http://myconfigserver.com
 ```
