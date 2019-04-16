@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-14 14:30:18
+updated: 2019-04-16 14:07:52
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -382,8 +382,17 @@ done!
 注： tar命令只会覆盖已有的文件，备份后新增的文件不会修改或删除。
 
 3.如果是虚拟机或其他电脑，因为硬盘的uuid不同，所以需要多些步骤
+由于我的移动硬盘是exfat格式，所以需要给ubantu安装exfat-utils:
 ```txt
+更新数据源为阿里云，
+sudo apt update
+sudo apt install exfat-utils
+插上u盘后，始终无法识别，这里还要将vmware虚拟机设置下硬件，
+改为usb 3.0接口
+
 备份fstab,得到其中的uuid
+cd ~
+mkdir back
 cd /etc/
 sudo cp fsta ~/back
 备份grub.cfg

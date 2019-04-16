@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-04-15 18:01:17
+updated: 2019-04-16 17:24:07
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -268,30 +268,107 @@ pra-request-prd.yml
    2. 启动类上注解@EnableConfigServer
    3. 修改application.yml
 ```txt
-server.port: 8080
-spring.cloud.config.server.git.uri: http://XXX  #配置文件的git仓库地址
+server.port: 8888
+spring:
+  application:
+      name: pra-config-server
+  cloud:
+      config:
+          server:
+              git:
+                  uri: http://128.160.184.165/wutaotao/configrepo.git
+                  clone-on-start: true
+                  force-pull: true      # 强制更新
+                  basedir: D:\\code\\pra-config-server-dir  
+                    #克隆的仓库由临时目录config-repo-XXX改为指定目录
+              health:
+                repositories:
+                  a:
+                    label: dev
+                    name: pra-request
+                    profiles: prod
+logging:
+  level:
+      org.springframework.cloud: debug
+      org.springframework.boot: debug
+# 为了显示health端点详细信息，需要进行额外配置
+management.security.enabled: false  # 1.5.1版本后只需要写这一句就可以
+# boot 2.0.0版本以后需要这样写
+management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+  endpoints:
+    web:
+      exposure:
+        include: *
 ```
    4. 启动应用，访问端点，如
 ```txt
 # 默认master分支
-http://localhost:8080/pra-request/default
-http://localhost:8080/pra-request/prod
-http://localhost:8080/pra-request-default.yml
-http://localhost:8080/pra-request-prod.yml
+http://localhost:8888/pra-request/default
+http://localhost:8888/pra-request/prod
+http://localhost:8888/pra-request-default.yml
+http://localhost:8888/pra-request-prod.yml
 
 # 指定dev分支
-# http://localhost:8080/dev/pra-request/default  （不支持）
-http://localhost:8080/dev/pra-request-default.yml
-http://localhost:8080/dev/pra-request-prod.yml
+# http://localhost:8888/dev/pra-request/default  （不支持）
+http://localhost:8888/dev/pra-request-default.yml
+http://localhost:8888/dev/pra-request-prod.yml
 ```
+修改某个文件后再次通过config-server访问可以发现修改能够查询成功，说明进行请求时，config-
+server会自动拉取代码仓库的最新配置。
 
 3. client app
    1. 添加spring-cloud-starter-config，spring-boot-starter-actuator依赖。
-   3. 修改application.yml，保留如端口号等不变的配置，需要变动的配置都放到配置中心去。
-   2. 新增bootstrap.yml
+   3. 删除application.yml，将其中属性分流到bootstrap.yml和配置仓库中去。
+   2. 新增bootstrap.yml（该文档比application.yml先加载，但它优先级比application.yml低，
+   经测试同名属性以application.yml中为准）
 ```txt
-spring.cloud.config.uri: http://myconfigserver.com
+spring:
+  application:
+    name: pra-request
+  cloud:
+    config:
+      uri: http://localhost:8888/
+      profile: default
+      label: master
 ```
+
+4. 注册到Eureka上。
+   1. config-server注册到Eureka上，config-server也是一个普通的spring-boot应用，根据环境
+   不同，可以写application.yml和application-prod.yml。
+   添加starter-eureka依赖，添加@DiscoveryClient注解，yml中添加eureka地址即可。
+   2. pra-request注册到Eureka上，经测试发现从配置中心取回的属性数据会覆盖客户端自己在
+   application.yml中配置的属性，如端口号等。文档里写可以通过在config-server里设置属性
+```txt
+spring.cloud.config.allowOverride: true
+```
+来授权允许客户端覆盖配置中心的配置。
+所以，在客户端-这里为pra-request里完全可以删除application.yml文件，完全以配置仓库里的为
+准，bootstrap.yml中保留可以注册到eureka中心并能定位到需要的yml配置文件的属性，如下:
+```txt
+spring:
+  application:
+      name: pra-request     # 需要来定位配置文件{application}
+  cloud:
+      config:
+          profile: default   # 需要来定位配置文件{profile}
+          label: master     # 需要来定位配置文件{label}
+          discovery:
+              enabled: true
+              service-id: pra-config-server
+          fail-fast: true     # 配置中心连不上时迅速报错，实测报错由19秒提高到3秒
+
+eureka:                               # 本身注册到eureka并寻找注册中心
+  client:
+      serviceUrl:
+          defaultZone: http://localhost:9090/eureka/
+  instance:
+      prefer-ip-address: true
+```
+此时，仓库中的配置文件暂时有端口号，profile值，数据库链接，日志级别等。
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
