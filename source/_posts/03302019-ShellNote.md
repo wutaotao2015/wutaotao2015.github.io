@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-16 14:07:52
+updated: 2019-04-19 00:37:19
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -442,6 +442,16 @@ sudo xrandr --addmode Virtual1 "2560x1440_60.00"
 删除刚才修改的~/.profile文件。
 具体原因明天再看吧！
 
+## xmonad
+折腾了一晚上，成功的搞出了背景图片，浏览器里可以输入中文(fcitx),双屏切换alt+w,r操作前先
+在大屏上最大化再扩展小屏也能正常使用，但是！vim里面fcitx又出不来了，终于放弃，后来又发现
+ubantu gnome也支持双屏操作的快捷键，主要是以下4个快捷键
+```txt
+alt + tab  切换应用
+alt + esc(我改成capslock)  切换上下屏幕
+command + shift + up/down  将当前窗口移动到上面的屏幕或下面的屏幕中
+```
+就这样吧，太喜欢折腾也不好，还是不能为了工具太折腾，明天赶紧装下idea, 正常写代码和锻炼！
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
