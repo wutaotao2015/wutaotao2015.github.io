@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-19 00:37:19
+updated: 2019-04-21 22:50:55
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -452,6 +452,82 @@ alt + esc(我改成capslock)  切换上下屏幕
 command + shift + up/down  将当前窗口移动到上面的屏幕或下面的屏幕中
 ```
 就这样吧，太喜欢折腾也不好，还是不能为了工具太折腾，明天赶紧装下idea, 正常写代码和锻炼！
+
+ 2019-04-21 22:01:59
+ 注: 说不折腾，但还是又搞了几天，终于搞出来了，也算行吧。
+ ubantu上直接安装xmonad，按教程走到最后，发现在终端里始终不能输入中文，但浏览器里可以，
+这个问题卡了蛮久，当时想的是终端的问题，但没有实践，后来又转到mac下去实现xmonad了，不过
+最近又实践了一下，发现成功了！mac也成功了！双喜临门！记录如下：
+```txt
+1. ubantu 18.04下安装xmonad
+主要是参照教程[https://beginners-guide-to-xmonad.readthedocs.io/intro.html](https://beginners-guide-to-xmonad.readthedocs.io/intro.html),
+我自己修改的地方就是改动了最后的启动文件.xsessionrc
+
+---------
+#!/bin/bash
+
+# Load resources
+
+xrdb -merge .Xresources
+
+# Set up an icon tray
+stalonetray &
+
+# Fire up apps
+
+xscreensaver -no-splash &
+
+if [ -x /usr/bin/nm-applet ] ; then
+   nm-applet --sm-disable &
+fi
+
+fcitx &
+xmodmap ~/.Xmodmap &
+feh --bg-scale ~/back.jpg &
+
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
+exec xmonad
+---------
+可以看到我加了输入法fcitx,esc和capslock键的交换，背景图片以及fcitx的环境变量配置
+其中.Xmodmap文件内容上文有提到，这里掠过。
+
+最后，替换掉gnome-terminal发现可以正常使用fcitx输入法，
+sudo apt install terminator
+sudo update-alternatives --config x-terminal-emulator
+选择terminator，输入其编号即可
+
+Done!
+xmonad官网上有与gnome整合的文章，没有细看，这里配好了就不需要它了，
+[https://xmonad.org/documentation.html](https://xmonad.org/documentation.html)
+最下面一排小字！
+ubantu上还有问题就是vmware-tool的复制粘贴功能没有了，gnome下可以实现，还需要再整整，
+to be continued......
+
+
+
+当时也是在那发现了
+mac上安装xmonad的方法，根据这个又整了一个周末。 
+[https://wiki.haskell.org/Xmonad/Using_xmonad_on_Apple_OSX](https://wiki.haskell.org/Xmonad/Using_xmonad_on_Apple_OSX)
+这篇太简略了，还参照了这篇[my xmonad recipe for macOS](https://gist.github.com/danchoi/3923233)
+
+我自己的步骤为
+1. 下载XQuartz,并按recipe里设置好
+2. 下载haskell-platform macOS 64位安装包(brew安装太慢，问题太多了...)
+3. 在文章里找到这个[https://github.com/xmonad/X11/issues/24](https://github.com/xmonad/X11/issues/24),使用命令
+LIBRARY_PATH=/opt/X11/lib:$LIBRARY_PATH cabal install xmonad
+4. 启动XQuartz,设置成全屏模式，并按alt+shift+enter,可以发现xmonad成功启动了！
+但它还不支持多屏...
+to be continued
+
+
+```
+
+
+
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
