@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-21 22:50:55
+updated: 2019-04-22 10:00:35
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -518,7 +518,10 @@ mac上安装xmonad的方法，根据这个又整了一个周末。
 2. 下载haskell-platform macOS 64位安装包(brew安装太慢，问题太多了...)
 3. 在文章里找到这个[https://github.com/xmonad/X11/issues/24](https://github.com/xmonad/X11/issues/24),使用命令
 LIBRARY_PATH=/opt/X11/lib:$LIBRARY_PATH cabal install xmonad
-4. 启动XQuartz,设置成全屏模式，并按alt+shift+enter,可以发现xmonad成功启动了！
+4. 按wiki.haskell里新建~/.xinitrc/90-xmonad.shell，但xmonad并没有生效，USERVM中的路径用
+命令`which xmonad`并没有输出，也搜索了很久和重装xmonad后，在~/.cabal/config中发现说要在
+.bash_profile中加入path变量，加入后，`which xmonad`即成功输出为文档中的值。
+5. 启动XQuartz,设置成全屏模式，并按alt+shift+enter,可以发现xmonad成功启动了！
 但它还不支持多屏...
 to be continued
 

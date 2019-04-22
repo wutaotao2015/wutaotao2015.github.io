@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-04-16 17:24:07
+updated: 2019-04-19 14:14:23
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -369,7 +369,39 @@ eureka:                               # 本身注册到eureka并寻找注册中�
 ```
 此时，仓库中的配置文件暂时有端口号，profile值，数据库链接，日志级别等。
 
+#### springcloud sleuth
+span:
+  cs: client-sent 客户端发送    span 开始
+  sr: server-received 服务器接受
+  ss: server-sent 服务器发送
+  cr: client-received  客户端接受  span结束
+即从客户端出发，开始发送请求到接收到响应的整个过程是一个span.
 
+从官方文档上来看，span有物理span和逻辑span的区别，
+物理span即将网络延迟和服务器处理分成2个span,而上面span的定义就是逻辑的span，整个请求和
+响应的过程就是一个逻辑span.
+
+集成zipkin:
+server:（因为这是日志收集的服务器，不是微服务的一部分，所以不应该注册到Eureka上，可以配合
+springcloud stream和rabbit mq来使用消息中间件）
+1. 新建项目zipkin-server,添加依赖
+zipkin-server, zipkin-autoconfig-ui
+
+2. 启动类上使用@EnableZipkinServer注解
+3. application.yml中添加server.port: 9411
+
+client:
+1. spring-cloud-sleuth-starter的基础上添加依赖spring-cloud-sleuth-zipkin
+2. application.yml添加
+```txt
+spring:
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      percentage: 1.0   # 采样为100%
+```
+这里客户端对于zipkin server的地址是写死的，可以使用rabbitMQ来避免写死，这里省略。
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
 
