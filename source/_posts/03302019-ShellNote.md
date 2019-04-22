@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-22 22:47:55
+updated: 2019-04-22 22:57:24
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -538,7 +538,9 @@ LIBRARY_PATH=/opt/X11/lib:$LIBRARY_PATH cabal install xmonad
 5. 启动XQuartz,设置成全屏模式，并按alt+shift+enter,可以发现xmonad成功启动了！
 但它还不支持多屏...
 to be continued
-
+ 2019-04-22 22:55:55 注：
+ 今天又试了下，发现XQuartz在全屏模式下是支持多屏的，用xmonad的mod+w,e可以正常切换屏幕，
+ 明天再试着调用app,改造终端样式等。
 
 ```
 
