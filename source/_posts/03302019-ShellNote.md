@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-22 10:00:35
+updated: 2019-04-22 22:47:55
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -484,6 +484,8 @@ fi
 fcitx &
 xmodmap ~/.Xmodmap &
 feh --bg-scale ~/back.jpg &
+# 虚拟机内使用 vmware-tool
+vmware-user &
 
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
@@ -505,7 +507,19 @@ xmonad官网上有与gnome整合的文章，没有细看，这里配好了就不
 最下面一排小字！
 ubantu上还有问题就是vmware-tool的复制粘贴功能没有了，gnome下可以实现，还需要再整整，
 to be continued......
-
+ 2019-04-22 21:14:57 solved:
+ google上搜到了vmware-tools-user-guide官方文档，可以手动启动vmware user process进程，
+ 在.xsessionrc中加入一行： `vmware-user &`
+ Done!
+ 另：上班时发现电脑自动关机了，后来发现是电池没有电了，xmonad没有低电量警告！
+ 网上搜到一个python程序rcoh/batmon
+```txt
+sudo apt install python-pip
+pip install batmon
+ls /sys/class/power_supply/   #BAT0或其他数字
+vi ~/.xsessionrc # 添加
+batmon BAT0 &
+```
 
 
 当时也是在那发现了
