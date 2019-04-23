@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-22 22:57:24
+updated: 2019-04-23 21:47:42
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -520,6 +520,9 @@ ls /sys/class/power_supply/   #BAT0或其他数字
 vi ~/.xsessionrc # 添加
 batmon BAT0 &
 ```
+ 2019-04-23 21:46:57 注：
+ 在thinkpad上使用了无效果，发现notify-send命令在xmonad下无效,
+
 
 
 当时也是在那发现了
@@ -541,6 +544,9 @@ to be continued
  2019-04-22 22:55:55 注：
  今天又试了下，发现XQuartz在全屏模式下是支持多屏的，用xmonad的mod+w,e可以正常切换屏幕，
  明天再试着调用app,改造终端样式等。
+ 2019-04-23 21:44:56
+ 看到一篇日语文章，和我之前整的过程差不多，它最后也是推荐Amethyst,想想mac上xmonad也就整到
+ 这里了。
 
 ```
 
