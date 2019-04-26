@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-23 21:47:42
+updated: 2019-04-26 19:09:29
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -548,11 +548,77 @@ to be continued
  看到一篇日语文章，和我之前整的过程差不多，它最后也是推荐Amethyst,想想mac上xmonad也就整到
  这里了。
 
+ 2019-04-26 18:39:10
+ 今天解决了2个在实际使用ubantu,xmonad,lantern的问题
+ 1. xmonad下无电池低电量预警
+ xmonad-contrib里之前收到有一个urgency插件，但配置比较麻烦，也许可以使得notify-send命令
+ 产生效果，但一直没试。今天搜到可以让有电池信息的xmobar在xmonad全屏模式下显示出来，具体
+ 是修改.xmobarrc文件
+```txt
+Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+        , borderColor = "black"
+        , border = TopB
+        , bgColor = "black"
+        , fgColor = "grey"
+        , position = TopW L 100
+        , persistent = True     # wtt-add
+        , overrideRedirect = False  # wtt-add
+        , commands = [ Run Weather "ZUUU" ["-t","<tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
+        , Run Battery [ "--template" , "Batt: <acstatus>"
+               , "--Low"      , "10"        -- units: %
+               , "--High"     , "80"        -- units: %
+               , "--low"      , "darkred"
+               , "--normal"   , "darkorange"
+               , "--high"     , "darkgreen"
+               , "--" -- battery specific options
+                      -- discharging status
+               , "-o"	, "<left>% (<timeleft>)"
+                      -- AC "on" status
+               , "-O"	, "<fc=#dAA520>Charging</fc>"
+                      -- charged status
+               , "-i"	, "<fc=#006000>Charged</fc>"
+             ] 50
+                        , Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                        , Run Network "eth1" ["-L","0","-H","32","--normal","green","--high","red"] 10
+                        , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                        , Run Memory ["-t","Mem: <usedratio>%"] 10
+                        , Run Swap [] 10
+                        , Run Com "uname" ["-s","-r"] "" 36000
+                        , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                        , Run StdinReader
+                        ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        , template = "%StdinReader% | %cpu% | %memory% * %swap% | %eth0% - %eth1% | %ZUUU% | %battery% }{<fc=#ee9a00>%date%</fc>  | %uname% "
+        }
 ```
+这样配了之后，打开需要的google,vmware,terminal，需要重启xmonad才能看到xmobar，目前只能这样
+了:执行命令`xmonad --restart`。
 
+2. xmonad和KDE,XFCE下lantern可链接但无法访问google问题，此前只有在gnome下lantern才能正常
+使用。今天搜索如何在linux下设置代理找到了配置方法，成功在xmonad下正常使用xmonad。
+```txt
+sudo vi /etc/environment
 
+添加
+all_proxy=socks://127.0.0.1:43359/
+ALL_PROXY=socks://127.0.0.1:43359/
+http_proxy=http://127.0.0.1:43359
+HTTP_PROXY=http://127.0.0.1:43359
+ftp_proxy=http://127.0.0.1:43359
+FTP_PROXY=http://127.0.0.1:43359
+https_proxy=http://127.0.0.1:43359
+HTTPS_PROXY=http://127.0.0.1:43359
 
+新建配置文件，这个应该是针对apt的代理设置
+vi /etc/apt/apt.conf 
 
+Acquire::http::proxy "http://127.0.0.1:43359/";
+Acquire::ftp::proxy "ftp://127.0.0.1:43359/";
+Acquire::https::proxy "https://127.0.0.1:43359/";
+使用命令来校验
+apt-config dump  | grep -i proxy
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
