@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-26 20:29:10
+updated: 2019-04-26 20:53:27
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -633,6 +633,17 @@ sudo apt-get install gluqlo
 看了xscreensaver manual,里面说设置直接执行以下命令即可
 xscreensaver-demo
 里面选择只展示一张，选中gluqlo即可。
+主动激活屏保的命令
+```txt
+sleep 2; xscreensaver-command -activate
+```
+结合前面的重启xmonad命令，可以这样定义2个别名
+```txt
+alias rstX 'xmonad --restart'
+funcsave resX
+alias xlock 'sleep 1; xscreensaver-command -activate'
+funcsave xlock
+```
 
 
 <hr />
