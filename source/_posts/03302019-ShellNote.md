@@ -6,7 +6,7 @@ tags:
   - ubantu
   - vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-26 19:09:29
+updated: 2019-04-26 20:29:10
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -619,6 +619,21 @@ Acquire::https::proxy "https://127.0.0.1:43359/";
 使用命令来校验
 apt-config dump  | grep -i proxy
 ```
+
+之前突然看到有linux上的fliqlo屏保，叫gluqlo,今天在xmonad上成功安装。
+1. 因为之前装xmonad时已经安装了xscreensave,所以把另外2个包也下载下，主要是各种屏保文件。
+# sudo apt remove gnome-screensaver # 这步没有执行
+sudo apt install xscreensaver-gl-extra xscreensaver-data-extra
+
+下载gluqlo
+sudo apt-add-repository ppa:alexanderk23/ppa
+sudo apt-get update
+sudo apt-get install gluqlo
+
+看了xscreensaver manual,里面说设置直接执行以下命令即可
+xscreensaver-demo
+里面选择只展示一张，选中gluqlo即可。
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
