@@ -4,7 +4,7 @@ categories: Mac
 tags:
   - Mac
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190415_1.jpg'
-updated: 2019-04-15 10:16:09
+updated: 2019-04-28 23:06:49
 date: 2019-04-14 15:30:26
 abbrlink:
 ---
@@ -53,6 +53,14 @@ export https_proxy=http://127.0.0.1:49612
 7. vmware中给ubantu虚拟机安装vmware-tools,在虚拟机选项中选择安装vmware-tools,ubantu中出现
 一个外接光盘，将压缩包拷贝到download目录后解压(不能直接解压)，执行命令`sudo ./vmware-tool
 -install.pl`, 一直回车即可。
+
+8. mac自带vim不支持共享剪贴板的问题
+mojave上的vim --version显示-clipboard,不支持共享系统剪贴板。
+`brew install vim`
+安装了python,sqllite,ruby,perl等依赖后，执行`which vim`，发现路径已经变掉了，
+再重新打开一个终端，在.vimrc中加入（一开始字母写错了，总报错还不知道为什么......)
+`set clipboard=unnamed`
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190415_1.jpg" class="full-image" />
