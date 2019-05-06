@@ -5,7 +5,7 @@ tags:
   - SpringBoot
   - SpringCloud
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-04-19 14:14:23
+updated: 2019-05-06 18:37:22
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -402,6 +402,86 @@ spring:
       percentage: 1.0   # 采样为100%
 ```
 这里客户端对于zipkin server的地址是写死的，可以使用rabbitMQ来避免写死，这里省略。
+
+#### web
+[项目源码](https://git.dev.tencent.com/wutaotao/springboot-web-jsp.git)
+开发工具： idea
+环境： springboot jsp
+服务器: war包部署到tomcat中
+
+1. 下载tomcat9 windows64位binary包，解压即可。
+2. 新建springboot项目，选择web启动依赖即可。
+3. pom.xml
+```txt
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <groupId>com</groupId>
+    <artifactId>microservice-web</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+    </parent>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
+```
+4. 在src/main下新建webapp文件夹存放jsp文件，这里我统一放在webapp/page/test下
+5. 新建webcontroller作简单处理和跳转到相应jsp中，实体类book,启动类WebApplication,
+它需要继承SpringBootServletInitializer类，重写config方法，将`return builder`改为
+`return builder.source(WebApplication.class)`即可。
+6. 新建application.yml文件，定义jsp视图的前缀和后缀，springmvc渲染视图需要。
+```txt
+spring:
+  mvc:
+    view:
+      prefix: /page/test/
+      sufix: .jsp
+```
+7. 到这里一个简单的springboot整合jsp就完成了，下面要在idea中配置tomcat。
+参考[idea tutorial with jrebel](https://github.com/judasn/IntelliJ-IDEA-Tutorial/blob/master/jrebel-setup.md)
+   1. 在toolbar中选择edit configuration
+   2. application server中选择tomcat解压后的安装路径
+   3. 填写after launch后自动打开的url地址
+   4. 在deployment中选择artifact: war exploded, 下面的application context置为空（访问路径
+   不带项目名），删掉下面build artifact前的build
+   注：这个artifact可以在project structure中看到
+
+   5. 返回server,`on update action`和新出现的`on frame deactivation`中都选择update classes
+   and resources`
+   6. jre默认1.8，http port 8080
+   7. apply后以debug启动项目，发现改变jsp后不用重新编译，重启，保存即可生效，改变方法内代码
+   重新编译后也能生效！但改变方法参数重新编译后提示`hot swap failed`,说明它还不支持，改用
+   jrebel debug启动，发现改变参数重新编译成功！这里并没有生成rebel.xml文件。
+   8. 至此，springboot整合jsp的开发环境就搭建成功了！下面打个war包在linux环境下安装tomcat
+   启动项目看看。
+
+#### linux安装tomcat并启动服务供外界访问
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />
 
