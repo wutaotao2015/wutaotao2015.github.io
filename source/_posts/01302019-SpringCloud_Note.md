@@ -4,13 +4,16 @@ categories: SpringCloud
 tags:
   - SpringBoot
   - SpringCloud
+  - Linux
+  - Tomcat
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
-updated: 2019-05-06 18:37:22
+updated: 2019-05-07 11:31:48
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
 spring boot, SpringCloud, Actuator, Eureka, ribbon, Feign, hystrix, zuul, 
-sleuth, spring cloud config, jdk, spring boot与spring cloud版本问题
+sleuth, spring cloud config, jdk, spring boot与spring cloud版本问题, linux,
+tomcat
 <!-- more -->
 ### springBoot简介
 
@@ -433,19 +436,10 @@ spring:
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!-- 解析jstl标签 -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
@@ -481,6 +475,9 @@ spring:
    启动项目看看。
 
 #### linux安装tomcat并启动服务供外界访问
+to be continued
+
+#### springboot整合spring security
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg" class="full-image" />

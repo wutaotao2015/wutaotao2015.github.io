@@ -3,10 +3,10 @@ title: Shell笔记
 categories: Shell
 tags:
   - Shell
-  - ubantu
-  - vmware workstation
+  - Ubantu
+  - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-04-27 10:19:03
+updated: 2019-05-07 10:41:47
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
