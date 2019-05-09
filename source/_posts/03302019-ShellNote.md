@@ -6,7 +6,7 @@ tags:
   - Ubantu
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-05-07 10:41:47
+updated: 2019-05-09 17:06:57
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -643,6 +643,36 @@ alias rstX 'xmonad --restart'
 funcsave resX
 alias xlock 'sleep 1; xscreensaver-command -activate'
 funcsave xlock
+```
+
+## xfce中使用vmware-workstation快捷键问题
+由于xmonad没有很方便的提示电池电量的方法（不支持notify-send命令）,所以在经历了几次电池
+耗尽自动关机后还是抛弃了xmonad,转向xfce,xfce也没有自带电池监控软件，但是可以
+`sudo apt install xfce4-battery-plugin`插件，实际使用很方便，到设定的百分比时在虚拟机
+全屏界面下也可以正常给出弹框提示。
+
+在实际使用虚拟机时发现一个快捷键问题，在ctrl+alt跳出虚拟机后，在不知情的情况下按下Idea
+的快捷键ctrl+e来查看最近打开的文件，结果虚拟机关闭了！！！
+
+原来vmware-workstation自带的快捷键有
+ctrl + e  power off
+ctrl + r  reset power 
+
+主要是这2个大坑，其他快捷键没有多大影响。经网上搜索windows下可以用autohotkey来映射ctrl+e
+到别的键上，mac可以用karabiner,linux可以用xmodmap,但具体xmodmap怎么配置组合按键没有搜到，
+但对于xfce可以使用其自带的快捷键修改功能来完成。
+终端下输入
+`xfce4-settings-editor`进入键盘修改界面，
+```txt
+xfce4-keyboard-shortcuts -> commands/custom
+-> new ->
+property: /commands/custom/<Control>E
+type: String
+value: gedit或terminator等任意其他即可
+-> close
+Done!
+
+同理可设置ctrl+r
 ```
 
 
