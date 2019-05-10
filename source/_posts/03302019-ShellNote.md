@@ -6,7 +6,7 @@ tags:
   - Ubantu
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
-updated: 2019-05-09 17:06:57
+updated: 2019-05-10 15:04:26
 date: 2019-03-30 11:40:15
 abbrlink:
 ---
@@ -674,7 +674,18 @@ Done!
 
 同理可设置ctrl+r
 ```
+ 2019-05-10 11:27:34 注:
+ 实际使用时发现ctrl+r在vim中是默认的redo,按以上设置无法正常使用，所以保险的方法还是
+ 在跳转到虚拟机界面时按j或k,使用虚拟机的capture key功能来避免误操作。
+ ctrl+e的设置可以保留。
 
+## xfce4 截屏
+需要安装截屏插件
+`sudo apt install xfce4-screenshooter`
+在applications->settings->keyboard->application shortcut中add
+command:
+xfce4-screenshooter -r
+按键prt-sc定义快捷键，done!
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
