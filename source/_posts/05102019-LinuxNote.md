@@ -5,7 +5,7 @@ tags:
   - Linux
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
-updated: 2019-05-10 17:53:17
+updated: 2019-05-17 17:27:23
 date: 2019-05-10 09:57:10
 abbrlink:
 ---
@@ -80,7 +80,53 @@ ctrl + l  clean the screen 当前命令行字符不会受影响
    用来杀死某个服务的所有进程，如killall httpd
 
 ## 系统状态检测命令
+1. ifconfig
+   默认查看活动的网卡接口，-a查看所有网卡接口
+   inet后是ip地址，ether后是物理网卡地址（MAC地址）
+   ifconfig -a 
 
+2. uname
+   查看系统内核和系统版本等信息
+   uname -a 
+   rhel可以使用cat /etc/redhat-release查看当前系统版本的详细信息
+   
+3. uptime
+   查看系统负载信息
+   具体显示系统启动时间，已运行时间，运行中的和不可中断的进程的平均负载情况，1,5,15分钟时间内,
+   建议不要长期超过1,生产不超过5.
+   注: 由fish shell切换回bash时，发现系统启动时间是bash切换的时间
+
+4. free
+   内存使用量
+   free -h 将数字转化为G为单位，方便阅读
+
+5. who
+   显示正在登录的用户终端信息
+   用户名 终端设备 登录时间（不受终端Shell影响）
+
+6. last
+   查看系统登录记录
+   查询的是日志文件，黑客可以修改，所以无法作为是否被入侵的依据。
+
+7. history
+   显示最近使用的命令，默认1000条
+   bash上有数字显示,其显示的是~/.bash_history内容（fish上执行history是不同的命令，没有数字）
+   可以使用！15来执行第15条命令
+   history -c 可以清除命令
+
+8. sosreport
+   输出系统配置和诊断信息
+   rhel上执行报no plugins enabled,使用sosreport -l发现插件都需要root权限。
+   注：针对打出的诊断包.tar.xz格式可以使用`tar -Jxf XX.tar.xz`来解压
+
+## 工作目录切换
+1. pwd  显示当前目录
+2. cd  切换工作路径
+   cd -  切换到上一次所处的目录
+3. ls
+   目录中的文件信息
+   ls -al  显示所有文件
+## 文本文件编辑命令
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />
