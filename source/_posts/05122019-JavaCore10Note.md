@@ -5,7 +5,7 @@ tags:
   - Java
   - Unicode
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-13 18:05:35
+updated: 2019-05-17 22:32:43
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -72,7 +72,18 @@ java有8种基本类型，4种整型，2种浮点型，1个unicode字符类型ch
   show the code:
   `System.out.println("𐐷".length());` 输出2
 
-4. 
+  最佳实践：不要在程序中使用char类型，尽量使用String类型。
+
+4. boolean类型
+   java的布尔类型和整数值之间无法转换，而C++中数值或指针都可以代替布尔值，0代表false,非
+   0代表true.如下java代码：
+  ```txt
+  int x = 11;
+  System.out.println(x = 0); // 输出0
+  if (x = 1) {} // 编译报错incompatible types,即表达式值为1时，它不会自动转换成bool值true.
+  ```
+5. 变量
+
 
 ##
 <hr />
