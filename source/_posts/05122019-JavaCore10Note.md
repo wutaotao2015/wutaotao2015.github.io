@@ -5,7 +5,7 @@ tags:
   - Java
   - Unicode
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-21 18:01:49
+updated: 2019-05-22 17:40:58
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -155,6 +155,7 @@ System.out.print(new String(codePoints, 0, codePoints.length())); //由数组反
 构建字符串
 StringBuffer是多线程安全的，但性能不如StringBuilder,单线程时应使用StringBuilder.
 
+### 输入输出
 读取输入：可以使用System.console对象来从控制台获取密码
 printf格式化输出：
 % 1 $ , 8.2 f 
@@ -165,7 +166,7 @@ printf格式化输出：
 Scanner in = new Scanner(Paths.get("D:\\a.txt")), "utf-8");
 PrintWriter out = new PrintWriter("D:\\b.txt", "utf-8");
 
-控制流程
+### 控制流程
 java break语句可以带标签，从而实现从内层循环跳出，C语言中使用goto语句，java没有goto.
 另外java有foreach循环，C,C++没有。
 
@@ -179,7 +180,24 @@ do{...}while(...)语句。
 switch语句可能会导致执行多个case语句（在没有break语句的时候），所以一般程序中不使用switch
 语句。（jdk 7之后case语句中可以为String类型）
 
+带标签的break与continue语句：
+```txt
+label{
+  ...
+  if(condition) break label;  
+  ...
+}
+```
+注： break与continue是可选的，完全可以避免使用它们（使用合理的判断条件即可）
 
+### 大数值
+BigInteger和BigDecimal
+可以使用valueOf将基本类型数值转换为bigInteger或bigDecimal类型
+
+这2个对象加法用add方法，乘法用multiply方法...
+注： C++可以自定义重载运算符，Java只重载了+号，它没有并且不允许程序员自己重定义重载运算符。
+
+### 数组
 
 ##
 <hr />
