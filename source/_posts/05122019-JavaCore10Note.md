@@ -5,7 +5,7 @@ tags:
   - Java
   - Unicode
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-22 17:40:58
+updated: 2019-05-22 22:05:54
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -198,7 +198,20 @@ BigInteger和BigDecimal
 注： C++可以自定义重载运算符，Java只重载了+号，它没有并且不允许程序员自己重定义重载运算符。
 
 ### 数组
+java允许数组长度为0，长度为0的数组也是一个对象，可以用来作为方法返回值，避免返回null，造成
+空指针。
+数组扩容可以使用
+`luckyNumbers=Arrays.copyOf(luckyNumbers,2 * luckyNumbers.length);`
+新增部分的元素默认值按照类型为0，false,或null.
 
+java数组与C++数组指针基本一致，但它没有指针运算，即不能通过a加1得到数组的下一个元素。
+
+数组排序可以使用Arrays.sort方法，它使用了快速排序算法，
+使用Arrays.binarySearch方法实现二分查找
+使用Arrays.fill方法将所有元素值设置为统一值
+使用Arrays.equals方法比较两个数组是否相同
+### for each循环
+必须是一个数组或一个实现Iterable接口的集合，才能使用foreach循环
 ##
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
