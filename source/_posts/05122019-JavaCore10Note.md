@@ -5,7 +5,7 @@ tags:
   - Java
   - Unicode
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-22 22:05:54
+updated: 2019-05-23 17:50:35
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -14,7 +14,7 @@ Java, Unicode,
 ## 安装java
 安装后将jdk安装目录/bin加入到path环境变量即可,不用设置其他。
 ## 基本程序设计结构
-## 数据类型
+### 数据类型
 java有8种基本类型，4种整型，2种浮点型，1个unicode字符类型char,1个boolean类型.
 1. 整型
    java需要保证不同机器上相同程序运行结果相同，所以java的数据取值范围是固定的
@@ -201,8 +201,7 @@ BigInteger和BigDecimal
 java允许数组长度为0，长度为0的数组也是一个对象，可以用来作为方法返回值，避免返回null，造成
 空指针。
 数组扩容可以使用
-`luckyNumbers=Arrays.copyOf(luckyNumbers,2 * luckyNumbers.length);`
-新增部分的元素默认值按照类型为0，false,或null.
+`luckyNumbers = Arrays.copyOf(luckyNumbers, 2 * luckyNumbers.length);`
 
 java数组与C++数组指针基本一致，但它没有指针运算，即不能通过a加1得到数组的下一个元素。
 
@@ -210,8 +209,101 @@ java数组与C++数组指针基本一致，但它没有指针运算，即不能�
 使用Arrays.binarySearch方法实现二分查找
 使用Arrays.fill方法将所有元素值设置为统一值
 使用Arrays.equals方法比较两个数组是否相同
+
+反转数组：
+1. 面试时的回答
+先Arrays.sort升序排列，再将第一个元素和最后一个元素互换，直到指针小于length/2(索引从0开始)
+2. 实际工作使用
+   1. 将数组转换为List,再用Collections.reverse(list)方法反转，最后用list.toArray(newArray)来
+   得到反转后的数组。
+```txt
+  Integer[] c = new Integer[5];
+  c[0] = 8;
+  c[1] = 3;
+  c[2] = 6;
+  c[3] = 5;
+  c[4] = 2;
+  Arrays.sort(c);
+  System.out.println(Arrays.toString(c));
+  List<Integer> blist = Arrays.asList(c);
+  Collections.reverse(blist);
+  Integer[] newC = new Integer[c.length];
+  blist.toArray(newC);
+  System.out.println(Arrays.toString(newC));
+```
+   2. 使用commons.lang3包中的ArrayUtils工具类，支持int,float,object.
+   通过查看源码可见，它也是使用了前后元素交换的算法实现的
+
+随机打乱数组：
+1. 网上说比较经典的方法是用Arrays.sort(array, comparator)，其中comparator的compare方法
+使用Math.random()来实现在比较时随机产生正负数从而实现乱序，但由于sort排序底层实现中无论是
+插入还是快排的比较次数都做了优化，达不到全部元素两两比较的绝对乱序要求。下面是sort的java
+代码实现：
+```txt
+ Integer[] c = new Integer[5];
+ c[0] = 8;
+ c[1] = 3;
+ c[2] = 6;
+ c[3] = 5;
+ c[4] = 2;
+ System.out.println(Arrays.toString(c));
+
+ // Arrays.sort(c, new Comparator<Integer>() {
+ //         @Override
+ //         public int compare(Integer x, Integer y) {
+ //                 double i = 0.5 - Math.random();
+ //                 int flag = i < 0 ? -1 : (i > 0 ? 1 : 0);
+ //                 System.out.print(flag + ",");
+ //                 return flag;
+ //         }
+ // });
+ Arrays.sort(c, (x, y) -> {
+   double i = 0.5 - Math.random();
+   int flag = i < 0 ? -1 : (i > 0 ? 1 : 0);
+   System.out.print(flag + ",");
+   return flag;
+ });
+System.out.println();
+System.out.println(Arrays.toString(c));
+```
+2. 想实现绝对乱序，每个元素都参与比较，可以使用Fisher-Yates shuffle算法，基本思路是通过
+随机数得到一个随机索引，将索引的元素值和最后一个元素进行交换，然后是倒数第二个元素，依次
+进行即可，这样每个元素都得到了比较和交换的机会，实现了绝对乱序。
+```txt
+Integer[] c = new Integer[5];
+c[0] = 8;
+c[1] = 3;
+c[2] = 6;
+c[3] = 5;
+c[4] = 2;
+System.out.println(Arrays.toString(c));
+
+int i = c.length;
+while (i > 1) {   // i = 1时picked和后面的i都为0，交换自身可省略,选随机数次数为c.length-1
+  int picked = new Double(Math.floor(Math.random() * i--)).intValue();
+  System.out.print(picked + ",");
+  int tmp = c[i];
+  c[i] = c[picked];
+  c[picked] = tmp;
+}
+System.out.println();
+System.out.println(Arrays.toString(c));
+```
+注： javaCore书中的抽彩游戏算法与这里的洗牌算法思路相同，不同的是它不是原地排序，而是
+将抽中的数字放到一个新数组中。
+
+多维数组的快速打印可以使用Arrays.deepToString(array)方法
+
 ### for each循环
 必须是一个数组或一个实现Iterable接口的集合，才能使用foreach循环
-##
+
+## 对象与类
+面向对象的程序设计过程
+1. 识别类
+简单的将名词作为类，动词作为方法
+注：根据设计模式的解析，类的作用应该是封装变化，应将变化的部分作为一个类
+2. 绘制UML图确定类之间的关系
+### 使用jdk包中的类
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
