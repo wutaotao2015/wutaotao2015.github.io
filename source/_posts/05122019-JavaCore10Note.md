@@ -3,13 +3,14 @@ title: JavaCore10Note
 categories: Java
 tags:
   - Java
-  - Unicode
+  - Char with UTF-16
+  - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-23 17:50:35
+updated: 2019-05-24 17:50:31
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
-Java, Unicode, 
+Java, Char with UTF-16, C++, 数组，  
 <!-- more -->
 ## 安装java
 安装后将jdk安装目录/bin加入到path环境变量即可,不用设置其他。
@@ -297,13 +298,142 @@ System.out.println(Arrays.toString(c));
 ### for each循环
 必须是一个数组或一个实现Iterable接口的集合，才能使用foreach循环
 
+
 ## 对象与类
 面向对象的程序设计过程
 1. 识别类
 简单的将名词作为类，动词作为方法
 注：根据设计模式的解析，类的作用应该是封装变化，应将变化的部分作为一个类
 2. 绘制UML图确定类之间的关系
-### 使用jdk包中的类
+
+### 使用jdk包中预定义类
+1. 对象与对象变量
+java对象变量等同于C++中的对象指针
+C++对象拷贝可以在类的内部进行，但Java只能通过clone方法。
+
+2. 访问器方法和更改器方法
+Java更改器方法会修改类的对象状态，如set方法，而访问器方法不改变当前对象，如get方法。
+C++中访问器方法有const后缀，而java中没有语法区别。
+
+3. date
+jdk8引入了LocalDate类，可以操作时间
+常用api有now(),of(int year,int month,int day),getYear(),getMonthValue(),getDayOfMonth(),
+getDayOfWeek(),plusDays(),minusDays(),进一步用法在卷2里有。
+
+### 自定义类
+C++构造器可以省略new关键字正常运行，但Java不可以
+
+C++可以在类的外部定义方法，在类内部定义的方法自动成为内联方法（直接用方法体替换方法调用
+代码的操作为内联），Java方法是否内联需要由jvm决定，需要内联时首先方法必须为final修饰，
+即时编译器才会判断是否需要内联。
+
+LocalDate没有更改器方法，无法改变对象状态，Date有一个setTime方法，可以改变对象状态，
+实际上破坏了对象的封装性。如get方法返回Date对象，实际上可以拿到这个date引用对原对象状态
+进行改变从而带来危险。
+所以，访问器方法应避免返回一个可变对象的引用，若无法避免，应当clone后再返回，从而保护
+原对象的封装性。
+注：java.time.LocalDate是一个不可变的，线程安全的类。
+
+基于类的访问权限
+一个类的方法可以访问所属类的所有对象的私有属性，这在C++中同样适用。
+
+私有方法
+如果不想自己的方法被他人调用，应当将方法设置为private,这样当以后删除该方法时就不用担心
+有其他地方调用该方法了。
+
+### 静态域与静态方法
+静态域
+private static修饰一个域时，它也被称为类域，可以修改,但该域无法被其他类访问到(private)，
+用public static final修饰常量时，因为常量不可变（final控制），所以可以用public修饰供其他
+类使用，同时不用担心封装性被破坏。
+
+注：private限制的是访问范围，static限制的是类变量-无需实例化即可使用。
+
+静态方法
+静态方法可以认为是没有this参数的方法，有2种情况使用它
+1. 不需要对象状态，只需要显式参数。
+2. 只需要访问静态域的方法。
+注： C++使用::访问自身作用域之外的静态域和静态方法。
+C++与java中static关键字的意义是一样的：即属于类且不属于类对象的变量与函数。
+
+静态工厂优点
+1. 因为构造器必须与类名相同，静态工厂不受此限制，相当于带名字的构造器。
+2. 构造器没有返回值，它构造的对象类型就是当前类，静态工厂可以构造当前类的子类对象返回，
+更加灵活。
+
+### 方法参数
+值传递 call by value
+引用传递 call by reference
+java只有值传递，针对基本数据类型很好理解，被传的参数值无法被改变;针对对象引用类型，java
+会拷贝一份该对象的引用，该引用和原参数对象引用指向同一个对象，改变其中一个另外一个引用也受到
+了影响，从而实现了改变对象的目的。
+
+证明java是值传递-即拷贝了引用的值，而不是引用传递-传递对象地址的是如下代码：
+```txt
+public class A{
+  public void main(String[] args){
+    P a = new P(1);
+    P b = new P(2);
+    swap(a,b);     
+     //执行可以发现swap没有生效，因为swap内交换了拷贝的引用，对原来的a,b对象引用无影响
+    System.out.println(a.getId());
+    System.out.println(b.getId());
+  }  
+  public static void swap(P x, P y){
+     P tmp = x;
+     x = y;
+     y = tmp;
+  }
+}
+class P{
+  private int id;
+  ...
+}
+```
+从这个程序可以总结出下面这个关键的结论：
+**一个java方法不能让参数对象指向一个新的引用，它在方法内始终是以拷贝的形式存在的。**
+
+这一点从以下代码片段看的更清楚：
+```txt
+public class A{
+  public void main(String[] args){
+    P a = new P(1);
+    newP(a);
+    System.out.println(a.getId());  //还是打印1
+  }  
+  public static void newP(P x){
+    x = new P(888);    // 对传递进来的a对象无影响
+  }
+}
+class P{
+  private int id;
+  ...
+}
+```
+1. 方法无法改变基本类型的参数对象。
+2. 方法可以改变引用类型对象的状态。
+3. 方法无法将引用类型参数对象指向一个新的引用。
+
+注：C++有值传递和引用传递，引用参数使用&来进行标识。
+
+### 对象构造
+重载
+方法签名不能重复，它包括方法名和参数类型，返回值不是签名的一部分
+
+域初始化
+java可以直接初始化各个域，C++不行，C++只能在构造器中对域进行设值，但它有特殊语法连续调用
+多个构造器。
+
+参数名
+C++通常对实例域加上特定的前缀_,x,m等，java没有。
+
+
+### 包
+### 类路径
+### 文档注释
+### 类设计技巧
+
+## 继承 
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
