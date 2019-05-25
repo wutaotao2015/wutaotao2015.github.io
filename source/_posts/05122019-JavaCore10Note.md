@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-25 11:10:58
+updated: 2019-05-25 11:41:07
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -456,6 +456,7 @@ finalize方法会在垃圾回收器清除对象前被调用，但无法确定时
 由此可知，同私有方法一样，如果不想外界调用该类，可以将其设置为私有类，仅供同包的其他类使用。
 这种情况该私有类一般作为内部类。
 
+test from mac ubantu clone
 
 ### 类路径
 ### 文档注释
