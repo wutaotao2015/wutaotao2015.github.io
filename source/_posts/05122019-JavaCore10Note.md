@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-25 11:41:07
+updated: 2019-05-26 22:38:45
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -456,9 +456,64 @@ finalize方法会在垃圾回收器清除对象前被调用，但无法确定时
 由此可知，同私有方法一样，如果不想外界调用该类，可以将其设置为私有类，仅供同包的其他类使用。
 这种情况该私有类一般作为内部类。
 
-test from mac ubantu clone
+静态导入
+import是导入一个类，import static可以导入静态方法和静态域，如使用
+`import static java.lang.System.*`之后可以将
+`System.out.println(...)`直接写为`out.println(...)`
+
+不过实际这样写不好理解，可以针对特定类使用，如
+`sqrt(pow(x,2) + pow(y,2))`比
+`Math.sqrt(Math.pow(x,2) + Math.pow(y,2))`要清晰很多。
+
+编译器不会检查目录结构，即如果package声明错误，如果该类没有依赖其他包，编译不会报错，
+有的程序可以正常执行...
+
+类或域如果没有public，private修饰，默认是同一个包内的方法可以访问到（default).
+而默认情况下，包是可见的，即任何人都可以向一个包中添加更多的类，如在自定义的类中修改
+package声明，并将该类放置在对应目录下即可访问目标包中的其他类。
+
+jdk本身由于修改了类加载器，禁止加载用户自定义的，包名以java.开始的包来达到安全防范的目的，
+但用户自己的包没有这个特性，不过可以通过包密封(package sealing)机制来解决这个问题。
+包被密封之后，就不能再向这个包中添加类了。
+
+可以使用jdk自带的jar工具来生成自己需要的jar包。可以使用如下命令来指定Manifest文件：
+先新建一个名为manifest.txt的文件，内容可以为
+`Sealed: true
+` // 需要一个回车才能生效
+然后执行命令
+`jar cvfm  XXX.jar .\manifest.txt .`(可以查看jar --help)
+
+而jar包是否密封可以通过Manifest中的`Sealed: true`进行配置，可以指定多个包或整个jar包
+进行密封，如果包密封后发现有相同包在不同类中的情况出现，会抛出sealing violation异常。
+主要有以下2种情况：
+
+(在URLClassLoader类的源码中可以看见)
+1. 一个包已经类加载器加载并密封，后面又尝试加载一个其他jar包中的相同包时触发安全异常,报错
+sealing violation: package is sealed.
+2. 一个包已经被类加载器加载但并未密封，后面尝试加载一个有密封要求的jar包的同名包时，触发
+安全异常，报错sealing violation: already loaded.
+
+这样，包密封增强了版本的一致性和安全性。
+
+[密封性测试代码地址](https://dev.tencent.com/u/wutaotao/p/mybatis-demo/git/tree/master/self-stuff/src/main/java/com)
+测试时先将Test1,Test2打成jar包(注意检查生成的jar包的包目录结构和MANIFEST.MF文件内容)，
+然后注释掉相应代码，运行TestSealException类来进行测试，因为类加载后无法卸载，所有需要
+一个个案例单独测试。
+结论在代码中已指出：
+1. sealing violation: package is sealed.
+2. sealing violation: already loaded.
+3. sealed package不包括被密封的父类包
+3. sealed package不包括被密封的子类包
+
 
 ### 类路径
+
+
+注：java -jar运行jar包时会屏蔽环境变量和命令行中的classpath，可以使用
+1. -Xbootclasspath/a: 后缀。将classpath添加在核心class搜索路径后面。常用!!
+2. 在jar包内的MANIFEST.MF文件中添加`Class-Path: XXX.jar`,路径为该jar包对当前jar包的
+相对路径。
+
 ### 文档注释
 ### 类设计技巧
 
