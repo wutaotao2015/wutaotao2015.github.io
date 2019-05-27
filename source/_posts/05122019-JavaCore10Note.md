@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-27 18:00:58
+updated: 2019-05-27 22:22:29
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -588,7 +588,26 @@ Manager::Manager(String name,int salary)
 动态绑定： 运行时能自动选择调用哪个方法的现象叫动态绑定。
 注： java中动态绑定是默认行为，不用声明为虚拟方法(C++中需要),可以声明为final来取消虚拟特征。
 
-
+子类和父类数组转换问题
+有如下代码:
+```txt
+class Parent{
+} 
+class Child extend Parent{
+} 
+public class Test {
+ public static void main(String[] args) {
+     
+   Child[] cs = new Child[];
+   Parent[] ps = cs;   // 子类元素数组向上转型为父类元素
+   ps[0] = new Parent();
+ }
+}
+```
+如上代码编译成功，但运行时报错java.lang.ArrayStoreException,因为ps[0]和cs[0]指向的是
+同一个对象，ps[0] = new Parent()就相当于cs[0] = new Parent(),父类转化为子类，从而引起
+了数组存储异常。因编译器无法检查出这个问题，所以当使用数组时，需要牢记它的元素类型，只
+向其中存储能够转化为该元素类型的元素。
 
 ## 接口，lambda表达式，内部类
 
