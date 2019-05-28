@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-27 22:22:29
+updated: 2019-05-28 17:47:03
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -608,6 +608,132 @@ public class Test {
 同一个对象，ps[0] = new Parent()就相当于cs[0] = new Parent(),父类转化为子类，从而引起
 了数组存储异常。因编译器无法检查出这个问题，所以当使用数组时，需要牢记它的元素类型，只
 向其中存储能够转化为该元素类型的元素。
+
+对象调用过程x.f(args)
+1. 查找对象x类型和方法名f
+2. 重载解析(子类重写方法返回值可以为父类方法的子类型，称为具有可协变的返回值类型，同时
+重写的子类方法的可见性(public,private等)不能低于父类方法.
+
+经测试，父类私有(private)的方法不能被重写(破坏了封装性),其他default,protected,public可以
+被重写，如果子类的可见性更低，如父类是protected,子类是private,那么根据替换原则(子类可以替代
+所有父类对象出现的地方)子类可见性更低可能会导致原代码无法访问的情况，所以重写的方法需要
+可见性更强来避免这个问题，这种情况编译器会报错：attempting to assign weaker access privileges.)
+这样看，public access privilege is strongest.
+
+3. 如果方法是private, static,final修饰或构造器，则编译器可以准确找到需要调用的方法，这
+称为静态绑定，相反，调用方法依赖于对象x的实际类型称为动态绑定(多态)。
+4. 动态绑定时，会从最接近x实际类型的方法开始匹配，如子类无该方法，会在它的父类去查找，
+依次类推。
+
+为了加快方法查找过程，虚拟机会为每个类生成一个方法表，列出它的所有方法(包含继承自父类的
+方法)。即在查找需要调用的方法时，虚拟机根据实际对象类型调出对应类的方法表，在该表中查找
+对应的方法并进行调用即可。
+
+阻止继承：final类
+使用final修饰的类无法被继承(public final class A{}),
+使用final修饰的方法无法被重写(public final void B(){}),
+由于final类无法被继承，它里面的方法都是final方法，没有子类，没有重写,final修饰符不用
+写明。但是它的域没有自动变为final，实例化后还是可以改变值的。
+(经测试，声明域为final后，编译器会检查是否有赋予初始值，可以在域声明后赋予初始值，也可以
+在无参构造器中赋值，只在有参构造器中赋值无效，同时如果有对该域的set方法存在，编译器同样
+会报错: cannot assign value to final variable)
+
+注：C++和C#中，所有方法默认都没有多态性，相当于默认全都加了final修饰，无法被重写。
+
+早期的时候，使用final修饰一个方法，编译器检测到该方法没有被覆盖并且很简短，编译器就会对它
+进行内联处理。
+现在即时编译器处理能力强很多，如果方法简短，频繁被调用并且没有被覆盖，它会自动进行内联处理，
+如果虚拟机加载了另一个类，它有覆盖该内联的方法，虚拟机又会取消内联。
+
+向下转型
+父类对象可以强制转换为子类对象，如果转换不成功，会抛出ClassCastException.
+应养成判断的习惯(if xxx instanceof yyy)
+另外，如果强转类型不是子类，编译器会报错。
+注： null instanceof XXX 是false,不会产生空指针异常
+注2： 如果碰到需要强制转型的情况，应考虑父类的设计是否合理。
+注3： 强制转型类似于C++中的`dynamic_cast`操作，只是如果转换失败，它不会抛出异常，而是生成
+一个null对象。类型测试和转换代码如下：
+```txt
+Child* ch = dynamic_cast<Parent*>(pa);
+if (ch != null) {...}
+```
+
+抽象类
+有一个或多个抽象方法的类必须被声明为抽象类。
+反过来，抽象类中可以没有抽象方法。
+抽象类无法被实例化，但可以作为变量引用非抽象子类的实例。
+注：C++中用尾部 = 0的方式来标记一个抽象方法，称为纯虚函数。
+有纯虚函数即为抽象类，C++中没有抽象类的关键字。
+
+受保护访问
+protected访问范围是所有子类以及同包的其他类，这与C++的保护机制不同。
+protected域由于可以被子类直接访问到，变动父类时需要通知子类，违反了封装性。protected方法
+适用性强一点。
+
+Object
+Object是所有类的超类，包括基本数据类型和引用类型的数组！如`Object obj = new int[3];`
+只有基本类型(数值，字符，布尔)不是对象——通过自动装箱技术它们会转成对应的包装类。
+注：C++没有超类，但指针都可以转成`void*`.
+
+equals方法
+Object的equals方法只有一句`return this==obj`,它只比较2个对象的地址。
+如果想要调用this或obj的equals方法进行自定义比较，可以使用`java.util.Objects`(jdk7引入)的
+equals方法`return （a == b) || (a != null && a.equals(b))`.
+
+(经测试，如Child类继承Parent类，则
+```txt
+Child ch = new Child();
+if (ch instanceof Parent) {...}  // 表达式为true
+```
+即instanceof是检测对象是否是后者的实例或子类实例，在equals方法中检验2个对象的类型是否相同，
+以前是使用instanceof来进行检验，但根据equals要求的对称性(x.equals(y)与y.equals(x)结果相同)
+, 当parent.equals(child)为真时，child.equals(parent)也为真，这样就使得Child类中的equals方法
+无法对Child类扩展的域进行检验的问题，这个问题本质还是出在instanceof关键字允许子类也为真的
+情况上。
+针对这个问题，有2种情况，一个是子类的扩展域不影响相等性，即不进入比较的话，可以使用
+instanceof关键字，另一个是如果扩展域也需要比较的话，就不能使用instanceof关键字，可以使用
+getClass()来明确指定类必须相同;所以如果一个类的equals方法使用了instanceof关键字，那么
+它的子类重写equals方法就几乎没有意义了，因为如果它比较了扩展域，就违反了对称性原则，所以
+一般应该将instanceof与final修饰符配合使用，反之则使用getClass()方法)
+
+注：该问题具体案例可见jdk源码中的
+```txt
+父类： java.util.Date  其中的equals(Object obj)方法使用了instanceof
+子类： java.sql.Timestamp  其中equals(Object obj)方法中注释指明了这一点
+"Note: This method is not symmetric with respect to the equals method in the base class"
+```
+注：equals方法应满足自反性，对称性，传递性，一致性。
+
+完美equals方法建议:方法签名为equals(Object otherObject)
+1. if (this == otherObject) return true; 是否是同一个对象
+2. if (otherObject == null) return false; 是否为null
+3. if (getClass() != otherObject.getClass()) return false; // 不用instanceof
+或 if(!(otherObject instanceof  ClassName)) return false;
+   // 建议方法更改为final，final可以与@Override共存
+4. 若使用了instanceof，将其强制转换类型
+5. return 各个域的比较结果，基本类型使用==，引用类型使用java.util.Objects的equals方法，
+它可以进行null值判断和调用域自身的equals方法，数组类型使用Arrays.equals方法。
+
+hashCode方法
+Object的hashCode方法默认是对象的存储地址。
+一般来说：
+1. 将对象放入容器中，需要重写equals方法，可以通过比较对象内容来进行判定业务上对象相等。
+2. 将对象放入散列表中(如HashMap,HashSet等),需要重写hashCode方法，以保证equals相等的2个
+对象在散列表中对应着同一个键！
+3. 将对象放入有序列表中，需要实现Comparable接口，重写compareTo(T o)方法，或者自定义一个外部
+比较器Comparator,重写compare(T o1, T o2)方法。
+
+针对多个域的hashCode计算可以调用java.util.Objects.hashCode(Object... values)方法，其中有
+对null值的处理。
+如上面总结的一样，equals方法返回true时，hashCode方法也必须返回true.
+具体表现为equals处理的域必须出现在hashCode方法中。
+注： 数组类型的域可以使用Arrays.hashCode方法。
+
+toString方法
+查看Object的toString源码可见toString方法为
+`return getClass().getName() + "@" + Integer.toHexString(hashCode());`
+可以看出对象默认输出的是类名+哈希码的16进制表示，数组也是Object类型，
+只不过它前面的类名比较特别，如[I表示的是整型数组，[Lcom.demo.Test;@XXX表示的是对象Test数组
 
 ## 接口，lambda表达式，内部类
 
