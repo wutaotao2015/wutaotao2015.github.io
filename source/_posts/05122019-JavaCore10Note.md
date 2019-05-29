@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-28 17:47:03
+updated: 2019-05-29 17:46:40
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -734,6 +734,170 @@ toString方法
 `return getClass().getName() + "@" + Integer.toHexString(hashCode());`
 可以看出对象默认输出的是类名+哈希码的16进制表示，数组也是Object类型，
 只不过它前面的类名比较特别，如[I表示的是整型数组，[Lcom.demo.Test;@XXX表示的是对象Test数组
+
+泛型数组列表-ArrayList
+java5以后提供了泛型，使用时可以省略右边的泛型参数
+`ArrayList<String> list = new ArrayList<>(100);`
+ArrayList默认大小是10。
+注：arraylist类似于C++中的vector,vector可以使用[]来访问元素，因为它重载了[]运算符，
+另外vector a = b;语句会重新拷贝一个vector赋给a,而ArrayList a = b;只是让a,b指向同一个
+引用。
+
+arraylist使用add,set,get方法来对元素进行控制，某些情况下转换成数组更加方便：
+```txt
+ArrayList<P> list = new ArrayList<>();
+list.add(new P(1));
+list.add(new P(2));
+
+P[] pa = new P[list.size()];
+list.toArray(pa);
+```
+
+泛型仅在编译时有效，编译成的字节码中没有任何泛型参数，即类型擦除。
+这个特性会造成以下问题：
+1. 泛型重载无效(编译报错)，
+2. 泛型类中静态域共享(不同泛型类对应同一个类),
+3. 捕捉异常catch语句内泛型参数无效(java运行时处理异常)
+
+自动装箱
+所有的对象包装器类都是不可变，无法继承(final)的。
+通过反编译代码`Integer a = 100`编译后的字节码，可以发现对于自动装箱，编译器会自动调用
+`Integer.valueOf(100)`方法，同理自动调用`i.intValue()`方法。
+即自动装箱和泛型参数一样，属于编译器层面的操作，与虚拟机无关，可以看作语法糖。
+
+自动装箱规范要求boolean,byte,char<=127, short and int between -128 to 127这之间的数值
+被包装到固定的对象中，所有有以下代码：
+```txt
+Integer a = 100;
+Integer b = 100;
+Integer c = 1000;
+Integer d = 1000;
+System.out.println(a == b); // true: same wrapping objects
+System.out.println(c == d);  // false: different wrapping objects
+Character e = (char)128;
+Character f = (char)128;
+System.out.println(e == f);  // false: different wrapping objects
+Character g = (char)127;
+Character h = (char)127;
+System.out.println(g == h); // true: same wrapping objects
+```
+
+自动装箱在运算符中也能自动进行：
+```txt
+Integer i = 10;
+i++;
+```
+包装器内还包含了如`int i = Integer.parseInt(string)`这样对于不同类型间转换的静态方法。
+
+注：包装器是不可变的，所以方法参数值传递也无法通过包装器对象来改变值，可以使用如IntHolder
+类（jdk自带）来变更基本类型的值，它的域value是public访问权限，这样通过改变参数对象状态来
+改变基本类型值。
+
+可变参数
+可变参数也是编译器层面的语法糖，它将实际传入的多个参数转化为对应的数组。
+反过来，如果原来代码的最后一个参数是数组类型，就可以将它变为可变参数，这样对生成的字节码
+文件没有任何变化。如`public static void main(String[] args){}`可变为`public static void
+main(String... args){}`.
+
+枚举
+枚举也是编译器层面的语法糖，它将枚举类编译成一个继承了Enum类的final类。
+```txt
+enum Size{
+
+  SMALL("s"), MEDIUM("m"), LARGE("l"); // 调用构造器创建多个枚举实例
+
+  private String abbr;   // 自定义域
+  private Size(String abbr){//私有构造器
+     this.abbr = abbr;
+  }  
+  public String getAbbr(){return abbr;}
+}
+```
+编译后使用`javap Size.class`进行反编译可以看到生成的枚举类。
+上面例子中S,M,L都是Size类的public static final实例，
+可以使用`Size size = Size.S`直接得到一个枚举值。
+`size.toString()`得到枚举常量名，`Size s = Enum.valueOf(Size.class, "S");`可以通过字符串
+得到枚举值。`Size.values()`返回一个包含所有枚举值的数组，(Enum类中的valueOf与枚举类中参数
+不同，并且Enum也没有values方法，它们应该是编译器自动添加的),Enum和枚举类都有ordinal()方法
+返回枚举的索引值，从0开始。compareTo方法比较的即为2个枚举的索引大小。
+
+反射
+获取class对象
+1. object.getClass();
+2. Class.forName("XXX");
+3. T.class (如Random.class, int.class, Double[].class)
+Class类实际是一个泛型类，如String.class类型为`Class<String>`，大多数时候可以忽略这个泛型
+参数，直接使用原始class类。
+可以使用==来比较2个class对象是否相同，使用`Class.forName("XXX").newInstance()`来根据字符串
+调用无参构造器得到一个对象。(调用有参构造器需要Constructor类)
+```txt
+class P{
+  private int id;
+  public P(int id){this.id = id;}
+  public int getId(){return id;}
+}
+public class Test{
+ public static void main(String[] args) {
+   Class pc = P.class;
+   try{
+     Constructor con = pc.getConstructor(int.class);  // 获取构造器，带上参数类型
+     P p = con.newInstance(667);  // 调用有参构造器
+     System.out.println(p.getId());
+   }catch(Exception e){
+     e.printStackTrace();
+   }
+ } 
+}
+```
+
+捕获异常
+异常分2种，已检查异常(需要使用try-catch捕获)和未检查异常(如空指针等)
+对于已检查异常，如果没有进行捕获，编译器会报错：unhandled exception.
+
+利用反射分析类
+Class类的getFields,getMethods,getConstructors方法返回类提供的公有域，方法，构造器(fields和
+methods会包含父类的公共域和方法，构造器只会显示本类构造器，另外不会显示未写明的默认无参构造器),
+getDeclaredFields,...Methods,...Constrcutors方法会返回类声明的所有域，方法和构造器，包括
+私有和保护成员(它们都只针对本类，不包括父类信息)。
+(getDeclaredFields如果class是基本类型或数组类型，或者没有任何域，它将返回一个长度为0的数组。)
+
+Field, Method, Constructor常用方法
+all.getName(), 
+F.getType(),
+M&C.getParameterTypes(),
+M.getReturnType(),
+all.getModifiers()    // 返回int值以指示修饰符
+
+注：使用Modifier.toString(int i)可以获得修饰符的字符串表示。
+Modifier.isFinal(int i)可以判断修饰符是否是final，其他方法同理。
+
+利用反射分析对象
+对于编译时无法确定域值的对象(如外界传递过来的参数对象)可以利用反射得到它的域值。
+```txt
+class C{
+ private int bonus;
+ public C(int bonus) {this.bonus = bonus;}
+}
+public class Test{
+ public static void main(String[] args){
+   C c = new C(1000);
+   Field[] fields = c.getDeclaredFields();
+   for(Field f : fields) {
+     System.out.println(f.get(c)); //编译器报错unhandled exception:IllegalAccessException
+   }
+ }
+}
+```
+因为bonus是私有的，所以无法直接访问，即反射受到访问权限限制。
+这时需要调用Field,Method,Constructor共同父类AccessibleObject中的一个方法
+`setAccessible(true)`
+来解除限制。这里f.get(c)返回的是object类型，进行了自动装箱，如果想返回int，
+可以使用getInt()方法，同理getDouble()等。
+
+
+
+
+
 
 ## 接口，lambda表达式，内部类
 
