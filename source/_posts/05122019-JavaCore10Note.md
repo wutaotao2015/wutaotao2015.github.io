@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-29 17:46:40
+updated: 2019-05-30 17:51:54
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -894,12 +894,106 @@ public class Test{
 来解除限制。这里f.get(c)返回的是object类型，进行了自动装箱，如果想返回int，
 可以使用getInt()方法，同理getDouble()等。
 
+ObjectAnalyzer程序分析：
+class.isArray()  判断class类型是否是数组
+class.isPrimitive()   判断class类型是否是基本类型：
+   boolean,character,byte,short,integer,long,float,double,void(java.lang.Void) 
+class.getComponentType()  返回数组元素类型，如果不是数组class返回null
 
+Array.getLength()   java.reflect.Array类中的方法，返回数组长度
+Array.get(Object, int) java.reflect.Array类中的方法，返回数组中第i个元素值
+AccessibleObject.setAccessible(AccessibleObject[], boolean) 对AccessibleObject数组统一赋予
+   访问权限，其子类包括Constructor, Field, Method
+Modifier.isStatic()  判断是否是static修饰符，程序中不打印静态域
+field.getType()  获取域类型，程序中判断是否是基本类型
+field.get(Object) 获取域的值对象
+field.set(Object classObj, Object newvalue)  使用新值替换object中的当前域
 
+class.getSuperclass()  获取当前class类的父类 
 
+注：程序执行是先打印本类的非静态域类型和值，然后是逐层向上，查看父类的非静态域值，所以可以
+看到每个类后都至少有一个[](java.lang.Object类无域);
+同时可以看到它把ArrayList的初始值10个后面未用到的null值元素都打印出来了;
+实现循环引用很简单，在类中定义一个自身的实例指向this即可:
+```txt
+class C{
+ private C c = this;
+}
+```
 
+使用反射编写泛型数组
+使用`System.arrayCopy(oldArray, startIdx, newArray, startIdx, length)`来扩充数组时，在编写
+泛型化时，由于Object[]无法强转为具体的数组类型，所以需要通过java.reflect.Array来获取具体的
+数组元素类型并进行初始化，主要用到以下三个方法：
+```txt
+class.isArray()  判断class类型是否是数组
+class.getComponentType()  返回数组元素类型，如果不是数组class返回null
+Array.getLength()   java.reflect.Array类中的方法，返回数组长度
+Array.newInstance(Class componentType, int length)  元素类型和数组长度(一维) 
+Array.newInstance(Class componentType, int... dimensions)  元素类型和数组长度(多维) 
+```
+newInstance方法可以让我们动态的创建一个与原数组相同类型的空数组，这样再使用System.arrayCopy()
+方法即可以获得一个可以进行强转的数组了。
+(基本类型数组拷贝需要方法的参数和返回值为Object,因为如int[]可以转成Object,无法转成Object[]，
+反过来这样Object也可以强转为int[])
+
+方法指针
+可以通过
+`class.getMethod(String methodName, Class... parameterTypes)`
+指定方法名和参数类型列表(完整方法签名区别重载)来获得方法指针，再通过
+`method.invoke(Object implicitObject, Object... parameters)`
+指定调用的隐式和显式参数来调用该方法。
+通过invoke方法进行回调比直接调用速度要慢一些，所以一般不推荐使用，建议使用接口或lambda表达式。
+
+继承设计技巧
+1. 公共操作和域放在超类中
+2. 不要使用protected域
+   protected域子类和同包类都能访问，破坏了封装性。
+   protected方法适用于不能作为公共public接口，同时需要在子类中重新定义的方法
+   (default只有同包可见，经测试在其他包中定义的子类无法重写父类方法，同理父类private方法
+   子类不可见，也不可重写，由此可见，是否能重写受到被重写方法能否被子类访问的限制，不一定
+   是这个原因，但可以这样记忆)。
+
+   注：static是静态绑定，重写多态是动态绑定，运行时确定，所以static方法不能被重写。
+
+3. 继承是is-a关系，不是的情况应不使用继承。
+4. 除非继承的所有方法都有意义，否则就不应使用继承。 
+5. 覆盖方法时不要偏离该方法最初的设计目的，预期行为。 
+6. 如果代码有对于不同类型的判断并进行相同概念的行为，应使用多态或接口实现。
+7. 不要过多使用反射，因为编译器难以发现错误。
 
 ## 接口，lambda表达式，内部类
+### 接口
+接口中的方法默认public，所以重写接口方法时必须为public(重写访问限制)
+接口没有实例域，
+jdk8之后可以实现简单方法。
+
+如实现`Comparable<T>`接口，重写compareTo(T t)方法。
+因为Arrays.sort(Object[] obj)源码实现中进行了Comparable强转并使用compareTo方法，
+所以如果obj中元素类型没有实现Comparable接口，会在运行中报错ClassCastException，而关于这点，
+编译器并不会给出报错信息。
+注：compareTo方法与equals方法一样，关于继承重写有对称性的问题(x.compareTo(y) < 0则
+y.compareTo(x) > 0)，解决方法也类似，分2种情况：
+1. 比较时涉及到子类属性时，应使用getClass()方法进行类型判断，类型相同才进行比较，否则抛出
+类型转换异常。
+2. 比较时不涉及子类的属性，应在父类中定义compareTo方法并定义为final.
+(经测试情况2,父类实现了泛型的Comparable接口，子类就不能实现自己的泛型了，编译器报错，因为
+泛型是可擦除的。这样在对子类数组进行排序后，虽然实现了排序，但其中的元素都自动
+向上转型为父类类型了...不过比较不同的子对象以进行排序，这样也不算太大副作用)
+
+接口特性
+同抽象类一样，不能使用new运算符实例化一个接口。
+
+
+
+
+
+### 接口示例
+### lambda表达式 
+### 内部类
+### 代理
+
+## 异常，断言和日志
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
