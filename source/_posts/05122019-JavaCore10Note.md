@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-05-31 18:04:54
+updated: 2019-06-02 22:23:44
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1141,8 +1141,37 @@ public class Test{
 }
 ```
 
+注： 如何在jdk8以前的版本中实现函数式编程？这时无法用λ表达式来传递计算函数，还是使用具体
+对象来实现，代码如下:
+```txt
+interface Inter{     // 函数式接口不可少，定义操作数和返回值
+    int oper(int x, int y);
+}
+public class TestLambda {
+    public static void main(String[] args) {
+        // 传递具体的对象来调用自定义的操作
+        f(new InterClass(), 4,5);    
+    }
+    private static void f(Inter inter, int x, int y) {  // 接收函数表达式的方法
+        System.out.println(inter.oper(x,y));
+    }
+
+}
+class InterClass implements Inter{   // 定义函数接口实现类以符合参数，返回值的约束
+    @Override
+    public int oper(int x, int y) {
+        return x + y;
+    }
+}
+```
+可以看到，在不使用λ表达式时，需要多定义一个接口实现类和初始化一个实现类对象，此方法适用于
+jdk8以前需要函数式编程的功能。
+
+
 方法引用
 如果λ表达式定义的处理逻辑已经有某个方法定义了，可以使用该方法来替代λ表达式，即方法引用。
+方法引用即为简化的λ表达式。
+
 它分3种情况：
 1. object.instanceMethod   如System.out::println  out是静态对象，println是实例方法
 2. Class.staticMethod      如Math::max
@@ -1176,9 +1205,319 @@ public class Test{
  }
 }
 ```
+在方法引用的第一种情况对象引用中，可以使用this和super关键字。
 
+
+构造器引用
+构造器引用即方法为new的方法引用，快捷调用某个类的构造器。如String::new,本质上说，它还是
+方法引用，即λ表达式。
+新建一个对象的λ表达式，这决定了构造器引用的用途不是非常广，只有需要批量初始化的时候(如
+stream流中)可以简化写法。
+
+数组也可以使用构造器引用，如int[]::new，这个表达式需要的唯一参数为数组的长度。利用这一点
+可以让工具类绕过java的限制创建泛型数组，代码如下：
+```txt
+public class Test2 {
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        // 常见方法，直接创建数组即可，这个例子里也是最快的
+        // Integer[] integers = new Integer[list.size()];
+
+        // 使用数组构造器引用。Function和BiFunction函数接口变量可以接收λ表达式，
+        // 通过调用其apply方法将参数应用到表达式中得到计算结果，这里返回值即为需要的数组
+        // Function<Integer, Integer[]> function = Integer[]::new;
+        // Integer[] integers = function.apply(list.size());
+
+        // 调用支持泛型方法，传递数组构造器引用，元素类型，数组大小即可。 
+        // 这里是大费周张了，但价值在于调用的泛型方法中
+        Integer[] integers = newTArray(Integer[]::new, Integer.class, list.size());
+
+        list.toArray(integers);
+        System.out.println(Arrays.toString(integers));
+    }
+
+ // 绕过了java不能创建T[]的限制，可以在其中进行需要的通用数组处理。这里创建后就直接返回了
+    private static <T> T[] newTArray(Function<Integer, T[]> f, Class T, Integer size) {
+        T[] genericArray = f.apply(size);
+        //  do something with genericArray
+        return genericArray;
+    }
+}
+```
+
+变量作用域
+λ表达式就是闭包。
+λ表达式实际由3部分组成：
+1. 参数
+2. 表达式代码块
+3. 自由变量——即λ表达式外的变量，既不是参数也不是代码块中定义的变量。
+
+λ表达式引用的自由变量必须是最终变量(final)或实际上的最终变量(effectively final)。
+即事实上的final变量。
+最佳实践： 应将使用到的自由变量都用final修饰。
+
+因为自由变量如果可以被改变，当λ表达式并发执行时，会产生问题(具体问题卷2有)。
+
+λ表达式的作用域与它所有的代码块是相同的，即λ表达式的参数和局部变量不能与所在代码块的变量
+冲突，如
+```txt
+int x = 3;
+Function<Integer, Integer> f = x -> x * x; 
+//error: variable x is already defined in the scope
+```
+λ表达式中this是指λ表达式所在方法的所属类，与它的返回值没有关系。如
+```txt
+package com.test;
+
+public class Test2() {
+ public static void main(String[] args){
+   new Test2().go(1000); 
+   JOptionPane.showMessageDialog(null, "stop");
+   System.exit(0);
+ }
+ private void go(int delay){
+  ActionListener listener = e -> {
+    System.out.println(this);  // will print com.test.Test2@XXXX  
+  }  
+  new Timer(delay, listener).start();  // java.swing.Timer
+ }  
+}
+```
+
+处理λ表达式
+λ表达式重点在于延后执行(deferred execution),可以控制代码的运行时间，条件，线程等。
+
+jdk提供了很多函数式接口的模板，可以根据λ表达式的参数和返回值个数和类型直接使用：
+```txt
+1. Runnable       void run()  适合无参数，无返回值的λ表达式，单纯的方法本身与线程无关
+2. Supplier<T>    T get()              无参数, 返回T
+3. Consumer<T>    void accept(T)       1个参数，无返回
+4. BiConsumer<T,U>  void accept(T,U)  2个参数，无返回
+5. Function<T,R>      R  apply(T)     1个参数，返回R
+6. BiFunction<T,U,R>  R apply(T,U)    2个参数，返回R
+下面是上面接口的特例
+7. UnaryOperator<T>   T apply(T)   Function<T,T>的子类，参数和返回值是相同类型
+8. BinaryOperator<T>  T apply(T,T) BiFunction<T,T,T>的子类，参数和返回值是相同类型
+9. Predicate<T>      boolean test(T)   1个参数,返回boolean值
+10. BiPredicate<T,U>  boolean test(T,U)  2个参数，返回boolean值
+```
+对于基本类型int,long,double,jdk为了省去自动装箱的开销提供了一些专门的函数式接口，如
+IntConsumer等。
+这些接口有一些默认方法，提供了如级联调用，返回相同方法等功能。
+如consumer.andThen(Consumer after)返回的是一个lambda表达式
+`(T t) -> {accept(t), after.accept(t);}`,
+该表达式只有一个参数，调用了2个accept方法，无返回值，其本身也是一个Consumer类型，
+需要执行该表达式时，也是调用其accept方法，代码如下：
+```txt
+public class Test{
+ public static void main(String[] args) {
+   Consumer<Integer> first = System.out::println;  
+   Consumer<Integer> second = System.out::println;
+   first.andThen(second).accept(666);   // output 666 twice   
+ } 
+}
+```
+
+再谈Comparator
+Comparator是一个常用的比较器和函数式接口。抽象方法为`int compare(T o1, T o2);`,可以通过
+多种方式得到自己需要的Comparator比较器，如Person类对象按域name长度排序：
+```txt
+public class TestPerson {
+    public static void main(String[] args) {
+
+        Person[] ps = new Person[]{new Person("wtt"), new Person("wttsan"), new Person("wt")};
+        System.out.println(Arrays.toString(ps));
+
+        // 直接自己想要的比较方式，idea会给出提示可以使用comparing
+        // Comparator<Person> comparator =
+        //         (Person p1, Person p2) -> p1.getName().length() - p2.getName().length();
+
+        // comparing有多个变体，主要参数为keyextractor,即需要比较的键的function,这里后面
+        // 一个参数为键本身的比较器，即字符串长度
+        // Comparator<Person> comparator = Comparator.comparing(Person::getName,
+        //         (x,y) -> x.length() - y.length());
+
+        // 最终结果是比较int值大小，可以提取到外面，使用comparingInt,参数为ToIntFunction,
+        // 需要传递返回值为int,只有一个参数的function.此方法最为简洁。
+        Comparator<Person> comparator = Comparator.comparingInt(p -> p.getName().length());
+        Arrays.sort(ps, comparator);
+        System.out.println(Arrays.toString(ps));
+    }
+}
+class Person{
+    private String name;
+
+    public Person(){}
+    public Person(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+同consumer.andThen(Consumer con)一样，Comparator有thenComparing方法实现级联调用，目的是
+第一个比较器比较结果为相等时可以调用第二个比较器继续比较：
+```txt
+public class TestPerson {
+    public static void main(String[] args) {
+        Person[] ps = new Person[]{
+          new Person("wtt", 5), new Person("wttsan",1), new Person("cll",3)};
+        System.out.println(Arrays.toString(ps));
+
+        // 第一个p的参数类型Person不可少，应是λ表达式无法推断出来，anyway,最好是
+        // 指明参数类型
+        Comparator<Person> comparator = Comparator.comparingInt(
+         (Person p) -> p.getName().length()).thenComparingInt(p -> p.getId());
+
+        Arrays.sort(ps, comparator);
+        System.out.println(Arrays.toString(ps));
+    }
+}
+class Person{
+    private String name;
+    private int id;
+
+    public Person(){}
+
+    public Person(String name, int id) {
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+}
+```
+如果比较的键函数可以返回null,可以使用Comparator.nullsFirst()或nullsLast来对null值进行排序。
 
 ### 内部类
+使用内部类的三个原因：
+1. 可以访问类定义所在作用域中的数据，包括私有数据。
+2. 内部类可以对同包的其他类隐藏
+3. 使用匿名内部类可以快捷定义回调函数。
+注： C++有嵌套类，它只是类之间的关系，对象之间没有关系。命名控制和访问控制同java相似，但
+java内部类对象有一个指向外部类对象的隐式指针，可以访问其全部状态。static内部类没有该指针。
+
+```txt
+public class TimerTest{
+    public static void main(String[] args) {
+
+        TimerClock timerClock = new TimerClock(1000, false);
+        timerClock.start();
+
+        // 当内部类为public时，可以在外界使用outerObject.new InnerClass(xxx)创建内部类对象
+        // 使用OuterClass.InnerClass来引用内部类对象
+        // 内部类为private时，无法在外界创建对象
+        // TimerClock.TimePrinter timePrinter = timerClock.new TimePrinter();
+
+        JOptionPane.showMessageDialog(null, "Quit program?");
+        System.exit(0);
+    }
+}
+class TimerClock {
+    private int interval;
+    private boolean beep;
+
+    public TimerClock(int interval, boolean beep) {
+        this.interval = interval;
+        this.beep = beep;
+    }
+
+    public void start() {
+      // 创建内部类对象的规范写法，因为在作用域内，也可以直接new
+        ActionListener listener = this.new TimePrinter();
+        Timer t = new Timer(interval, listener);
+        t.start();
+    }
+    // 只有内部类可以作为private类，其他类只能为default或public
+    public class TimePrinter implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            System.out.println("At the tone, the time is " + new Date());
+            // 引用外部类域的规范写法，因为在作用域内，也可以直接写beep
+            if (TimerClock.this.beep) Toolkit.getDefaultToolkit().beep();
+        }
+    }
+
+}
+
+```
+编译器会自动修改内部类的构造器，将外部类对象的引用传递进去，因此在实例化内部类时，它自动
+就获得了外部类对象的引用。
+
+因为静态变量和方法属于类的范围，它们会在具体的对象初始化前被加载，而非静态内部类的初始化
+依托于外部类对象，所以非静态内部类中不能定义静态变量和方法，因为加载它们时需要的内部类
+还未生成。
+
+
+对于上面的程序使用命令`javac .\TimerTest.java`进行编译后发现生成了3个class文件，
+`TimerTest.class, TimerClock.class, TimerClock$TimerPrinter.class`文件。
+最后一个即为定义的内部类，使用命令`javap -p '.\TimerClock$TimePrinter.class'`进行反编译：
+```txt
+public class com.test.TimerClock$TimePrinter implements java.awt.event.ActionListener {
+
+  // 内部类自动添加了对外部类的引用域
+  final com.test.TimerClock this$0;       
+  // 内部类构造器中自动添加了对外部类的引用参数
+  public com.test.TimerClock$TimePrinter(com.test.TimerClock);
+  public void actionPerformed(java.awt.event.ActionEvent);
+}
+```
+由此可知，内部类只是编译器层面的语法糖，虚拟机对此一无所知。
+使用命令`javap -p '.\TimerClock.class'`查看外部类的反编译代码为:
+```txt
+class com.test.TimerClock {
+  private int interval;
+  private boolean beep;
+  public com.test.TimerClock(int, boolean);
+  public void start();
+  static boolean access$000(com.test.TimerClock);
+}
+```
+
+
+
+
+
+
+
 ### 代理
 
 ## 异常，断言和日志
