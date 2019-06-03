@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-02 22:23:44
+updated: 2019-06-03 17:34:14
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1167,6 +1167,10 @@ class InterClass implements Inter{   // 定义函数接口实现类以符合参�
 可以看到，在不使用λ表达式时，需要多定义一个接口实现类和初始化一个实现类对象，此方法适用于
 jdk8以前需要函数式编程的功能。
 
+再注： 使用下方的匿名内部类更为简便，函数接口与接受函数接口的方法不变，只不过需要将λ表达式
+替换为匿名内部类即可，不过需要在其中重写方法，代码没有λ表达式整洁，但它是jdk8前的最佳替代
+方案了。
+
 
 方法引用
 如果λ表达式定义的处理逻辑已经有某个方法定义了，可以使用该方法来替代λ表达式，即方法引用。
@@ -1434,7 +1438,7 @@ class Person{
 2. 内部类可以对同包的其他类隐藏
 3. 使用匿名内部类可以快捷定义回调函数。
 注： C++有嵌套类，它只是类之间的关系，对象之间没有关系。命名控制和访问控制同java相似，但
-java内部类对象有一个指向外部类对象的隐式指针，可以访问其全部状态。static内部类没有该指针。
+java内部类对象有一个指向外部类对象的隐式指针，可以访问其全部状态。静态内部类没有该指针。
 
 ```txt
 public class TimerTest{
@@ -1446,7 +1450,7 @@ public class TimerTest{
         // 当内部类为public时，可以在外界使用outerObject.new InnerClass(xxx)创建内部类对象
         // 使用OuterClass.InnerClass来引用内部类对象
         // 内部类为private时，无法在外界创建对象
-        // TimerClock.TimePrinter timePrinter = timerClock.new TimePrinter();
+        TimerClock.TimePrinter timePrinter = timerClock.new TimePrinter();
 
         JOptionPane.showMessageDialog(null, "Quit program?");
         System.exit(0);
@@ -1472,21 +1476,14 @@ class TimerClock {
         public void actionPerformed(ActionEvent event) {
             System.out.println("At the tone, the time is " + new Date());
             // 引用外部类域的规范写法，因为在作用域内，也可以直接写beep
+            // 同时，这样写确定了调用的是TimerClock类中的域beep，避免了被同名属性覆盖
             if (TimerClock.this.beep) Toolkit.getDefaultToolkit().beep();
+            System.out.println(interval);
         }
     }
 
 }
-
 ```
-编译器会自动修改内部类的构造器，将外部类对象的引用传递进去，因此在实例化内部类时，它自动
-就获得了外部类对象的引用。
-
-因为静态变量和方法属于类的范围，它们会在具体的对象初始化前被加载，而非静态内部类的初始化
-依托于外部类对象，所以非静态内部类中不能定义静态变量和方法，因为加载它们时需要的内部类
-还未生成。
-
-
 对于上面的程序使用命令`javac .\TimerTest.java`进行编译后发现生成了3个class文件，
 `TimerTest.class, TimerClock.class, TimerClock$TimerPrinter.class`文件。
 最后一个即为定义的内部类，使用命令`javap -p '.\TimerClock$TimePrinter.class'`进行反编译：
@@ -1508,7 +1505,177 @@ class com.test.TimerClock {
   private boolean beep;
   public com.test.TimerClock(int, boolean);
   public void start();
+  // 自动生成域的访问方法供内部类调用
   static boolean access$000(com.test.TimerClock);
+  static int access$100(com.test.TimerClock);
+}
+```
+可以看到针对内部类访问的2个域生成了对应的2个access方法(如果只访问了一个域只会生成对应的一个
+access方法),内部类实际上就是通过这个自动生成的方法来访问外部类的私有属性，结合内部类反编译
+代码，即调用了如`TimerClock.access$000(this$0)`来得到beep值。
+
+注：编译生成的access$XXX方法实际上可以被任何同包的类调用,不仅限于内部类。由于access方法是
+编译器自动生成的，无法在编译前直接调用，所以需要编写虚拟机指令来完成，而且还需要获得对应的
+TimeClock对象作为方法参数，操作还是有难度的。
+
+
+局部内部类
+局部类是在方法中定义的内部类，它不能用public，private修饰，使用default,它的作用域限定在
+这个方法中，外部类的其他方法不能访问它，内部类本身仍然可以访问外部类属性。
+局部类实现了更深层次的封装。
+将上面程序的TimePrint类移到start方法中，此时不能再使用`this.new TimePrint()`了，外部类对象
+不能直接访问局部类。同样编译后再使用javap反编译可得，生成的内部类名字变了，中间变为`$1`:
+```txt
+class com.test.TimerClock$1TimePrinter implements java.awt.event.ActionListener {
+  final com.test.TimerClock this$0;       
+  com.test.TimerClock$1TimePrinter(com.test.TimerClock);
+  public void actionPerformed(java.awt.event.ActionEvent);
+}
+```
+同λ表达式一样，局部类也可以访问作用域内的局部变量，但它必须是final类型的，代码变为如下：
+
+```txt
+public class TimerTest{
+    public static void main(String[] args) {
+
+        TimerClock.start(1000, false);
+
+        JOptionPane.showMessageDialog(null, "Quit program?");
+        System.exit(0);
+    }
+}
+class TimerClock {
+
+   public static void start(int interval, boolean beep) {
+
+     class TimePrinter implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            System.out.println("At the tone, the time is " + new Date());
+            if (beep) Toolkit.getDefaultToolkit().beep();
+            System.out.println(interval);
+        }
+     }
+     ActionListener listener = new TimePrinter();
+     Timer t = new Timer(interval, listener);
+     t.start();
+   }
+}
+```
+使用命令`javap '.\TimerClock$1TimePrinter.class'`可得
+```txt
+class com.test.TimerClock$1TimePrinter implements java.awt.event.ActionListener {
+  final boolean val$beep;
+  final int val$interval;
+  com.test.TimerClock$1TimePrinter();
+  public void actionPerformed(java.awt.event.ActionEvent);
+}
+```
+与以上引用外部类域的反编译结果可知，没有引用外部类域后，局部类没有了外部类域的引用this$0,
+构造器参数也去掉了，同时由于actionPerformed方法需要在start方法结束调用后仍然需要得到beep和
+interval的值以继续执行，所以在内部类中相应的生成了域val$beep和val$interval来保存局部变量的
+拷贝值。出于并发的考虑，访问的局部变量需要为final变量，最好是显式的声明出来。
+
+可以看到，使用局部类极大的简化了代码，同时使用局部变量替代外部类实例域提高了安全性，无需
+生成不安全的access方法供内部类调用。
+
+注：如果需要在内部类中改变局部变量的值，可以将该变量封装在一个数组中，这时变量对该数组的
+引用是final的，但其中的元素值可以被改变，从而避开了final的限制。start方法如下：
+```txt
+   public static void start(int interval, boolean beep) {
+
+     int[] count = {1};
+     class TimePrinter implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            // OK to change count[0] value, array reference not changed
+            System.out.println(count[0]++);  
+        }
+     }
+     // ...
+  }
+```
+
+匿名内部类
+匿名内部类即没有名字的内部类，因为这个类只需要创建一个对象，所以它不需要给类命名，只需要
+以特定的语法指明父类或实现的接口即可。
+
+因为匿名内部类没有名字，而构造器需要与类名相同，所以匿名内部类没有构造器，它将构造器参数
+传递给父类构造器，因为接口没有构造器，所以匿名内部类实现接口时，也没有参数，直接为
+`new InterfaceType(){...}`.
+
+λ表达式可以用匿名内部类替换，如上文中λ表达式的例子可改写为
+```txt
+interface Inter{     // 函数式接口不可少，定义操作数和返回值
+    int oper(int x, int y);
+}
+public class TestLambda {
+  public static void main(String[] args) {
+      f(new Inter(){
+         @Override
+         public int oper(int x, int y) {
+           return x + y;  
+         }
+        }, 4,5);    
+  }
+  private static void f(Inter inter, int x, int y) {  // 接收函数表达式的方法
+      System.out.println(inter.oper(x,y));
+  }
+}
+```
+下面是继承一个类的匿名内部类：
+```txt
+class Person{
+  private int id;
+  public Person(int id) {
+    this.id = id;
+  }
+  public void say(){
+   System.out.println("person");
+  }
+  public int getId(){return id;}
+  @Override
+  public String toString(){
+    return "Person{id=" + id + "}";  
+  }
+}
+public class Test{
+  public static void main(String[] args) {
+    final String x = "hello";
+    Person p = new Person(88) {
+      @Override
+      public void say(){
+        // 匿名内部类实际上是Person的子类，无法直接访问Person私有属性id,也getId访问
+        System.out.println(x + getId());  // output hello88
+        System.out.println(this); // output Person{id=88}
+      }
+      public void test(){}
+    };
+    p.say();
+    // p.test();   // 编译报错无法解析，原因在于多态
+  }  
+}
+```
+由以上程序可以看出，匿名内部类与局部类的作用域相同，可以对所在作用域(即声明的所在方法)内
+的final or effective final变量有访问权限。
+关于p.test()多态报错的问题，网上找到一个经测试可以运行的办法：
+```txt
+new Person(88) {
+  @Override
+  public void say(){
+    // 匿名内部类实际上是Person的子类，无法直接访问Person私有属性id,也getId访问
+    System.out.println(x + getId());  // output hello88
+    System.out.println(this); // output Person{id=88}
+  }
+  public void test(){}
+}.test();  // 直接在类声明后调用可以调用成功，未进行向上转型
+```
+无论如何，匿名内部类主要还是用于重写方法。
+
+还是使用javap命令反编译以上程序，匿名内部类会自动生成一个Outerclass$1.class：
+```txt
+final class com.test.InnerTest$1 extends com.test.Person{ // 证实了子类的关系
+  com.test.InnerTest$1(int);   // 构造器参数与Person一致
+  public void say();
+  public void test();
 }
 ```
 
@@ -1518,6 +1685,9 @@ class com.test.TimerClock {
 
 
 
+因为静态变量和方法属于类的范围，它们会在具体的对象初始化前被加载，而非静态内部类的初始化
+依托于外部类对象，所以非静态内部类中不能定义静态变量和方法，因为加载它们时需要的内部类
+还未生成。
 ### 代理
 
 ## 异常，断言和日志
