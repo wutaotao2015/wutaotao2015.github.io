@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-03 17:34:14
+updated: 2019-06-04 16:41:23
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1678,7 +1678,23 @@ final class com.test.InnerTest$1 extends com.test.Person{ // 证实了子类的�
   public void test();
 }
 ```
+注：有时需要传递一个匿名数组列表，可以是使用双括号初始化(double brace initialization):
+```txt
+public class SimpleTest{
+ public static void main(String[] args){
+   showList(new ArrayList<Integer>() {{
+    add(6);
+    add(5);
+    add(111);
+   }});      // 适用于只需要使用一次的list参数
+ }
+ private static void showList(List<Integer> list) {
+   System.out.println(Arrays.toString(list.toArray())); 
+ }
+}
+```
 
+静态内部类
 
 
 
