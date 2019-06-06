@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-05 17:59:19
+updated: 2019-06-06 17:46:40
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1706,21 +1706,266 @@ public class SimpleTest{
 对外部类的引用,无构造器参数，为普通类编译结果。
 
 ### 代理
-需要在运行时创建一个实现了一组指定接口的类实例，尤其是在编译时无法确定接口类型情况下，即
-通过代理可以实现动态的接口类型。
+代理是一种设计模式，主要作用为对被代理对象的方法调用进行监控或加工处理等，是AOP和其他开发
+框架常用的技术。
 
-可以使用Proxy.newProxyInstance方法来创建这样的一个类(其方法内部还是使用了反射原理)，方法参数为
-1. 类加载器，默认可为null
-2. class对象数组，需要实现的接口类型数组
-3. 调用处理器 InvocationHandler
+代理分为静态代理和动态代理，静态代理为显式的定义一个被代理对象的包装类，
+实现与被代理对象相同的接口，该方法不具有广泛性，每个代理类都写死为某个接口与对象。
+代码如下:
+```txt
+public class StaticProxy {
+  public static void main(String[] args) {
+     Bird bird = new Bird();
+     BirdProxy birdProxy = new BirdProxy(bird);
+     birdProxy.fly();
+  }
+  interface Fly{
+     void fly();
+  }
+  static class Bird implements Fly{
+     @Override
+     public void fly() {
+        System.out.println("bird fly");
+     }
+  }
+  static class BirdProxy implements Fly{
+     private Fly target;
+     public BirdProxy(Fly target) {
+       this.target = target;
+     }
 
+     @Override
+     public void fly() {
+       System.out.println("do something before");
+       target.fly();
+       System.out.println("do something after");
+     }
+  }
+}
+```
+动态代理使用jdk的Proxy类和InvocationHandler接口，自定义代理类实现InvocationHandler接口，
+同样包装被代理对象，重写invoke方法调用被代理对象的具体方法。调用时使用Proxy.newProxyInstance
+(classloader, class[] interfaces, invocationHandler)方法在运行时生成代理对象。
+代码如下：
+```txt
+public class DynamicProxy {
+  public static void main(String[] args) {
+     Bird bird = new Bird();
+     Object proxy = Proxy.newProxyInstance(bird.getClass().getClassLoader(),
+                     bird.getClass().getInterfaces(),
+                     new ProxyFactory(bird));
+     Fly birdProxy = (Fly)proxy;  // proxy instance implements the interfaces assigned
+     birdProxy.fly();
+     System.out.println(birdProxy);  // toString方法同样调用invoke方法
+  }
+  interface Fly{
+     void fly();
+  }
+  static class Bird implements Fly{
+     @Override
+     public void fly() {
+       System.out.println("bird fly");
+     }
+  }
+  static class ProxyFactory implements InvocationHandler {
 
+     private Object target;
+     public ProxyFactory(Object target) {
+       this.target = target;
+     }
 
+     @Override
+     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+       System.out.println("do sth before");
+       Object result = method.invoke(target, args);
+       System.out.println("do sth after");
+       // System.out.println(proxy);       // error and exception
+       return result;
+     }
+  }
+}
+```
 
+(参照java.reflect.Proxy类注释和javaCore书)
+1. newProxyInstance方法会在运行时生成一个代理类，类名以`$Proxy`开头，它继承了
+`java.reflect.Proxy`类，并以相同顺序实现方法参数中传递的的接口列表。
 
+2. 如果接口组都是public访问权限，代理类就是public final的，并且该代理类不指定包名;
+如果接口组中有一个非public，则代理类就是非public的，并且代理类处于和其他非公有包的相同包中，
+其中所有的非public接口需要在同一个包中。
 
+3. 对于相同类加载器和相同接口组生成的proxy不同实例是属于同一个proxy类的不同对象。
+
+4. 每个代理对象都只有一个实例域——invocationHandler,代理对象本身可以向上转型为某个实现的接口
+引用，而通过此种方法调用代理对象的接口方法时，代理对象会调用其invocationHandler的invoke
+方法(由于该invocationHandler会在初始化时通过参数传入，即调用了自定义的invoke方法)，invoke
+方法中可以自定义操作，如通过反射Method调用被代理对象的方法等，invoke方法的返回值即为该次
+代理对象上方法调用的返回值。
+
+5. 生成的代理类会自动重写Object的hashCode，equals,toString方法，这些方法也会被转向
+invocationHandler的invoke方法进行处理，在实际使用中应当注意这一点，防止不必要的invoke
+方法调用。其他的Object方法没有被重写。
+
+6. 如果不同代理接口中出现了重复方法，不管代理对象引用是什么接口类型，代理对象调用的
+都是第一个出现的拥有此方法的接口(直接声明或继承而来的)，因为生成的代理类对应方法实现中
+无法确定调用哪一个接口--都是接口数组元素。
+
+注：调用接口方法时转向调用invoke方法的实现原理是在生成的代理类代码中写明的，查看Proxy类
+源码，其中有一个ProxyClassFactory静态内部类，其中的apply方法调用了
+ProxyGenerator.generateProxyClass方法来生成Proxy类。我们可以自己调用该方法来查看生成的
+Proxy类代码，通过类代码可以清楚的证明上述的1、4、5点。该类一旦被生成就是一个普通类。
+```txt
+public class GenerateProxyTest {
+  public static void main(String[] args) {
+
+    byte[] $Proxy6s = ProxyGenerator.generateProxyClass("$Proxy6", new Class[]{Inte.class});
+
+    // jdk 1.7后的try-with-resource语法糖，可以对实现了autoCloseable接口的资源自动关闭
+    // 编译后为原来的try-catch-finally语句(如果用户代码和关闭代码都有异常，关闭异常被抑制，
+    // 可以通过getSuppressed方法获得该被抑制的异常)
+
+    try(FileOutputStream fos = new FileOutputStream("D:\\$Proxy6.class")) {
+            fos.write($Proxy6s);
+            fos.flush();
+    } catch (IOException e) {
+            e.printStackTrace();
+    }
+  }
+}
+interface Inte{
+      void say();
+}
+```
+取出该文件，使用jd-gui反编译(我需要将文件压缩成$Proxy6.zip格式才能正常打开，看来它还是面向
+jar包的),内容如下：
+```txt
+import com.example.demo.Inte;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
+
+public final class $Proxy6     // 继承Proxy,实现Inte接口
+  extends Proxy
+  implements Inte
+{
+  private static Method m1;
+  private static Method m2;
+  private static Method m3;
+  private static Method m0;
+  
+  public $Proxy6(InvocationHandler paramInvocationHandler)
+  {
+      super(paramInvocationHandler);
+  }
+  
+  public final boolean equals(Object paramObject)
+  {
+      try
+      {
+          return ((Boolean)this.h.invoke(this, m1, new Object[] { paramObject })).booleanValue();
+      }
+      catch (Error|RuntimeException localError)
+      {
+          throw localError;
+      }
+      catch (Throwable localThrowable)
+      {
+          throw new UndeclaredThrowableException(localThrowable);
+      }
+  }
+  
+  public final String toString()
+  {
+      try
+      {
+          return (String)this.h.invoke(this, m2, null);
+      }
+      catch (Error|RuntimeException localError)
+      {
+          throw localError;
+      }
+      catch (Throwable localThrowable)
+      {
+          throw new UndeclaredThrowableException(localThrowable);
+      }
+  }
+  // 代理类中只是简单的调用了invoke方法 
+  public final void say()
+  {
+      try
+      {
+          this.h.invoke(this, m3, null);
+          return;
+      }
+      catch (Error|RuntimeException localError)
+      {
+          throw localError;
+      }
+      catch (Throwable localThrowable)
+      {
+          throw new UndeclaredThrowableException(localThrowable);
+      }
+  }
+  
+  public final int hashCode()
+  {
+      try
+      {
+          return ((Integer)this.h.invoke(this, m0, null)).intValue();
+      }
+      catch (Error|RuntimeException localError)
+      {
+          throw localError;
+      }
+      catch (Throwable localThrowable)
+      {
+          throw new UndeclaredThrowableException(localThrowable);
+      }
+  }
+  
+  static
+  {
+      try
+      {
+          m1 = Class.forName("java.lang.Object").getMethod("equals", new Class[] { Class.forName("java.lang.Object") });
+          m2 = Class.forName("java.lang.Object").getMethod("toString", new Class[0]);
+          m3 = Class.forName("com.example.demo.Inte").getMethod("say", new Class[0]);
+          m0 = Class.forName("java.lang.Object").getMethod("hashCode", new Class[0]);
+          return;
+      }
+      catch (NoSuchMethodException localNoSuchMethodException)
+      {
+          throw new NoSuchMethodError(localNoSuchMethodException.getMessage());
+      }
+      catch (ClassNotFoundException localClassNotFoundException)
+      {
+          throw new NoClassDefFoundError(localClassNotFoundException.getMessage());
+      }
+  }
+}
+```
+因为生成的代理类继承了java.reflect.Proxy类(和枚举继承了Enum一样),而java是单继承机制，
+所以jdk动态代理只能代理接口，无法代理一个类，想要代理一个类，可以使用cglib包，它是通过
+生成子类的方式实现的，据说spring的面向切面就是代理类时使用cglib,代理接口时使用proxy(这
+一点以后研究AOP时再细看)
+
+注：可以使用Proxy.isProxyClass来判断一个class对象是否是代理类。
 
 ## 异常，断言和日志
+
+
+
+
+
+
+
+
+## 泛型程序设计
+## 集合
+## 图形程序设计，事件处理，Swing用户界面组件(略)
+## 部署java应用程序
+## 并发
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
