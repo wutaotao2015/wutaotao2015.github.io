@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-06 17:46:40
+updated: 2019-06-10 18:02:29
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -977,9 +977,9 @@ y.compareTo(x) > 0)，解决方法也类似，分2种情况：
 1. 比较时涉及到子类属性时，应使用getClass()方法进行类型判断，类型相同才进行比较，否则抛出
 类型转换异常。
 2. 比较时不涉及子类的属性，应在父类中定义compareTo方法并定义为final.
-(经测试情况2,父类实现了泛型的Comparable接口，子类就不能实现自己的泛型了，编译器报错，因为
-泛型是可擦除的。这样在对子类数组进行排序后，虽然实现了排序，但其中的元素都自动
-向上转型为父类类型了...不过比较不同的子对象以进行排序，这样也不算太大副作用)
+(经测试情况2,父类实现了泛型的Comparable接口，子类就不能实现自己的泛型类型了，编译器报错(XXX
+interface cannot be inherited with different type arguments)，因为子类会继承父类的接口类型。
+这样在对子类数组进行排序后，虽然实现了排序，但其中的元素都自动向上转型为父类类型了...)
 
 接口特性
 同抽象类一样，不能使用new运算符实例化一个接口。
@@ -1204,7 +1204,7 @@ public class Test{
  private static void printDouble(OI<Double> oi, double x, double y) {   // 操作逻辑，操作数
    System.out.println(oi.oper(x,y));  
  }
- private int ss(int x, int y) {
+ private static int ss(int x, int y) {
    return (x * x) + y;   //这是一个简单的运算，只有复杂的操作提取才有意义  
  }
 }
@@ -1705,6 +1705,23 @@ public class SimpleTest{
 对静态内部类进行反编译可以发现其类名与普通内部类组成相同：Outerclass$Innerclass,类中没有
 对外部类的引用,无构造器参数，为普通类编译结果。
 
+静态类初始化语法`Outer.Inner inner = new Outer.Inner(XXX);`
+```txt
+public class StaticTest{
+  public static void main(String[] args) {
+     Outer.Inner inner = new Outer.Inner(66); 
+  }  
+}
+class Outer{
+  public static class Inner{
+    private int id;
+    public Inner(int id){
+      this.id = id;
+    }
+  }  
+}
+```
+
 ### 代理
 代理是一种设计模式，主要作用为对被代理对象的方法调用进行监控或加工处理等，是AOP和其他开发
 框架常用的技术。
@@ -1953,7 +1970,95 @@ public final class $Proxy6     // 继承Proxy,实现Inte接口
 注：可以使用Proxy.isProxyClass来判断一个class对象是否是代理类。
 
 ## 异常，断言和日志
+来自Throwable类注解：
+所有errors和exceptions都继承自Throwable类，只有Throwable或其子类的实例才可以被java虚拟机
+处理，才能被throw，catch关键字抛出或捕获。
 
+在Throwable子类中，RunTimeException和Error下属异常属于非检查异常，不属于它们的子类异常
+则是检查异常，检查异常(checked exceptions)是用于编译期进行检查的异常。
+
+异常的抛出是一个传递链，Throwable有以自身为参数的构造器，即一个Throwable中包含了另一个
+Throwable作为引发该异常的异常原因。
+这样设计有以下原因：
+
+1. 可以让用户自定义异常包装底层实现的异常，通过抛出包装异常，而不直接抛出原生异常，
+可以在更换方法的实现方式时，用户层面不用更改抛出的异常类型，从而避免了修改代码，保持了灵活性。
+下面的ExceptionTest类代码以更强的方式实现了解耦合。
+
+2. 如某些接口或父类的方法本身并没有抛出异常，如果实现类需要抛出一个检查异常时，如果直接抛出
+编译器会报错，提示父类或接口方法未抛出该异常。这时我们可以将这个检查异常用一个自定义的
+未检查异常包装起来(通过Throwable cause参数)，从而绕开编译器检查。代码如下：
+```txt
+public class ExceptionTest implements IF{
+
+  public static void main(String[] args) {
+     new ExceptionTest().add();
+  }
+  // 不用声明throws RuntimeException，无法控制运行时异常，每个方法都有可能抛出
+  @Override
+  public void add(){
+    System.out.println("test");
+    // 使用自定义的运行时异常包装被检查异常
+    throw new WttException("null", new ParseException("parse", 0));
+  }
+  // 定义为运行时异常
+  private class WttException extends RuntimeException{
+    // 将检查异常包装起来
+    public WttException(String msg, Throwable clause){
+      super(msg, clause);
+    }
+  }
+}
+interface IF{
+  void add();
+}
+```
+运行以上程序，结果为：
+```txt
+Exception in thread "main" com.demo.ExceptionTest$WttException: null   // 先抛出上层异常
+  at XXX
+  at XXX
+caused by: java.text.ParseException: parse    // 再是clause Throwable底层异常
+...
+```
+将cause Throwable链接到当前异常类，除了可以使用构造器，还可以使用initCause方法，代码如下:
+```txt
+public class ExceptionTest implements IF{
+
+  public static void main(String[] args) {
+     new ExceptionTest().add();
+  }
+  @Override
+  public void add(){
+
+    System.out.println("test");
+    // 使用自定义的运行时异常包装被检查异常
+    WttException wttException = new WttException("wttException");   
+    wttException.initCause(new ParseException("wttParse", 0));
+    throw wttException;  
+// 注意initCause返回的是Throwable对象，如果返回它也会引起编译报错，
+// 这里直接返回外层包装的异常对象即可
+  }
+  // 定义为运行时异常
+  private class WttException extends RuntimeException{
+    public WttException(){}
+    public WttException(String msg){
+      super(msg);
+    }
+  }
+}
+interface IF{
+  void add();
+}
+```
+Throwable一般有4个构造器：
+1. default: no param
+2. one param: String message
+3. one param: Throwable cause
+4. two params: String message, Throwable cause
+
+注： C++中2个基本的异常类，一个是`logic_error`,它相当于java的RunTimeException;另一个是
+`runtime_error`,它是由于不可预测原因引发的异常，相当于java的非RunTimeException.
 
 
 
