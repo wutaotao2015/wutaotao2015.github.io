@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-10 18:02:29
+updated: 2019-06-11 18:00:08
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1994,7 +1994,7 @@ public class ExceptionTest implements IF{
   public static void main(String[] args) {
      new ExceptionTest().add();
   }
-  // 不用声明throws RuntimeException，无法控制运行时异常，每个方法都有可能抛出
+  // 不用声明运行时异常
   @Override
   public void add(){
     System.out.println("test");
@@ -2059,6 +2059,117 @@ Throwable一般有4个构造器：
 
 注： C++中2个基本的异常类，一个是`logic_error`,它相当于java的RunTimeException;另一个是
 `runtime_error`,它是由于不可预测原因引发的异常，相当于java的非RunTimeException.
+
+注2： 绕过编译器抛出受查异常除了上述这样用一个运行时异常包装起来以外，还有其他方法可以直接
+抛出受查异常并且通过编译，网上搜索到有以下2种方法：
+1. 使用sun.misc.Unsafe类，由于它是私有构造器，所以需要使用反射。代码如下：
+```txt
+public class CheckedExceptionTest {
+  public static void main(String[] args) {
+    try {
+       Class unsafeClass = Class.forName("sun.misc.Unsafe");
+      // 反射使用私有无参构造器构造对象
+       Constructor<Unsafe> defaultConstructor = unsafeClass.getDeclaredConstructor(null);
+       defaultConstructor.setAccessible(true);
+       Unsafe unsafe = defaultConstructor.newInstance(null);
+       // 本地方法
+       unsafe.throwException(new Exception("wwwttt"));
+
+    } catch (ReflectiveOperationException e) {
+       // 这里统一抛出上层异常
+       e.printStackTrace();
+    }
+  }
+}
+```
+这里可以看到，使用反射也需要抛出多个ReflectiveOperationException的子类异常，它本身也是一个
+受查异常，如果需要抛出的是它，那么这样做就没有意义了。
+2. 利用泛型擦除机制绕过编译器检查。代码如下：
+```txt
+public class CheckedExceptionTest {
+  public static void main(String[] args) {
+    throwExp(new Exception("tt"));
+  }
+  private static <T extends Throwable> void throwExp(Throwable th) throws T {
+    throw (T) th;
+  }
+}
+```
+猜想：泛型擦除将`throws T`这一句去除了。如果直接`throws Throwable`编译器会报错。
+
+经过测试，子类重写方法抛出的受查异常类型同方法返回值一样，子类方法只能抛出更具体的受查异常
+或不抛受查异常，否则编译报错。使用throws关键字抛出运行时异常没有意义，因为所有方法都有可能
+抛出运行时异常。
+
+注: java throws与C++ throw说明符基本相同，不过C++ throw没有编译检查，如果抛出的异常未在
+throw列表中，会调用unexpected函数中止程序执行。同理，java由于编译检查，它如果需要明确
+抛出受查异常(不使用以上技术方案情况下),需要使用throws进行声明，而C++没有检查，没有限制。
+
+
+抛出异常
+java中需要抛出一个异常时，使用throw关键字抛出该异常类的一个对象即可。
+注： Java中只能抛出Throwable子类的对象，C++可以抛出任何类型的值。
+
+捕获异常
+捕获还是抛出异常？
+对于知道如何进行处理的异常可以进行捕获并处理，不知道如何处理的异常可以抛给调用者。
+实际捕获的异常可能是catch中声明异常的子类，可以通过e.getClass().getName()来获取其实际类型。
+
+捕获多个异常
+可以使用多个catch语句对不同的异常进行处理。
+jdk7以后可以在一个catch语句中对不同的异常进行相同的操作,
+如`catch(AException | BException e)`,其中A和B异常是相互独立的，不能有继承关系;并且该异常
+对象变量e默认为final变量，不能在处理中改变其值。
+
+捕获到异常后又再次抛出它， 原因可能有：
+1. 改变异常类型，可以创建自定义异常对象，将实际异常对象作为自定义异常的cause，通过这种包装
+方式，调用者使用e.getCause()方法即可以拿到真正的异常原因，同时由于包装获得了异常对象的
+系统一致性。
+2. 记录日志，用于在抛出异常前记录日志。这种情况下受查异常的声明(throws)与捕获的异常
+类型(catch)应尽量保持一致。
+
+finally子句
+finally语句是任何情况下都会执行的代码块，无论是否有异常发生。如果使用固定格式
+`try{}catch(){}finally{}`进行处理，由于finally语句块中代码也可能发生异常，这时候还需要
+在finally中进行异常捕获，显得很繁琐。可以使用嵌套来进行解耦：finally专职于资源处理，catch
+专职于捕获异常，格式如下：
+```txt
+try{
+  try{
+    ... 
+    ...  // normal code
+  }finally{
+    XX.close(); // do with resources 
+  }
+}catch(Exception e){
+  ... // do with exception
+}
+```
+通过嵌套使用try-finally和try-catch，finally块中可能抛出的异常也被catch语句捕获到了。
+但还有另一个问题，由于finally语句块始终会被执行，所以当正常代码和finally同时抛出异常时，
+finally异常会覆盖掉正常代码的异常，这个问题在jdk7的try-with-resource语法得到了解决,前面
+有提到过它，它会自动抑制finally的异常。
+
+注：finally语句块的return语句会覆盖正常代码的return语句，所以应避免在finally中使用return.
+```txt
+public int doubleX(int x) {
+  try{
+    return x * 2; 
+  }finally{
+    if (x == 2) return 0;  
+  }
+}
+```
+调用doubleX(2)，得到结果0,可以理解为finally语句在`return x * 2`后执行。
+
+
+
+
+
+
+
+
+
 
 
 
