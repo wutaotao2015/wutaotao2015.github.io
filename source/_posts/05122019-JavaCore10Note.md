@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-11 18:00:08
+updated: 2019-06-12 17:49:43
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -2162,13 +2162,86 @@ public int doubleX(int x) {
 ```
 调用doubleX(2)，得到结果0,可以理解为finally语句在`return x * 2`后执行。
 
+try-with-resource
+jdk7针对实现了AutoCloseable接口的资源类提供了一个语法糖，语法格式为:
+```txt
+try(Resource res1 = ...;
+    Resource res2 = ...){
+  ...  // do sth with res1, res2
+}
+```
+它会自动调用res1,res2的close方法，用javap查看反编译结果，可以看见它自动添加了finally语句，
+并且抑制close方法中抛出的异常，可以使用getSuppressed()得到这个被抑制的异常。
 
+堆栈轨迹
+Throwable有一个getStackTrace()方法，返回的是一个StackTraceElement数组，这个数组的第一个元素
+是最后执行或抛出异常的位置信息，后面的每个元素都代表了一个方法的调用。StackTraceElement
+对象记录了所在类，方法名，文件名，当前代码所在行号的信息。StackTraceElement的toString方法
+输出的即是我们经常见到的异常位置信息：方法名(文件名:行号).
 
+注：Thread.getAllStackTraces()方法可以得到所有线程的堆栈轨迹map：它的key为线程对象，value为
+StackTraceElement数组，在遍历map集合时调用map.get(thread)和使用thread.getStackTrace()方法
+得到的结果相同，都是每个线程各自的方法调用轨迹数组。
 
+注2: 如果想查看代码中某个位置的堆栈轨迹，可以使用`Thread.dumpStack()`方法，它会通过抛出一个
+异常来打印轨迹，这适用于调试时查看某个方法从入口到被执行时经过的方法调用。
 
+使用异常机制技巧
+1. 异常处理不能代替简单测试。
+   如判断某个对象是否为null，捕获空指针异常要比使用if语句进行判断速度慢很多(显然捕获一个异常
+   后台需要做大量工作)。这说明了异常不应当被用于正常业务逻辑处理中，具体就是说不应当
+   在catch语句中进行业务逻辑处理。
+2. 不要过分的细化异常 
+  即不要使用多个try-catch语句将正常业务逻辑处理分隔开，可以使用一个try语句块，多个catch语句
+  块将正常处理和异常处理分隔开，使代码清晰化。
+3. 利用异常层次结构
+  可以自定义异常来代替简单的RuntimeException或Throwable。
+  不要将业务逻辑异常定义为受查异常，这样做会提高耦合度，业务发生变化时无法灵活修改。
+  可以在catch语句中将捕获到的异常转换为另一种更合适的异常类型后再抛出，这样方便管理。
+4. 压制异常
+  如果调用的方法有受查异常，而该异常对于方法调用者来说可以忽略，这时可以使用try-catch语句捕获
+  后不做任何处理，直接忽视它。
+5. 严格检测错误(早抛出)
+  在方法处理完成后，有时要面对特殊情况下是抛出异常还是返回一个特殊值(如-1,null等)的选择，
+  一般建议抛出异常要比返回特殊值好，因为特殊值在以后的逻辑处理中如果没有判断处理，可能
+  会导致空指针等其他异常。但如果是工具类或其他类库工具，可以返回特殊值并给出注释告知调用者。
+  可以大概总结为：合理的边界情况可以使用特殊值，如果是明显不合理或错误的情况，应当抛出异常。
+6. 不要羞于抛出异常(晚捕获)
+  有时抛出异常让方法调用者处理是更为明智的选择。
 
+断言
+格式为`assert x == 1;`或`assert x == 1: "x == 1"`,后一种语法格式可以在抛出AssertionError
+时打印出自定义的表达式信息。
 
+使用java命令运行程序时使用-ea开启断言，-da关闭断言，默认是关闭状态。
+启用或关闭是类加载器的行为，即开启断言不需要重新编译，断言关闭时类加载器会自动跳过断言代码，
+因此使用断言不会影响运行速度。
+1. 断言失败是致命的，不可恢复
+2. 断言只适用于开发和测试阶段。
+注： -ea无法应用到没有类加载器的"系统类"(jdk中的类)中，对于它们可以使用-esa
+(-enableSystemAssertions).
 
+记录日志
+java自带的日志记录器为java.util.logging.Logger类。
+
+默认情况下，日志记录器把日志记录发送到consoleHandler处理器中，再由它输出到System.err流打印
+出来。日志API提供了2个处理器，SocketHandler和FileHandler.
+```txt
+FileHandler fileHandler = new FileHandler();
+logger.addHandler(fileHandler);
+logger.info("test log");
+```
+运行以上代码，程序默认会在windows的用户目录下生成一个javaX.log文件，其中使用xml格式记录了
+输出的日志信息。jdk logger提供了过滤器和格式化器进行日志过滤和格式化操作。
+如上面程序中使用以下语句可以将xml格式转化为String:
+```txt
+  fileHandler.setFormatter(new SimpleFormatter());
+```
+这样文件内容就与console管理台输出的内容一致了，这样倒是省去了在idea中配置日志输出重定向。
+
+调试技巧
+1. 使用java命令运行程序时使用-verbose参数可以查看虚拟机加载类的过程，对于诊断类路径问题很
+方便。
 
 
 
