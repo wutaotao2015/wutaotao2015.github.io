@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-12 17:49:43
+updated: 2019-06-13 18:12:19
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1853,8 +1853,7 @@ interface Inte{
       void say();
 }
 ```
-取出该文件，使用jd-gui反编译(我需要将文件压缩成$Proxy6.zip格式才能正常打开，看来它还是面向
-jar包的),内容如下：
+取出该文件，使用jd-gui反编译(直接打开无效，进去后使用open file功能),内容如下：
 ```txt
 import com.example.demo.Inte;
 import java.lang.reflect.InvocationHandler;
@@ -2242,15 +2241,161 @@ logger.info("test log");
 调试技巧
 1. 使用java命令运行程序时使用-verbose参数可以查看虚拟机加载类的过程，对于诊断类路径问题很
 方便。
-
-
-
-
-
-
-
+2. jdk/bin目录下有一些可以查看程序性能的工具
 
 ## 泛型程序设计
+类型参数(type parameter)规定了元素类型，并省去了类型转换，使程序有更好的可读性和安全性。
+jdk7以后在构造函数中可以省略泛型类型，因为它们可以从变量类型中推导出，如返回值可以直接返回
+`return new ArrayList<>();`.
+
+泛型类
+类名后使用如`<T>`或`<T,U>`声明一个类型变量，经测试`<T,T>`报错:重复类型参数。
+
+泛型方法
+```txt
+public class Test{
+ public static void main(String[] args){
+   // 在方法名前指定类型参数
+   System.out.println(Test.<Object>middle(null, 0, "sd"));
+   //编译报错， 0是int，要求为String
+   System.out.println(Test.<String>middle(null, 0, "sd"));  
+ }  
+ private static <T> T middle(T... ts) {
+   return ts[ts.length / 2];  
+ }
+}
+```
+大部分情况下，调用泛型方法时可以省略指定泛型类型，因为编译器可以从参数类型推导出泛型类型。
+如使用以下语句`double x = cal(3.3, 23, 0);`，编译报错，错误信息提示'incompatible type:
+Number & Comparable...',说明编译器根据参数推导得出T为Number类型或Comparable类型，可以改为
+`Number x = cal(3.3, 23, 0);`或`Comparable x = cal(3.3, 23, 0);`.
+同理`double x = cal(3.3, 2, "34");`可以看到推导出T类型为Serializable或Comparable.
+由此可知，当不同类型的参数对应于一个类型参数时，最好将参数转化为统一类型，或使用明确类型
+的变量接受返回值。
+
+注：java泛型类似于C++中的template模板，但它们有本质区别。
+
+类型变量的限定
+如果想要对类型参数对应的类型增加某些参数，如指定实际类型必须实现Comparable接口，可以使用
+extends关键字，如以上代码：
+```txt
+public static <T extends Comparable> T middle(T... ts){...}
+```
+当传入如`Pair<Integer>(2,3)`对象时，编译报错: 
+`no instances of type variables exists so that Pair<Integer> conforms to Comparable`.
+
+可以使用`&`来区分多个限定，使用逗号区分不同的类型参数，如
+```txt
+public static <T extends Number & Comparable & Serializable, U extends Cloneable> 
+  T middle(U u,T... ts){...}
+```
+类型变量的限定与类的继承机制保持一致，类型参数的限定也只能继承自一个类，实现多个接口，
+并且类必须是限定列表的第一个。
+
+
+泛型代码和虚拟机
+虚拟机没有泛型类型对象：即虚拟机中只有普通类。泛型仅仅是编译时的语法糖，同枚举，内部类，
+try-with-resource等语法一样。
+
+每个泛型类型都有自己的原始类型(raw type),程序执行时会擦除泛型，将变量类型替换为泛型
+的第一个限定类型,无限定类型的转为Object.
+如`T extends Comparable & Serializable`会转化为限定类型Comparable,而
+`T extends Serializable & Comparable`会转化为Serializable,当代码里执行compareTo方法时，
+程序会强制转型为Comparable，所以为了提高效率，应当将无方法的记号接口放在限定列表的最后。
+
+泛型擦除后编译器会增加必要的强制类型转换，如代码
+`List<Integer> list = ...; int a = list.get(0)`执行时，编译器会自动转化为
+`int a = (Integer)list.get(0);`.
+
+
+泛型擦除机制导致的问题及解决方法
+
+泛型方法擦除泛型后，类型转化为限定类型(如Object)，如果其子类使用具体类型(如String)进行
+方法重写时将会出现问题：如果是set方法将与多态调用产生冲突(产生2个不同类型参数的方法)，
+如果是get方法则产生了方法签名相同而返回值不同的方法。
+
+对于get方法，方法签名是由方法名和参数列表决定的，如果方法重载时方法签名相同，返回值不同，
+编译器会报错(因为调用者可以忽略返回值).但是虚拟机是根据方法签名和返回值来确定方法调用的，
+所以即使泛型擦除导致出现了相同签名的方法出现，虚拟机也可以解决。相当于用户自己编写这样的
+代码经过编译检查会报错无法执行，而编译器自动产生的绕过了检查机制可以被虚拟机执行。
+
+针对set方法编译器会修改继承的限定类型(如Object)方法，在其中调用重写的新方法，这也称为
+桥方法(bridge method).实际上桥方法也应用在重写方法时子类方法返回协变类型上，它也是合成了
+桥方法调用重写的方法。桥方法的作用就是保持多态。
+
+将泛型类型参数赋值给无泛型参数变量时，会得到编译器警告信息，一般情况下可以使用
+@SuppressWarnings("unchecked")注解来压制警告。
+
+
+泛型的约束和影响
+1. 泛型类型参数不能是基本数据类型
+  因为泛型擦除后泛型类型需要转化为Object类型，基本类型无法转化为Object,所以需要对应的包装类。
+2. 运行时类型检查不支持泛型参数
+  即无法使用instanceof关键字判断泛型类型，`if(pair instanceof Pair<LocalDate>){...}`会
+  得到编译报错：illegal generic type for instanceof. 关键字instanceof只能用来判断原始类型:
+  `if(pair instanceof Pair){...}`。
+  同样的，使用getClass()得到的结果始终是原始类型。
+ ```txt
+Pair<String> pair1 = new Pair<>();
+Pair<Integer> pair2 = new Pair<>();
+System.out.println(pair1.getClass() == pair2.getClass());  // 都是Pair.class
+ ```
+3. 无法创建泛型数组
+  代码`List<String>[] listArray = new List<String>[10];`报错：generic array creation.
+其中泛型数组可以声明，但无法进行初始化。原因在于泛型数组破坏了泛型的类型安全。
+因为数组是可协变的，子类数组可以转化为父类数组，用户可以通过父类数组引用破坏泛型类型安全，
+代码如下：
+ ```txt
+ // 使用强制类型转换得到泛型数组，后面也可以写为new List<?>[10]
+ List<String>[] listArray = (List<String>[])new List[10];
+ Object[] objects = listArray;  // 向上转型为Object[]
+ objects[0] = Arrays.asList(1);   // 通过objects存入一个List<Integer>
+ String s = listArray[0].get(0);  // 运行报错，类型转换异常
+ ```
+4. 可以在@SafeVarargs注解的注释上看到上面的这个例子。
+5. 不能实例化类型参数，如T.class, new T[...],new T(...)都会产生编译错误。在jdk8以前，只能
+使用Class.newInstance方法来构造需要的类型对象，而jdk8以后可以使用构造器引用。
+如创建一个pair对象的泛型方法，代码如下：
+```txt
+public class GenericTest {
+
+  public static void main(String[] args) {
+
+    Pair<String> stringPair = makePair(String.class, "s", "w");
+    System.out.println(stringPair.getF());
+    System.out.println(stringPair.getS());
+
+    Pair<String> stringPair2 = makePair2(String::new, "d", "f");
+    System.out.println(stringPair2.getF());
+    System.out.println(stringPair2.getS());
+  }
+  private static <T> Pair<T> makePair(Class<T> tClass, T f, T s) {
+    try {
+      return new Pair<>(tClass.getDeclaredConstructor(tClass).newInstance(f),
+                        tClass.getDeclaredConstructor(tClass).newInstance(s));
+    } catch (ReflectiveOperationException e) {
+      return null;
+    }
+  }
+  private static <T> Pair<T> makePair2(Function<T,T> function, T f, T s) {
+      return new Pair<>(function.apply(f), function.apply(s));
+  }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 集合
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
 ## 部署java应用程序
