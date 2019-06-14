@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-13 18:12:19
+updated: 2019-06-14 17:54:15
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -1518,6 +1518,9 @@ access方法),内部类实际上就是通过这个自动生成的方法来访问
 编译器自动生成的，无法在编译前直接调用，所以需要编写虚拟机指令来完成，而且还需要获得对应的
 TimeClock对象作为方法参数，操作还是有难度的。
 
+注2: 外部类可以访问内部类的所有成员，包括内部类的私有属性(无需如access方法等附加条件)，
+这点可以从类包含的关系去理解，也无法解释太多。不过对于下面的局部内部类外部类将无法访问。
+
 
 局部内部类
 局部类是在方法中定义的内部类，它不能用public，private修饰，使用default,它的作用域限定在
@@ -2353,7 +2356,7 @@ System.out.println(pair1.getClass() == pair2.getClass());  // 都是Pair.class
  String s = listArray[0].get(0);  // 运行报错，类型转换异常
  ```
 4. 可以在@SafeVarargs注解的注释上看到上面的这个例子。
-5. 不能实例化类型参数，如T.class, new T[...],new T(...)都会产生编译错误。在jdk8以前，只能
+5. 不能实例化类型变量，如T.class, new T[...],new T(...)都会产生编译错误。在jdk8以前，只能
 使用Class.newInstance方法来构造需要的类型对象，而jdk8以后可以使用构造器引用。
 如创建一个pair对象的泛型方法，代码如下：
 ```txt
@@ -2382,6 +2385,110 @@ public class GenericTest {
   }
 }
 ```
+注： String.class实际为`Class<String>`的唯一实例，所以makePair方法可以得到T类型(值得注意
+的是T类型无法从参数f,s获得，代码`Class<T> tClass = f.getClass()`报错：
+`Found Class<T>, Required Class<capture<? extends java.lang.Object>>`,可以看到由于泛型擦除，
+f变为Object类型，无法强转为具体的T类型)。
+构造器引用使用的构造器为new String(String),对应的函数接口为`Function<T,T>`,
+
+6. 不能实例化泛型数组。像上面说的那样，不能直接初始化泛型数组，实际使用时有
+`E[] = (E[])new Object[10];`这是因为初始元素null可以转化为任意的Object子类型，
+但针对已经存在数组元素的数组就无法使用这种方式强转了，如数组拷贝等需求。在前面的数组反射和
+数组构造器引用已经分别写过解决方案，下面统一一下代码：
+```txt
+public class ArrayGenericTest {
+  public static void main(String[] args) {
+    // 可变参数可以直接传递数组
+    Integer[] integers = makeGenericArray(new Integer[]{23, 23, 45});
+    System.out.println(Arrays.toString(integers));
+
+    // 构造器引用
+    String[] strings = makeGenericArray2(String[]::new, "d", "s", "f");
+    System.out.println(Arrays.toString(strings));
+  }
+  private static <T> T[] makeGenericArray(T... ts) {
+    T[] newT = (T[])Array.newInstance(ts.getClass().getComponentType(), ts.length);
+    // do something else with T[]
+    // 对于引用类型数组必须需要使用clone方法才能得到新的对象引用, 不能单纯使用下面的方法
+    System.arraycopy(ts, 0, newT, 0, ts.length);
+    return newT;
+  }
+  private static <T> T[] makeGenericArray2(Function<Integer, T[]> function, T... ts) {
+    T[] newT = function.apply(ts.length);
+    // do something else with T[]
+    System.arraycopy(ts, 0, newT, 0, ts.length);
+    return newT;
+  }
+}
+```
+
+7. 不能在静态域或静态方法中使用泛型变量。如下代码：
+```txt
+class Pair<T> {
+  private static T tt;    // 编译报错，pair.this cannot be referenced from a static context
+  private static T getTt(){
+    return tt;
+  }
+}
+```
+可以从报错信息知，类型变量默认是与实例进行绑定的，可以理解为类在实例化前尚未确定T类型，所以
+无法确定静态域tt的类型，静态方法也是一样道理。
+注： 同样的，如下代码同基本的static域无任何不同:
+```txt
+class Person<T>{
+ public static int id;
+}
+Person<Integer> p1 = new Person<>();
+p1.id = 3;
+Person<String> p2 = new Person<>();
+p2.id = 4;
+System.out.println(p1.id);
+```
+这个例子其实和泛型变量没有太大关系，id只是一个普通的静态域罢了。
+
+8. 无法捕获泛型异常，也不能使用泛型类继承Throwable类(正因为无法继承，所以也不存在带有泛型
+变量的异常类型，也就无法抛出带有泛型类型的异常对象)，但可以声明Throwable类限定的泛型
+类型并抛出它。因为泛型是编译时生效，而异常是运行时处理，所以异常无法支持泛型。如：
+```txt
+
+class Person<T> extends Throwable{}  // error: generic class may not extend Throwable
+
+class Person<T extends Throwable> {
+  public void say() {
+    try{
+      System.out.println("go");  
+    }catch(T e) {  // error: cannot catch type parameters
+    }
+  }
+}
+// 因MyException<T>无法继承Throwable,所以throw new MyException<String>()也不可能存在
+// 泛型参数不能被抛出，但可以将整个异常类作为泛型参数抛出，如前面利用泛型绕过受查异常
+// 编译检查的例子:
+public static <T extends Throwable> void f(Throwable th) throws T {
+  throw (T)th;  
+} 
+```
+9.消除受查异常检查。
+代码即如上所示，调用时如"f(new ParseException("sd", 0));"编译通过，运行时抛出受查异常
+ParseException.但这种简略写法其实默认等同于
+`OuterTest.<RuntimeException>f(new ParseException("sd", 0));`,即指定T类型为RuntimeException
+(或者Error类型);如果改为`OuterTest.<Exception>f(new ParseException("sd", 0));`，
+编译器同样报错unhandled exception.
+
+10. 泛型冲突
+如类Child继承Parent类，而Parent实现了`Comparable<Parent>`接口，此时Child类再次实现接口
+`Comparable<Child>`编译报错，因为Child会同时实现`Comparable<Parent>和Comparable<Child>`,
+由于前面说过的泛型擦除和重写泛型方法问题，编译器会自动合成对应的桥方法，在桥方法中调用重写
+的方法，此时子类同时拥有不同的参数类型，桥方法即无法确定调用哪一个，所以这种情况是不被允许的。
+
+11. 
+
+
+
+
+
+
+
 
 
 
