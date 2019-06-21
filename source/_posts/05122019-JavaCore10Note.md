@@ -6,7 +6,7 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-14 17:54:15
+updated: 2019-06-21 18:34:36
 date: 2019-05-12 20:10:28
 abbrlink:
 ---
@@ -2481,29 +2481,331 @@ ParseException.但这种简略写法其实默认等同于
 由于前面说过的泛型擦除和重写泛型方法问题，编译器会自动合成对应的桥方法，在桥方法中调用重写
 的方法，此时子类同时拥有不同的参数类型，桥方法即无法确定调用哪一个，所以这种情况是不被允许的。
 
-11. 
+11. 泛型与继承
+泛型参数本身的继承关系对其实际类型无关，即`ArrayList<Number>和ArrayList<Integer>`类型没有
+任何关系:这一点其实也是由泛型擦除决定的。
+```txt
+ArrayList<Integer> integers = new ArrayList<>();
+ArrayList<Number> numbers = integers;   // Error: incompatible types
+numbers.set(0, 3.444);                 // cannot be allowed to happen
+```
+(如果这2者可以转换，理由类似于无法创建泛型数组一样:
+经过向上转型传递引用，破坏了类型安全。数组本身的可协变性则是由其自身的保护机制决定的，如果
+元素类型没有严格相符，它会抛出ArrayStoreException.)
 
+另一方面，当泛型参数相同的情况下，类或接口本身的继承关系仍然有效，如`ArrayList<Integer>是
+List<Integer>的子类`(如果泛型参数Integer不同，转换类型时会产生编译错误，不符合泛型要求)。
 
+如果`ArrayList<Integer>`转换为原生类型ArrayList,则相当于里面的元素都转换为Object类型，原有
+泛型类型限制就全部失效了。
 
+12. 通配符
+由于上面说的`ArrayList<Number>和ArrayList<Integer>`毫无关系，但有时候一个方法的参数类型需要
+能同时处理这2种类型，这时候可以使用通配符`?`，它又分子类型限定通配符和超类限定通配符2种，
+总体来说，**子类限定可以读，超类限定可以写**(或者理解为指定了父类可以读，指定了子类可以写)
 
+   1. 需要访问值时，使用子类通配符(? extends XX)对子类型统一访问，但不能更改子类型的值。
+   对于子类限定的set方法来说,? extends Number指Number类的**某一个**子类类型，可以认为它
+   不能接收任何具体的类型(包括Number本身和其下的任何子类型)，以这种类型的区别来禁止使用。
+   而对于get方法它就可以成功转化，统一转型为Number类型。
+```txt
+ArrayList<Integer> integers = new ArrayList<>();
+integers.add(2);
+// 引用传递可以为Number本身或其子类型
+ArrayList<? extends Number> numbers = integers;     // OK  
 
+// 对子类型限定通配符的泛型对象无法设置值
+// compilation Error: wrong type,Found Integer, required ? extends Number 
+numbers.set(0, (Integer)3);     
 
+// compilation Error: wrong type,Found Number, required ? extends Number 
+numbers.set(0, (Number)3);     
 
+// OK, 整型元素可以向上转型为Number类型被统一访问到 
+Number first = numbers.get(0); 
+```
 
+   2. 需要更改参数值时，使用超类通配符(? super XXX)传入各个父类型泛型的对象，当使用符合
+   泛型要求的子类型XXX的值传入set方法时，可以向上转型从而成功赋值。而get方法因无法确定
+   父类型，所以只能转换为Object类型。代码如下：
+```txt
+ArrayList<Number> nums = new ArrayList<>();
+nums.add(2);
+// 引用传递可以为Double本身或其父类型
+ArrayList<? super Double> doubleSupers = nums;     // OK  
 
+// OK，double可以像上转型为Number类型，没有违反nums的泛型安全
+doubleSupers.set(0, 6.32);
 
+//compilation error: wrong type:found Integer, required ? super Double
+doubleSupers.set(0, 33); 
 
+// OK，get方法得到Object类型，需要强制转型。
+// 实际使用时在库方法中无法得知参数的具体类型为Number
+Number one = (Number)doubleSupers.get(0); 
+```
 
+注： 如以上提到的泛型冲突问题：时间类LocalDate实现了接口ChronoLocalDate,而ChronoLocalDate
+接口继承了Compare(ChronoLocalDate)接口，所以LocalDate就无法实现Compare(LocalDate)接口。
+这对于方法`public <T extends Comparable<T>> T getMax(T... ts){...}`来说就无法使用LocalDate
+作为参数类型，我们可以使用超类限定通配符将其中的泛型声明部分改为
+`<T extends Comparable<? super T>>`，使得compare方法参数类型可以是被比较元素T的父类，从而
+解决这个问题。
 
+   3. 无限定通配符
+如`ArrayList<?>`,它和原生类型的区别即在于无限定通配符无法使用set方法修改对象，原生对象可以。
+```txt
+ArrayList<?> list = new ArrayList<>();
+list.add(23);  // 编译报错：add(capture<?>)in ArrayList cannot be applied to (int)
+ArrayList list2 = new ArrayList<>();
+list2.add(23);  // OK
+```
+使用无限定通配符有时可以对一些简单操作方法省去泛型类型T.如
+```txt
+public <T> boolean isNull(Pair<T> p){...}
+```
+可写为
+```txt
+public void boolean isNull(Pair<?> p){...}
+```
 
+   4. 通配符捕获
+以上例子中方法`public void boolean isNull(Pair<?> p){...}`并不是一个泛型方法，它有着一个
+固定类型为`Pair<?>`的参数,有时在方法内需要捕获该类型进行对象处理，如`? f = p.getF()`,但
+?并不是一个实际类型，这样写会报错，这时可以另写一个泛型方法捕获这个通配符类型。
+```txt
+public class Test{
+  public static void main(String[] args) {
+    ArrayList<Number> list = new ArrayList<>();
+    list.add(3.67);
+    f(list);
+  }  
+  // 这个例子仅为演示通配符捕获的作用，实际上可以直接使用ArrayList<T>
+  private static void f(ArrayList<? extends Number> list){
+    getType(list);
+  }
+  // 使用通配符捕获在库方法中得到具体的类型
+  private static <T> void getType(ArrayList<T> list){
+    T t = list.get(0); 
+    System.out.println(t.getClass());
+  }
+}
+```
+值得注意的是，只有通配符匹配的类型可以唯一确定的情况下才能捕获，否则无法捕获。
+```txt
+// 使用上面的Pair<T>类
+public class Test{
+ public static void main(String[] args) {
+   ArrayList<Pair<?>> list = new ArrayList<>();
+   list.add(new Pair<String>("sd", "f"));  // OK
+// list.add(new Pair<Integer>(32, 34));   // OK
+   //编译报错: reason: incompatible equality constraint: T and ?
+   cap(list);
+ }  
+ private static <T> void cap(ArrayList<Pair<T>> list) {
+   ...
+ }
+}
+```
+注: 通配符泛型对象如Pair<?>, Pair<? extends XXX>是无法修改值的(? super XXX除外),
+所以它们一般都是作为引用的接收对象，在引用传递过程中通配符类型可以被唯一确定。
+而在上面的例子`ArrayList<Pair<?>>`中,`Pair<?>`整体作为泛型参数实际上等同于Pair原生类型，
+无法确定`Pair<T>`中T的具体类型。
 
+13. 反射和泛型
+   1. 泛型Class类
+   反射关键类Class本身是一个泛型类`Class<T>`,String.class其实是`Class<String>`的唯一实例。
+   2. 使用`Class<T> c`作为方法参数接受XXX.class类型，在方法中可以使用T作方便的处理。
+   3. 虽然泛型参数在虚拟机中被擦除，但可以通过java.lang.reflect.Type接口下的几个子接口
+   获得泛型参数的相关信息。
+```txt
+Type:  只有一个接口默认方法getTypeName
 
+对于Type类型的变量type可以使用type instanceof XXX(XXX为以下类型)来判断具体类型
+Class:   普通类型，如类，接口，数组等
 
+   TypeVariable[] getTypeParameters()  该类型如果带有泛型，则返回其泛型类型变量列表;否则
+   返回长度为0的数组。(经测试类，接口都可以成功取得泛型变量，由于无法创建泛型数组，所以
+   数组类型如Comparable[].class调用该方法都是返回0长度数组)
 
+   Type[] getGenericInterfaces()  返回当前类型(类或者接口)实现的泛型接口列表。
 
+   Type getGenericSuperclass()  返回当前类型的父类泛型信息(父类无泛型返回父类类型即可)，
+   该方法限定为类类型使用，其他如Object本身或接口类型会返回null,数组类型统一返回
+   java.lang.Object。
 
+   Method类中关于泛型的方法:
+     TypeVariable[] getTypeParameters()  返回方法声明的泛型变量列表，同Class类中方法
+     Type getGenericReturnType()       获得泛型返回值 
+     Type[] getGenericParameterTypes()  获得方法泛型参数
+
+TypeVariable: 描述了泛型变量，如T extends Number
+    String getName()  获取类型变量名称，如T,E,K等
+    Type[] getBounds()  获取类型变量的子类限定列表，超类，接口等，
+       如T extends Object & Comparable,若无限定，返回长度为0的数组。
+       不存在T super XXX语法，因为T为确定类型，super无法确定类型，只有通配符才有super.
+
+WildcardType: 描述通配符类型，如? super T
+   Type[] getUpperBounds()  获取通配符子类限定(extends)列表，无则返回长度为0数组
+   Type[] getLowerBounds()  获取通配符超类限定(super)列表，无则返回长度为0数组
+
+ParameterizedType: 描述泛型类或泛型接口，如Comparable<T>
+   Type getRawType()  获取泛型类原始类型 
+   Type[] getActualTypeArguments()  获取实际的类型参数 如Map<K,V>中的K,V列表
+   Type getOwnerType()  获取所在类，如内部类O<T>.I<S>类型调用该方法返回外部类O<T>，
+      否则返回null
+
+GenericArrayType: 描述泛型数组，如T[]或Comparable<T>[]
+   Type getGenericComponentType(); 获取数组元素泛型类型,泛型数组不可创建，但可以作为引用
+     接收，如Comparable<String>[] carr = (Comparable<String>[])new Comparable<?>[10];
+      但这种做法存在类型转换隐患。
+```
+书中的代码示例GenericReflectionTest非常经典，总结如下：
+1. 一个泛型类继承另一个泛型类时，当前类的泛型是定义(相当于程序中的isDefinition = true),
+如`class C<K,S> extends P<K,S>`,父类的泛型参数只能为`<K,S>或<S,K>`，即只能在当前类的泛型
+中定义泛型变量，后面父类的泛型只能使用定义好的泛型变量; 类似的，泛型方法返回值前也是泛型
+变量的定义区。
+2. 只有在定义泛型变量(除去通配符的情况)时，允许出现限定符extends,在使用变量时不能进行限定。
+这一点可以从isDefinition变量只有在printType方法的TypeVariable类别中进行判断添加Bound限定
+看出。
+3. 通配符符号?在WildcardType接口中没有方法获得，所以需要手动打印。
 
 ## 集合
+### java集合框架
+1. 接口和实现分离
+  如List接口和它的具体实现ArrayList,LinkedList.使用List接口作为引用操作集合时，如果需要
+  更换实现，只需要改变初始化集合对象一处即可以，这样就实现了解耦。
+2. Collection接口
+   boolean add(E e) 和Iterator<E> iterator()
+3. 迭代器
+   for each循环是语法糖，会转化为带迭代器的循环。Collection接口定义为
+   `public interface Collection<E> extends Iterable<E>{...}`,
+   Iterable接口只有一个抽象方法`Iterator<T> iterator();`,因此，对于任何一个Collection集合
+   都可以使用for each循环。
+   Iterator接口在jdk8后新增了一个默认方法forEachRemaining,可以使用它配合λ表达式不使用for
+   循环即可遍历处理元素。
+  ```txt
+  List<Integer> list = new ArrayList<>(3);
+  list.add(3);
+  list.add(4);
+  list.add(2);
+  list.iterator().forEachRemaining(System.out::println);
+  ```
+java迭代器并不存储元素的位置信息，查找元素和指针位置变动是结合在next()方法中一起执行的，
+它无法像数组索引一样在迭代器中查找位于中间或后面随机位置的元素(即随机访问)，只能依次读取。
+可以认为java迭代器指针指向的是2个元素之间的位置，调用next方法时"越过"下一个元素并返回它。
+
+注: C++的迭代器是根据数组索引创建的，指针指向每个元素，同数组索引一样，不需要查找元素就可以
+移动指针。
+
+Iterator的remove()方法必须在next()方法后调用，每个next()方法后只能调用一次remove()方法删除
+刚刚"越过"的这个元素，否则将抛出异常IllegalStateException.
+因此，需要连续删除2个元素时只能这样做：
+```txt
+iterator.next();
+iterator.remove();
+iterator.next();
+iterator.remove();
+```
+注：ArrayList遍历同时删除元素的问题是一个老问题了：
+这个问题其实主要是在于ArrayList的2处源码：ArrayList.Itr的remove方法和ArrayList.remove方法。
+
+   1. ConcurrentModificationException: 经测试，使用foreach循环遍历ArrayList集合时
+调用list.remove()方法时可能会报这个异常，但并不是一定会报: ArrayList继承了List接口，
+iterator()方法返回的是其内部定义的一个迭代器Itr,Itr的remove方法中有
+CheckForComodification()检查计数值modCount和expectedModCount值是否相等，不等时即抛出该异常。
+由此可知，某些情况下删除元素后这2个值会处于相等的情况，这时就不会抛出该异常
+(比如列表"2,3,4"中删除元素3的时候就无异常，删除2或4就会报)。
+
+使用迭代器对ArrayList遍历时不应调用list.remove()方法，应使用iterator.remove()方法，
+这是因为iterator.remove()方法中有对modCount的重新赋值操作，从而避免了抛出异常。
+
+   2. ArrayList的迭代器有检查机制会抛出异常。如果不用迭代器而使用普通索引for循环会怎么样？
+由于ArrayList本身是数组实现的，查看remove(obj)方法源码可知，该方法是通过将删除元素
+后的元素使用System.arrayCopy方法统一前进一位，删除最后一个元素来实现的。
+这样的话如果对列表"2,3,3,4"删除其中的元素3,会发现结果为"2,3,4",即删除了第一个3后，后面一个
+3元素由于移位避开了循环从而跳过了删除判断。对于这个问题，可以使用倒序遍历的方式来解决：
+由于是倒序遍历，删除某个元素后，后面的元素统一前移一位，这时使用list.get(i)时i由于是减法
+所有刚好能取到后面前移的那个元素，从而实现正确遍历。
+
+总结以上2点，使用迭代器的hasNext()，next(),remove()方法对集合进行遍历同时修改的操作才是
+最佳实践，另外也可以使用普通for循环倒序遍历集合调用list.remove()方法。
+
+4. 泛型实用方法
+Collection接口声明了很多有用的方法，如int size(), boolean isEmpty(),boolean contains(obj),
+boolean remove(obj),Object[] toArray()等，对于部分方法由AbstractCollection抽象类提供了具体
+实现，自定义的接口实现类继承它只需要实现部分抽象方法即可。
+
+对于jdk8以后的类，在Collection接口中添加了很多默认方法，更加方便，如
+boolean removeIf(Predicate<? super E> filter)按条件删除(使用超类限定符可以使用Object类的方法)。
+还有其他一些与流相关的操作方法。
+
+5. 集合框架中的接口
+集合有2个基本接口，Collection和Map,Collection下主要有List,Set,Queue子接口。
+
+List是有序列表，支持随机访问，方法如E get(index),void add(index, element), 
+boolean remove(index)等支持按索引进行操作。但实际上List可以由数组或链表来实现，链表虽然也
+实现了相应随机访问方法，但是效率非常低。为了解决这个问题，jdk1.4引入了一个记号接口
+RandomAccess,它本身同Cloneable一样，没有任何方法，仅是一个接口。可以通过
+`XXX instanceof RandomAccess`判断XXX类是否支持高效随机访问，如ArrayList就实现了RandomAccess
+接口，LinkedList没有实现它。这时可以使用迭代器来顺序遍历链表。
+
+迭代器Iterator针对List上的遍历有一个ListIterator子接口，它新增了hasPrevious(), previous(),
+add(),set()等额外的方法以更方便的在list上使用迭代器。
+
+### 具体的集合
+具体实际使用的集合有以下这些：
+```txt
+1. ArrayList           可以动态改变大小的索引序列(动态数组)
+2. LinkedList          可以在任意位置高效插入和删除元素的有序序列(双向链表)
+3. ArrayDeque          用循环数组实现的双端队列 
+4. HashSet             无序集(无重复元素)
+5. TreeSet             有序集(无重复元素)
+6. EnumSet             枚举集(无重复元素)
+7. LinkedHashSet       可以记住元素插入次序的集 
+8. PriorityQueue       允许高效删除最小元素的集合(优先队列)
+9. HashMap             键值对
+10. TreeMap            键值有序排列的映射表
+11. EnumMap            键是枚举类型的映射表
+12. LinkedHashMap      可以记住键值对添加顺序的映射表
+13. WeakHashMap        值无用后可以被GC回收的映射表
+14. IdentityHashMap    用==而不是equals比较键值的映射表
+```
+AbstractCollection: 
+   为方便实现Collection接口，jdk提供了AbstractCollection抽象类。其中对很多方法都提供了默认实现。
+
+类注释中说明，如果需要实现的是一个不可变的类，则只需要实现iterator()和size()方法，
+其中iterator()返回的迭代器需要实现hasNext和next方法(add方法默认实现是抛出UnsupportedException).
+
+如果需要实现一个可变集合，就需要额外实现add方法，并且迭代器还需要实现remove()方法。
+可以看到ArrayDeque是直接继承了AbstractCollection类。
+AbstractCollection主要有以下3个子类，AbstracList,AbstractSet,AbstractQueue.
+
+   1. AbstractList:
+AbstractList继承自AbstractCollection类，实现了List接口。前面已提到，List接口对于Collection
+接口扩展了一些随机访问方法，AbstractList类同样继承了这些方法，并针对其中部分方法如
+indexOf(object),lastIndexOf(object)方法提供了实现。
+
+对于上面说的AbstractCollection实现要求，可以看到AbstractList简单实现了add方法，相当于增加了
+一个索引作为参数，具体处理还是抽象的。迭代器实现有内部类Itr,同时还有一个ListIterator实现的内部类
+ListItr，它们实现了hasNext(), next(), remove()方法。size方法没有给出默认实现。
+
+同时，还有获取子列表subList(from,to)方法。
+
+
+   2. AbstractSet:
+
+
+   3. AbstractQueue:
+ 
+
+
+
+### 映射
+### 视图与包装器
+### 算法
+### 遗留的集合
+
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
 ## 部署java应用程序
 ## 并发
