@@ -6,9 +6,9 @@ tags:
   - Ubantu
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
+abbrlink: 45ed956e
 updated: 2019-05-10 15:04:26
 date: 2019-03-30 11:40:15
-abbrlink:
 ---
 Shell,ubantu,vmware workstation
 <!-- more -->

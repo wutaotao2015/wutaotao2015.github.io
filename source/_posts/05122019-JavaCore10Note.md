@@ -6,9 +6,9 @@ tags:
   - Char with UTF-16
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
-updated: 2019-06-21 18:34:36
+abbrlink: 2a1ddb5b
+updated: 2019-06-23 21:54:35
 date: 2019-05-12 20:10:28
-abbrlink:
 ---
 Java, Char with UTF-16, C++, 数组，  
 <!-- more -->
@@ -583,6 +583,11 @@ Manager::Manager(String name,int salary)
   bonus = 0; 
 }
 ```
+
+注： 经测试，子类会继承父类实现的接口，如父类实现了记号接口RandomAccess,子类对象使用
+instanceof关键字可以测试出子类也实现了RandomAccess接口。另外，子类中与父类的同名属性
+不会覆盖父类的属性，它们可以拥有不同的值。
+
 
 多态： 一个变量可以指示多种实际类型的现象叫多态。
 动态绑定： 运行时能自动选择调用哪个方法的现象叫动态绑定。
@@ -2712,19 +2717,21 @@ iterator.remove();
 
    1. ConcurrentModificationException: 经测试，使用foreach循环遍历ArrayList集合时
 调用list.remove()方法时可能会报这个异常，但并不是一定会报: ArrayList继承了List接口，
-iterator()方法返回的是其内部定义的一个迭代器Itr,Itr的remove方法中有
+iterator()方法返回的是其内部定义的一个迭代器Itr,Itr的next方法中第一步即为
 CheckForComodification()检查计数值modCount和expectedModCount值是否相等，不等时即抛出该异常。
-由此可知，某些情况下删除元素后这2个值会处于相等的情况，这时就不会抛出该异常
-(比如列表"2,3,4"中删除元素3的时候就无异常，删除2或4就会报)。
+经测试发现，当使用foreach循环list.remove删除倒数第二个元素时，程序不会抛出该异常，可以
+理解为foreach语法糖转化后的迭代器执行完list.remove方法后没有下一个元素了，
+即iterator.hasNext() == false,从而跳出了循环，没有进入到循环中继续执行将抛出异常的next方法。
 
-使用迭代器对ArrayList遍历时不应调用list.remove()方法，应使用iterator.remove()方法，
-这是因为iterator.remove()方法中有对modCount的重新赋值操作，从而避免了抛出异常。
+使用迭代器对ArrayList遍历时调用iterator.remove()方法可以正确删除，这是因为
+iterator.remove()方法中有对modCount的重新赋值操作，能够保证检查的2个值相等。
 
    2. ArrayList的迭代器有检查机制会抛出异常。如果不用迭代器而使用普通索引for循环会怎么样？
 由于ArrayList本身是数组实现的，查看remove(obj)方法源码可知，该方法是通过将删除元素
 后的元素使用System.arrayCopy方法统一前进一位，删除最后一个元素来实现的。
+
 这样的话如果对列表"2,3,3,4"删除其中的元素3,会发现结果为"2,3,4",即删除了第一个3后，后面一个
-3元素由于移位避开了循环从而跳过了删除判断。对于这个问题，可以使用倒序遍历的方式来解决：
+3元素由于移位避开了遍历从而跳过了删除判断。对于这个问题，可以使用倒序遍历的方式来解决：
 由于是倒序遍历，删除某个元素后，后面的元素统一前移一位，这时使用list.get(i)时i由于是减法
 所有刚好能取到后面前移的那个元素，从而实现正确遍历。
 
@@ -2772,14 +2779,17 @@ add(),set()等额外的方法以更方便的在list上使用迭代器。
 14. IdentityHashMap    用==而不是equals比较键值的映射表
 ```
 AbstractCollection: 
-   为方便实现Collection接口，jdk提供了AbstractCollection抽象类。其中对很多方法都提供了默认实现。
+   为方便实现Collection接口，jdk提供了AbstractCollection抽象类。其中对很多方法都提供了默认实现,
+如contains(object)，toArray(),remove(object),addAll(collection)等。
 
 类注释中说明，如果需要实现的是一个不可变的类，则只需要实现iterator()和size()方法，
 其中iterator()返回的迭代器需要实现hasNext和next方法(add方法默认实现是抛出UnsupportedException).
 
 如果需要实现一个可变集合，就需要额外实现add方法，并且迭代器还需要实现remove()方法。
-可以看到ArrayDeque是直接继承了AbstractCollection类。
-AbstractCollection主要有以下3个子类，AbstracList,AbstractSet,AbstractQueue.
+*可以看到ArrayDeque是直接继承了AbstractCollection类*。
+
+AbstractCollection主要有以下子类，AbstractList,AbstractSet,AbstractQueue,ArrayDeque,
+ConcurrentLinkedDeque.
 
    1. AbstractList:
 AbstractList继承自AbstractCollection类，实现了List接口。前面已提到，List接口对于Collection
@@ -2787,19 +2797,172 @@ AbstractList继承自AbstractCollection类，实现了List接口。前面已提�
 indexOf(object),lastIndexOf(object)方法提供了实现。
 
 对于上面说的AbstractCollection实现要求，可以看到AbstractList简单实现了add方法，相当于增加了
-一个索引作为参数，具体处理还是抽象的。迭代器实现有内部类Itr,同时还有一个ListIterator实现的内部类
-ListItr，它们实现了hasNext(), next(), remove()方法。size方法没有给出默认实现。
+一个索引作为参数，具体处理还是抽象的。迭代器实现有内部类Itr,同时还有一个ListIterator接口
+实现的内部类ListItr，它们实现了hasNext(), next(), remove()方法。size方法没有给出默认实现。
+同时，还给出了获取子列表subList(from,to)方法。
 
-同时，还有获取子列表subList(from,to)方法。
+同AbstractCollection一样，AbstractList类注释中也给出了实现类的要求：
+如果是实现一个不可变list集合，实现类只需要提供get(index)和size()方法的实现。
+如果是实现一个可修改的list集合，实现类需要额外实现set(index, object),set(index, E)方法。如果
+该集合大小可变，实现类需要额外实现add(index, object),add(index, E)和remove(index)方法。
 
+AbstractList的主要子类有ArrayList, Vector,  主要子接口有AbstractSequentialList.
+
+      1. ArrayList
+```txt
+ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
+   java.io.Serializable
+```
+      可变大小数组实现的list集合。在add方法中添加元素前会检查数组容量，如果数组容量不够，具体
+为grow方法中的`int newCapacity = oldCapacity + (oldCapacity >> 1);`,即每次扩容都扩大
+现有容量的一半，直到符合要求为止。所以在初始化ArrayList时指定大小可以提高程序性能，
+减少自动扩容的次数，由于默认容量是10, 所以初始化大小如果指定容量小于10没有意义，程序中有
+取值比较`minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity)`，扩容从10开始。
+   同样的，如果显式的调用ensureCapacity(int)方法，它也是调用grow方法，一半一半的扩容直到
+符合容量要求，效率较低，所以如果初始化时可以确定大概大小最好指明容量，然后调用完毕后使用
+trimToSize()方法将容量变为与数组大小一致，去除list中多余的null元素。
+
+ArrayList的类注释概述了上面的扩容机制，并提到ArrayList本身并不是线程安全的，可以使用
+`Collections.synchronizedList(new ArrayList());`来获得线程安全的list集合。同时，也提到
+ArrayList中的迭代器在创建迭代器后对list做结构修改会引发快速失败(即抛出并发修改异常)的机制
+并不是非常确定的(如上面说的删除倒数第二个元素的例子)，不能依靠这个来写程序，只应作为检测bug的
+手段。实际上前面异常章节中有提到不应当依靠任何异常进行逻辑处理，不在catch语句中做业务逻辑。
+
+
+      2. Vector
+```txt
+Vector<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
+   java.io.Serializable
+```
+Vector是线程安全的，而ArrayList是线程不安全的。Vector的elements()返回的是一个类似于迭代器
+的Enumeration接口，属于遗留代码。
+
+      3. AbstractSequentialList
+AbstractSequentialList是继承自AbstractList的抽象类。正如名字所示，是为了方便顺序访问list
+集合而创建的抽象类，如LinkedList,对于支持如数组一样随机访问的实现类，应直接继承AbstractList.
+
+对于继承自AbstractList而来的随机访问方法如get(index),set(index), add(index), remove(index)
+方法，AbstractSequentialList全部使用迭代器进行了重写，其中具体的迭代器实现是抽象的。
+同AbstractCollection和AbstractList一样，实现者需要根据不可变或可变list集合实现不同的方法。
+
+AbstractSequentialList主要子类为LinkedList.
+
+      1. LinkedList:
+   Queue: Queue比Collection提供了额外的插入，提取和检查方法。
+   
+    队列一般是FIFO，先进先出，但不是必须的，也有例外，如优先队列是根据提供的比较器排列元素，
+或自然排序;栈是先进后出的顺序。无论是用什么顺序存储元素，队列的头都是那个可以调用remove()
+或者poll()方法删除的元素。先进先出的队列是从队列尾部插入新元素的。 
+   
+   队列操作根据操作错误主要分2类：
+
+  | 异常情况处理 | 新增 | 删除 | 查看 |
+  | 抛出异常  | add(e) | remove()| element()|
+  | 返回特殊值| offer(e)| poll()| peek()|
+
+
+offer(e)方法通过返回特殊值来告知调用者新增失败适用于失败是普通的行为，如向一个固定容量的
+队列中新增元素的情况。add(e)方法只能通过抛出非受查异常来告知失败，只适用于失败是异常情况时。
+
+remove()和poll()方法都会删除并返回队列的头元素，具体的元素由队列的排序规则而定。当在一个
+空队列上执行这2个操作时，remove()方法抛出异常，poll()方法返回null值。
+
+element()和peek()方法会返回当前的队列头元素。
+
+对于并发编程中常见的阻塞队列的方法是定义在Queue的子接口BlockingQueue中，Queue本身没有定义
+相关操作。
+队列的实现一般不允许插入null元素，但也有例外，如LinkedList就没有禁止这样做。但是并不建议
+这样做，因为poll()方法是通过返回null值来表示当前是空队列的异常情况，插入null元素会与该
+方法产生冲突。
+队列实现的equals和hashCode方法并没有基于元素来定义，它只是继承了Object的相关方法，因为根据
+元素来定义的话，相同的元素组由于不同的排序规则会对这2个方法的实现产生影响。
+    
+实现Queue接口的主要类有AbstractQueue,ConcurrentLinkedQueue, 子接口有BlockingQueue，Deque.
+
+    Deque: double ended queue 双端队列。队列两端都能进行新增删除元素的队列
+大部分Deque实现都没有容量限制，但Deque接口本身也支持固定大小的实现。
+   |            | Head  || Tail ||      
+   |异常情况处理| 抛异常|返回错误值|抛异常|返回错误值|
+   |    新增    |  addFirst(e)|offerFirst(e)| addLast(e)|offLast(e)|
+   |    删除    |  removeFirst()|pollFirst()| removeLast()|pollLast()|
+   |   查看    |  getFirst() | peekFirst() | getLast() | peekLast() |   
+
+当Deque被当作Queue使用时，它遵循的是先进先出(FIFO)的原则,从队尾添加元素，队头删除元素。
+同样分异常情况不同处理方式有等效方法如下表：
+     |         | Queue方法  |  等效的Deque方法 |        
+     |队尾新增1| add(e) |  addLast(e) |  
+     |队尾新增2| offer(e)| offerlast(e) |
+     |队头删除1| remove() | removeFirst()|
+     |队头删除2| poll() | pollFirst()| 
+     |队头查看1| element() | getFirst()|
+     |队头查看2| peek() | peekFirst()|
+
+另一方面Deque也可以被用作后进先出(LIFO)的栈使用(优于遗留类Stack).这时候，元素是在deque
+的头部进行入栈和出栈操作的。以下是栈操作的等效方法：
+    |     | Stack方法 | 等效Deque方法 | 
+    | 入栈| push(e) | addFirst(e)   | 
+    | 出栈| pop()   | removeFirst() | 
+    | 查看| peek()  | peekFirst() |
+
+不过，Deque接口中同样提供了push(e),pop()方法，它们就是直接调用addFirst(e),removeFirst()。
+将Deque用作栈时，使用这2个方法具有更强的可读性。
+
+Deque接口还提供了2个方法用于删除内部的元素: removeFirstOccurrence(object)和
+removeLastOccurrence(object).Deque继承自Queue接口，没有随机访问的方法。
+同Queue接口保持一致，Deque实现也不应该插入null元素，equals和hashCode方法也是直接继承自
+Object类。
+
+Deque也继承了总接口Collection的方法，如remove(object):实现为调用removeFirstOccurrence(obj),
+contains(obj), size()方法。提供了迭代器iterator(): 遍历顺序为从队列头到队列尾; 
+descendingIterator():遍历顺序与iterator()相反，从队列尾到队列头。
+
+Deque接口的主要实现类为LinkedList, ArrayDeque, ConcurrentLinkedDeque,子接口为BlockingDeque.
+
+LinkedList:
+```txt
+LinkedList<E> extends AbstractSequentialList<E> implements List<E>,Deque<E>,Cloneable,
+    java.io.Serializable
+```
+LinkedList是双向链表，同时实现了List和Deque接口，这意味着它同时支持随机访问方法和双端队列
+相关的操作。从get(index)方法的实现看，它会将参数index同中间索引进行比较，index较小时从
+头开始遍历链表，index较大时从尾开始遍历。
+
+同ArrayList一样，LinkedList一样也是线程不安全的，也一样可以使用以下方法进行包装:
+`List list = Collections.synchronizedList(new LinkedList(...));`
+
+LinkedList返回的迭代器同ArrayList的迭代器机制相同，同样是快速失败机制但并不确保必定发生。
+不同的是ArrayList定义了2个迭代器Itr和ListItr, LinkedList(重写了AbstractList中的2个迭代器)，
+LinkedList定义了一个ListItr和一个倒序遍历迭代器DescendingIterator.
+
+总之，LinkedList是链表结构，使用它的随机访问方法如get(index)效率较低，应使用迭代器进行遍历
+处理。随机访问方法的效率应查看是否实现了RandomAccess接口。
 
    2. AbstractSet:
+AbstractSet继承自AbstractCollection类，同时实现了Set接口。
+AbstractSet没有重写AbstractCollection的任何方法实现，它只是增加了equals(object), 
+hashCode(), removeAll(collection)方法的实现。
+
+   Set接口:
+Set接口是Collection接口的三大接口之一(前面已经总结了List和Queue).
+Set集合即为不含重复元素的集合。确切的说，Set集合不包含这样一对元素e1,e2,其中
+e1.equals(e2) = true, 并且Set集合最多只能包含一个null元素。在数学上，
+a set is a collection of distinct objects.
+
+AbstractSet的主要子类有HashSet, TreeSet, EnumSet.
+
+      1. HashSet
+```txt
+public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, 
+   java.io.Serializable
+```
+--TBC
+
 
 
    3. AbstractQueue:
  
 
-
+   4. ArrayDeque
 
 ### 映射
 ### 视图与包装器
