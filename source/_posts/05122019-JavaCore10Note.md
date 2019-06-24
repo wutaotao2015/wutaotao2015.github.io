@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-23 21:54:35
+updated: 2019-06-24 18:05:49
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -2717,14 +2717,18 @@ iterator.remove();
 
    1. ConcurrentModificationException: 经测试，使用foreach循环遍历ArrayList集合时
 调用list.remove()方法时可能会报这个异常，但并不是一定会报: ArrayList继承了List接口，
-iterator()方法返回的是其内部定义的一个迭代器Itr,Itr的next方法中第一步即为
-CheckForComodification()检查计数值modCount和expectedModCount值是否相等，不等时即抛出该异常。
-经测试发现，当使用foreach循环list.remove删除倒数第二个元素时，程序不会抛出该异常，可以
-理解为foreach语法糖转化后的迭代器执行完list.remove方法后没有下一个元素了，
-即iterator.hasNext() == false,从而跳出了循环，没有进入到循环中继续执行将抛出异常的next方法。
+iterator()方法返回的是其内部定义的一个迭代器Itr,Itr有一个实例域expectedModCount，
+意思是expected modified count,预计修改过List集合结构的次数，如新增或删除元素会改变列表大小
+的操作次数。AbstractList中有一个可继承的域modCount即用来统计该次数，迭代器初始化时
+expectedModCount = modCount, Itr的next方法中第一步即为CheckForComodification()检查计数值
+modCount和expectedModCount值是否相等，不等时即抛出该异常。
 
 使用迭代器对ArrayList遍历时调用iterator.remove()方法可以正确删除，这是因为
 iterator.remove()方法中有对modCount的重新赋值操作，能够保证检查的2个值相等。
+
+经测试发现，当使用foreach循环list.remove删除倒数第二个元素时，程序不会抛出该异常，可以
+理解为foreach语法糖转化后的迭代器执行完list.remove方法后没有下一个元素了，
+即iterator.hasNext() == false,从而跳出了循环，没有进入到循环中继续执行将抛出异常的next方法。
 
    2. ArrayList的迭代器有检查机制会抛出异常。如果不用迭代器而使用普通索引for循环会怎么样？
 由于ArrayList本身是数组实现的，查看remove(obj)方法源码可知，该方法是通过将删除元素
@@ -2751,7 +2755,8 @@ boolean removeIf(Predicate<? super E> filter)按条件删除(使用超类限定�
 集合有2个基本接口，Collection和Map,Collection下主要有List,Set,Queue子接口。
 
 List是有序列表，支持随机访问，方法如E get(index),void add(index, element), 
-boolean remove(index)等支持按索引进行操作。但实际上List可以由数组或链表来实现，链表虽然也
+boolean remove(index)(注意remove是删除第一次出现的该元素，即索引最小的元素，而不是所有相同的
+重复元素)等支持按索引进行操作。但实际上List可以由数组或链表来实现，链表虽然也
 实现了相应随机访问方法，但是效率非常低。为了解决这个问题，jdk1.4引入了一个记号接口
 RandomAccess,它本身同Cloneable一样，没有任何方法，仅是一个接口。可以通过
 `XXX instanceof RandomAccess`判断XXX类是否支持高效随机访问，如ArrayList就实现了RandomAccess
@@ -2759,6 +2764,8 @@ RandomAccess,它本身同Cloneable一样，没有任何方法，仅是一个接�
 
 迭代器Iterator针对List上的遍历有一个ListIterator子接口，它新增了hasPrevious(), previous(),
 add(),set()等额外的方法以更方便的在list上使用迭代器。
+
+List接口的主要实现类有AbstractList(ArrayList, Vector,LinkedList)
 
 ### 具体的集合
 具体实际使用的集合有以下这些：
@@ -2810,7 +2817,7 @@ AbstractList的主要子类有ArrayList, Vector,  主要子接口有AbstractSequ
 
       1. ArrayList
 ```txt
-ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
+public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
    java.io.Serializable
 ```
       可变大小数组实现的list集合。在add方法中添加元素前会检查数组容量，如果数组容量不够，具体
@@ -2831,7 +2838,7 @@ ArrayList中的迭代器在创建迭代器后对list做结构修改会引发快�
 
       2. Vector
 ```txt
-Vector<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
+public class Vector<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
    java.io.Serializable
 ```
 Vector是线程安全的，而ArrayList是线程不安全的。Vector的elements()返回的是一个类似于迭代器
@@ -2920,8 +2927,8 @@ Deque接口的主要实现类为LinkedList, ArrayDeque, ConcurrentLinkedDeque,�
 
 LinkedList:
 ```txt
-LinkedList<E> extends AbstractSequentialList<E> implements List<E>,Deque<E>,Cloneable,
-    java.io.Serializable
+public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>,Deque<E>,
+   Cloneable, java.io.Serializable
 ```
 LinkedList是双向链表，同时实现了List和Deque接口，这意味着它同时支持随机访问方法和双端队列
 相关的操作。从get(index)方法的实现看，它会将参数index同中间索引进行比较，index较小时从
@@ -2948,6 +2955,14 @@ Set集合即为不含重复元素的集合。确切的说，Set集合不包含�
 e1.equals(e2) = true, 并且Set集合最多只能包含一个null元素。在数学上，
 a set is a collection of distinct objects.
 
+Set接口的主要实现类有AbstractSet(HashSet(LinkedHashSet)),子接口有SortedSet.
+   SortedSet:
+   -- TBC
+
+
+
+
+
 AbstractSet的主要子类有HashSet, TreeSet, EnumSet.
 
       1. HashSet
@@ -2955,7 +2970,49 @@ AbstractSet的主要子类有HashSet, TreeSet, EnumSet.
 public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, 
    java.io.Serializable
 ```
---TBC
+从代码实现看，HashSet是用HashMap实现的，为了保证元素的唯一性，HashSet里的元素被当作
+HashMap的键，值是一个简单的Object对象PRESENT = new Object().HashSet的add方法实现即为
+`map.put(e, PRESENT) == null;`,remove方法实现为`map.remove(e) == null;`其中put和remove方法
+返回的是value值。HashSet的迭代器实现为`map.keySet().iterator()`.
+
+由HashMap实现的HashSet无法保证集合的元素遍历顺序，同时HashSet允许null元素(HashMap允许null
+键),因为键的唯一性，null元素同其他元素一样，也只能有一个。
+遍历HashSet集合的时间与HashSet元素数量加上内部实现HashMap的容量大小之和成正比。因为元素
+之间无联系(散列算法放入)，需要遍历整个空间。
+HashSet是线程不安全的，同ArrayList,LinkedList一样，可以使用如下方法
+```txt
+Set s = Collections.synchronizedSet(new HashSet(...));
+```
+HashSet的迭代器也是快速失败的。
+
+HashSet有一个子类LinkedHashSet.
+
+   LinkedHashSet:
+```txt
+public class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable, 
+   java.io.Serializable
+```
+查看LinkedHashSet的实现可知，它调用了定义在HashSet中的重载构造器(使用bool值dummy区分)，
+在其中使用LinkedHashMap而不是HashMap实现Set集合，其他方法都使用默认的HashSet实现，没有进行
+重写。
+同LinkedHashMap一致，LinkedHashSet维护了一个双向链表来记录元素的插入顺序(重复插入相同元素
+不会改变它的次序),可以使用它来记录参数set集合的元素顺序，如
+```txt
+void foo(Set s) {
+  Set copy = new LinkedHashSet(s);
+  ...
+}
+```
+由于维护了一个双向链表，LinkedHashSet效率比HashSet低一些，但遍历集合时，由于链表的存在，
+它的时间是与元素个数成正比的，而HashSet(HashMap实现)它是与集合的容量成正比的。 
+
+这样看来，当修改较少，遍历查询较多时，应使用LinkedHashMap或LinkedHashSet，而不是HashMap或
+HashSet.
+同HashSet一样，LinkedHashSet也是线程不安全的，可以使用
+```txt
+Set s = Collections.synchronizedSet(new LinkedHashSet(...));
+```
+   2. TreeSet
 
 
 
