@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-24 18:05:49
+updated: 2019-06-24 22:13:06
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -2956,8 +2956,60 @@ e1.equals(e2) = true, 并且Set集合最多只能包含一个null元素。在数
 a set is a collection of distinct objects.
 
 Set接口的主要实现类有AbstractSet(HashSet(LinkedHashSet)),子接口有SortedSet.
+
    SortedSet:
-   -- TBC
+
+SortedSet是一个给元素提供了排序规则的set集合。元素可以使用自带的Comparable接口进行排序或
+是创建sortedSet时提供的Comparator接口。这也意味着sortedSet集合中的元素必须要实现Comparable
+接口或是可以使用指定的Comparator接口进行排序，同时，元素之间需要能够进行双向比较，即
+进行比较时不应抛出类型转换异常。
+
+同时，sortedSet使用的排序规则应当与equals方法保持一致，即a.compareTo(b) == 0时\
+a.equals(b) == true.这时因为set集合的操作都是建立在equals方法的基础上的(前面说的无重复元素
+定义)，但sortedSet进行比较时使用的是compareTo或compare方法，sortedSet只有在这两个方法返回
+0时才认为比较对象相同，所以如果equals和排序方法不保持一致，可能会产生意想不到的错误, 如
+Comparable类注释中给出的例子:
+```txt
+a.equals(b) == false && a.compareTo(b) == 0
+sortedSet.add(a); 
+sortedSet.add(b);
+```
+添加元素b时会返回false并且sortedSet集合大小不变，因为在sortedSet看来，a与b是相同的元素。
+
+SortedSet建议实现类应当提供4个构造器：
+1. 无参构造器: 元素按自然排序排列
+2. 有一个Comparator参数的构造器: 元素按指定的Comparator接口排列
+3. 有一个Collection类型参数的构造器: 使用参数Collection中全部元素构造一个新SortedSet,按
+元素的自然排序规则排序。
+4. 有一个SortedSet类型参数的构造器: 使用与参数sortedSet中相同的元素和相同的排列规则建立
+一个新的sortedSet.
+
+值得注意的是, SortedSet有些方法是返回有区间限定的子set集合，子集元素的边界默认是半开区间，
+即包含低边界，不包含高边界(包头不包尾).如果想得到全闭边界的子集，可以将高边界向后推进一个
+元素。如以下例子:
+```txt
+SortedSet<String> sub = s.subSet(low, high+"\0");
+```
+同理可以得到全开边界区间:
+```txt
+SortdSet<String> sub = s.subSet(low + "\0", high);
+```
+SortedSet接口比Set接口主要新增了以下几个方法:
+```txt
+1. Comparator<? super E> comparator();
+2. SortedSet<E> headSet(E toElement);
+3. SortedSet<E> tailSet(E fromElement);
+4. E first();
+5. E last();
+```
+
+SortedSet的主要子接口为NavigableSet.
+  
+  NavigableSet:
+  
+  -- TBC
+
+
 
 
 
