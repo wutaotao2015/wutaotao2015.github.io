@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-24 22:13:06
+updated: 2019-06-25 17:53:15
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -2798,7 +2798,7 @@ AbstractCollection:
 AbstractCollection主要有以下子类，AbstractList,AbstractSet,AbstractQueue,ArrayDeque,
 ConcurrentLinkedDeque.
 
-   1. AbstractList:
+#### AbstractList:
 AbstractList继承自AbstractCollection类，实现了List接口。前面已提到，List接口对于Collection
 接口扩展了一些随机访问方法，AbstractList类同样继承了这些方法，并针对其中部分方法如
 indexOf(object),lastIndexOf(object)方法提供了实现。
@@ -2815,7 +2815,7 @@ indexOf(object),lastIndexOf(object)方法提供了实现。
 
 AbstractList的主要子类有ArrayList, Vector,  主要子接口有AbstractSequentialList.
 
-      1. ArrayList
+1. ArrayList
 ```txt
 public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
    java.io.Serializable
@@ -2835,8 +2835,7 @@ ArrayList中的迭代器在创建迭代器后对list做结构修改会引发快�
 并不是非常确定的(如上面说的删除倒数第二个元素的例子)，不能依靠这个来写程序，只应作为检测bug的
 手段。实际上前面异常章节中有提到不应当依靠任何异常进行逻辑处理，不在catch语句中做业务逻辑。
 
-
-      2. Vector
+2. Vector
 ```txt
 public class Vector<E> extends AbstractList<E> implements List<E>, RandomAcess, Cloneable, 
    java.io.Serializable
@@ -2844,7 +2843,7 @@ public class Vector<E> extends AbstractList<E> implements List<E>, RandomAcess, 
 Vector是线程安全的，而ArrayList是线程不安全的。Vector的elements()返回的是一个类似于迭代器
 的Enumeration接口，属于遗留代码。
 
-      3. AbstractSequentialList
+3. AbstractSequentialList
 AbstractSequentialList是继承自AbstractList的抽象类。正如名字所示，是为了方便顺序访问list
 集合而创建的抽象类，如LinkedList,对于支持如数组一样随机访问的实现类，应直接继承AbstractList.
 
@@ -2854,7 +2853,7 @@ AbstractSequentialList是继承自AbstractList的抽象类。正如名字所示�
 
 AbstractSequentialList主要子类为LinkedList.
 
-      1. LinkedList:
+ LinkedList:
    Queue: Queue比Collection提供了额外的插入，提取和检查方法。
    
     队列一般是FIFO，先进先出，但不是必须的，也有例外，如优先队列是根据提供的比较器排列元素，
@@ -2944,7 +2943,7 @@ LinkedList定义了一个ListItr和一个倒序遍历迭代器DescendingIterator
 总之，LinkedList是链表结构，使用它的随机访问方法如get(index)效率较低，应使用迭代器进行遍历
 处理。随机访问方法的效率应查看是否实现了RandomAccess接口。
 
-   2. AbstractSet:
+#### AbstractSet:
 AbstractSet继承自AbstractCollection类，同时实现了Set接口。
 AbstractSet没有重写AbstractCollection的任何方法实现，它只是增加了equals(object), 
 hashCode(), removeAll(collection)方法的实现。
@@ -3006,17 +3005,22 @@ SortedSet接口比Set接口主要新增了以下几个方法:
 SortedSet的主要子接口为NavigableSet.
   
   NavigableSet:
-  
-  -- TBC
+NavigableSet比SortedSet多定义了一些方法，如返回集合中离被搜索元素最近的元素方法:
+lower: 返回小于参数的元素，floor: 返回小于或等于参数的元素，ceiling:大于等于，
+higher: 大于。NavigableSet集合支持升序遍历和倒序遍历，需要注意的是descendingSet方法
+并没有新键一个set集合，它是在原集合的基础上进行处理的，如果改变其中的一个集合，另一个
+集合也会受到影响(可以查看TreeSet的该方法实现，使用了navigableMap.descendingMap())。
 
+Navigable接口还增加了pollFirst(),pollLast()用于删除第一个或最后一个元素(如pollFirst在升序
+排列时删除最小值，倒序排列时删除最大值)。
 
+不同于父类SortedSet中的subSet,headSet,tailSet方法，NavigableSet中的这些方法添加了是否包含
+边界的参数，可以使调用者更方便的控制。
+因为SortedSet集合需要元素间进行比较，所以不建议在其中插入null元素。
 
-
-
-
+NavigableSet接口的主要实现类有TreeSet, ConcurrentSkipListSet.
 
 AbstractSet的主要子类有HashSet, TreeSet, EnumSet.
-
       1. HashSet
 ```txt
 public class HashSet<E> extends AbstractSet<E> implements Set<E>, Cloneable, 
@@ -3048,7 +3052,8 @@ public class LinkedHashSet<E> extends HashSet<E> implements Set<E>, Cloneable,
 在其中使用LinkedHashMap而不是HashMap实现Set集合，其他方法都使用默认的HashSet实现，没有进行
 重写。
 同LinkedHashMap一致，LinkedHashSet维护了一个双向链表来记录元素的插入顺序(重复插入相同元素
-不会改变它的次序),可以使用它来记录参数set集合的元素顺序，如
+不会改变它的次序),可以使用它来记录参数set集合的元素顺序(底层是LinkedHashMap比HashMap在键上
+新增了一个双向链表来记录键的插入顺序)，如
 ```txt
 void foo(Set s) {
   Set copy = new LinkedHashSet(s);
@@ -3064,14 +3069,73 @@ HashSet.
 ```txt
 Set s = Collections.synchronizedSet(new LinkedHashSet(...));
 ```
+
    2. TreeSet
+```txt
+public class TreeSet<E> extends AbstractSet<E> implements NavigableSet<E>, Cloneable,
+   java.io.Serializable
+```
+同HashSet类似，TreeSet底层也是使用了TreeMap实现的，TreeMap是NavigableMap接口的红黑树实现，
+而NavigableMap继承自SortedMap,SortedMap继承自Map接口，它们之间的关系和Set,SortedSet,
+NavigableSet的关系基本相同，都是sortedXXX新增了可排序功能，NavigableXXX进一步扩展:返回目标
+附近元素，提供倒序遍历，优化获取子集合边界控制的方法。
+
+同HashSet一样，TreeSet的add方法即`m.put(e, PRESENT) == null;`,remove为
+`m.remove(o) == PRESENT;`,NavigableSet的first方法为`m.firstKey();`,last方法为`m.lastKey();`,
+其他也都是类似的调用TreeMap中相应的方法。
+
+   3. EnumSet
+枚举可以看作不可变的常量对象，当这些枚举对象需要批量处理时可以使用EnumSet。它有2个实现，
+如果枚举值个数超过64个，使用JumboEnumSet实现类，如果小于等于64个，使用RegularEnumSet实现。
+查看它们的实现可知，由于枚举的常量特性，RegularEnumSet使用一个long数值作为整个set集合的
+容器，add,remove,get操作都是对该长整型数值的位操作(其中size方法是使用Long.bigCount()方法
+来统计1的个数实现的)。同理，JumboEnumSet是使用一个long[]数组作为容器进行存储。
+
+EnumSet使用noneOf(Class elementType)方法创建一个空的枚举集，方法中根据枚举值个数判断选择
+是JumboEnumSet还是RegularEnumSet实现;使用allOf(Class elementType)创建一个包含了所有枚举值
+的枚举集，还可以使用of方法对1到5个枚举值快速创建枚举集。
+
+EnumSet集合中的所有元素都必须显式或隐式的来自同一个枚举类型.EnumSet是用位向量(bit vectors)
+表示的。它返回的迭代器永远不会抛出ConcurrentModificationException(对位进行操作),无法得知
+遍历过程中修改集合的影响。EnumSet不允许插入null元素，会抛出空指针异常。
+
+EnumSet同样是线程不安全的，可以使用
+```txt
+Set<MyEnum> s = Collections.synchronizedSet(EnumSet.noneOf(MyEnum.class));
+```
+由于EnumSet是由位操作实现的，所以所有的集合基础操作都是常数时间内完成，比HashSet高效很多。
+如果批量操作方法的参数也是EnumSet,它也是常数时间完成。由此可知，如果元素集合可以被定义为
+枚举类型，使用EnumSet进行处理是非常高效的。
+
+#### AbstractQueue:
+AbstractQueue继承AbstractCollection类，实现了Queue接口。
+从代码可以看出，AbstractQueue使用Queue接口的方法如offer,poll,peek实现了集合的基础操作如
+add,remove,element,addAll方法，如果操作失败抛出相应的异常。clear()方法则是死循环出队操作:
+```txt
+while(poll()!=null);
+```
+像前面说的Queue接口一样，AbstractQueue的子类应实现一个不允许插入null元素的offer方法(因null
+被当作特殊返回值),peek,poll,size,iterator方法。
+
+AbstractQueue的主要子类有PriorityQueue,并发包下的ArrayBlockingQueue, LinkedTransferQueue,
+SynchronousQueue,LinkedBlockingDeque, DelayQueue, LinkedBlockingQueue, ConcurrentLinkedQueue,
+PriorityBlockingQueue.从这也可以看出，并发编程大量使用到了队列。
+
+PriorityQueue:
+二叉堆实现的优先队列。
+现实生活中有时候我们需要在一堆元素中选出最大值，然后插入一些新元素，再在其中选出最大值。
+这种动态排序使用传统的栈或队列实现效率低下，这时可以使用二叉堆来实现。
+
+二叉堆定义: 二叉堆中的每个顶点都大于或等于它的两个子节点。二叉堆的根节点即为最大值。
 
 
 
-   3. AbstractQueue:
- 
 
-   4. ArrayDeque
+#### ArrayDeque
+
+
+
+
 
 ### 映射
 ### 视图与包装器
