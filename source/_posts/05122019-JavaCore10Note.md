@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-25 17:53:15
+updated: 2019-06-26 17:53:40
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3083,6 +3083,7 @@ NavigableSet的关系基本相同，都是sortedXXX新增了可排序功能，Na
 同HashSet一样，TreeSet的add方法即`m.put(e, PRESENT) == null;`,remove为
 `m.remove(o) == PRESENT;`,NavigableSet的first方法为`m.firstKey();`,last方法为`m.lastKey();`,
 其他也都是类似的调用TreeMap中相应的方法。
+TreeSet也是线程不安全的。
 
    3. EnumSet
 枚举可以看作不可变的常量对象，当这些枚举对象需要批量处理时可以使用EnumSet。它有2个实现，
@@ -3123,15 +3124,101 @@ PriorityBlockingQueue.从这也可以看出，并发编程大量使用到了队�
 
 PriorityQueue:
 二叉堆实现的优先队列。
-现实生活中有时候我们需要在一堆元素中选出最大值，然后插入一些新元素，再在其中选出最大值。
-这种动态排序使用传统的栈或队列实现效率低下，这时可以使用二叉堆来实现。
+现实生活中有时候我们需要在一堆元素中选出最大或最小值，然后插入一些新元素，再在其中选出最值，
+或者是输入集合过于巨大，无法进行存储或存储后排序过于缓慢，这些场景都可以使用优先队列来解决。
+
+使用场景:
+比如输入N个字符串，每个字符串都有一个整数作为键，需要找出输入流中键最小的M个字符串。
+(字符串的比较对象是一个整数，我们可以通过该索引来引用优先队列中的元素并进行操作，
+这实际是索引优先队列的一个使用场景)
+
+解决方案:
+这里的整数索引即为对应字符串的优先级，我们可以将每个字符串存入优先队列中，并检查优先
+队列中的元素是否超出M,如果超出则删除其中优先级最低(整数最大)的字符串。通过这种方式优先队列
+中始终存储的都是优先级最高的M个字符串。
+
+这就是优先队列的常见用法，使用者只需要执行入队和出队操作，并控制队列的大小，即可以得到需要
+的元素集合，并且整个过程是动态的，支持无限输入。
+
+那么优先队列是如何新增元素并确保每次出队操作都是优先级最低(值最小)的元素呢？可以使用
+普通数组或链表实现:
+1. 正常插入元素，删除时再找出最大的元素，最差时需要线性时间，即每个元素都比较了一遍。
+2. 每次插入后都保持有序，较小元素都向后移动，保证第一个元素是最大值，删除时直接删除它即可。
+同样，插入时最差也是线性时间，插入的是最小值，每个元素都被移动了。
+优先队列实际使用的是一种叫二叉堆的数据结构，它可以保证插入和删除都是对数时间，最多只需要
+处理一半的元素。
 
 二叉堆定义: 二叉堆中的每个顶点都大于或等于它的两个子节点。二叉堆的根节点即为最大值。
+二叉堆可以定义到数组a[]中，a[k]的子节点为a[2k]与a[2k+1].
 
+当每次插入新的元素时，需要进行重新排列使得数组保持堆有序，这个过程叫堆的有序化(reheapifying).
+具体为上浮或下沉，元素与父节点或子节点进行比较后决定是否需要互换位置。
 
+PriorityQueue同样使用数组存储堆，默认升序排列，即队列头queue[0]存储的是最小值，这样执行
+出队poll()操作后，删除的是最小值，队列中保存的是较大者的集合，即PriorityQueue是MaxQueue,
+这一点在实际使用中应当注意。
 
+与SortedSet相同，优先队列中的元素需要根据其自身进行排序(实现Comparable接口)或指定
+Comparator比较器，所以优先队列不允许插入无法比较的元素或null元素。如果有多个相等的最小值，
+优先队列会任选一个作队列头，方法poll,remove,peek,element处理的都是队列头的元素。
+优先队列本身同ArrayList一样，内部实现的数组会自动进行扩容，同样是grow方法，当数组大小小于
+64时扩大一倍，超过64时扩容原大小的一半。
+
+PriorityQueue也提供了迭代器iterator,但同ArrayList或TreeSet不同的是，在遍历过程中调用迭代器
+的remove方法进行删除时，实际调用的是PriorityQueue.this.removeAt(index)方法，其中同样会进行
+堆的有序化操作，从而对剩余元素的顺序产生影响(实际上为了全部遍历到，迭代器中特意定义
+了一个ArrayDeque来存储被影响到的元素)，所以无法保证元素的遍历顺序。若想要固定的遍历顺序，
+可以使用`Arrays.sort(queue.toArray());`.
+
+PriorityQueue与ArrayList,LinkedList, HashSet, TreeSet一样是线程不安全的，若需要线程安全可以
+使用PriorityBlockingQueue.由于底层的数组实现和二叉堆的数据结构，add(e),offer(e),poll(),
+remove()方法都是O(logN)时间，remove(object),contains(object)是线性时间，peek(),element(),
+size()是常量时间。
+
+从实现看，PriorityQueue的初始默认大小是11,定义了多个构造器:
+```txt
+1. 无参构造器: 使用默认大小，自身Comparable比较
+2. 一个指定初始大小参数的构造器: 自身Comparable比较
+3. 一个指定比较器Comparator参数的构造器: 使用默认大小
+4. 同时指定初始大小和Comparator
+5. 一个Collection集合参数的构造器: 如果参数是PriorityQueue类型，可以直接使用queue.toArray()
+  方法快速新建对象，否则需要拷贝数组后进行堆有序化操作。
+```
+从offer(e)方法的实现可以看出，新增元素时需要执行上浮操作SiftUp(size,e),将新元素从队尾
+开始循环与父节点比较直到新元素大于或等于父节点。
+
+remove(object)实际调用的是removeAt(index)方法，如果删除的是队尾元素，则直接删除并返回null
+不影响堆有序，否则将队尾元素先删除后再将其值插入到要删除的位置上，执行下沉操作，如果其位置
+没变动，再执行上浮操作，以这种方式来保证堆有序(像这种执行上浮操作并位置确实变动的元素在
+迭代器中刚好"逃过"了待遍历部分，removeAt(index)方法会直接返回该元素，迭代器的remove方法会
+根据removeAt返回值是否为null来判断是否需要加入特殊ArrayDeque队列forgetMeNot中)。
+
+heapify()方法保证了整个数组的堆有序，它从个数大小的一半开始倒序遍历直到为0，对每个元素
+执行下沉操作。将被操作元素沿树向下比较，直到该元素小于或等于子节点。
+在从Collection集合参数的构造器中有使用到heapify()方法，复制数组后调用它使得堆有序。
 
 #### ArrayDeque
+```txt
+public class ArrayDeque<E> extends AbstractCollection<E> implements Deque<E>, Cloneable,
+   Serializable
+```
+使用动态循环数组的Deque接口实现类。数组默认初始大小为8, 数组容量用完时(head == tail)固定
+是扩大一倍现有容量。 
+
+ArrayDeque也是线程不安全的，不允许插入null元素(Queue统一限制),被当作栈使用时比Stack类快，
+当作队列使用时比LinkedList快。
+ArrayDeque的迭代器同样基于快速失败机制，但不保证一定会抛异常。
+
+总之，ArrayDeque应是最常用的普通栈和队列(无线程安全要求)的实现类，push(e),pop(),offer(e),
+poll()方法也非常明确简洁，无需关心具体实现。同样，初始化时指定大小可以减少扩容次数。
+
+#### AbstractMap
+HashSet基于HashMap,TreeSet基于TreeMap,可知Map是比Set更通用的存在。
+
+   `Map<K,V>`接口:
+Map接口定义了键集合映射到值集合的关系，键不能重复，每个键最多只能映射一个值。
+
+
 
 
 
