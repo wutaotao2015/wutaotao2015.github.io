@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-27 18:05:25
+updated: 2019-06-28 17:56:12
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3302,9 +3302,14 @@ Map m = Collections.synchronizedMap(new HashMap(...));
 ```
 HashMap的三个视图keySet(),values(), entrySet()中的迭代器都是快速失败的，同样不保证抛出异常。
 
+当哈希表中桶过大时，HashMap会将桶的实现由list转换为树，如果元素变小，它又会转换回来
+(像之前说的一样，它使用ComparaTo方法和identityHashCode值来区分HashCode值相同的树节点)。
+HashMap定义了一个实例域`TREEIFY_THRESHOLD = 8`, 意味着一个桶中的元素超过8个时，HashMap 
+就会开始树化。同理反转化有实例域`UNTREEIFY_THRESHOLD = 6`,少于6个时开始反转。还定义了
+实例域`MIN_TREEIFY_CAPACITY = 64`,意味者如果HashMap的容量小于64时，如果这时一个桶过大，
+它并不会树化，而会对HashMap实现扩容操作。
 
-
-
+HashMap定义了`Node<K,V>`类实现Map.Entry接口，
 
 
 
