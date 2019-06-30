@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-06-28 17:56:12
+updated: 2019-06-30 22:07:35
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3309,7 +3309,42 @@ HashMap定义了一个实例域`TREEIFY_THRESHOLD = 8`, 意味着一个桶中的
 实例域`MIN_TREEIFY_CAPACITY = 64`,意味者如果HashMap的容量小于64时，如果这时一个桶过大，
 它并不会树化，而会对HashMap实现扩容操作。
 
-HashMap定义了`Node<K,V>`类实现Map.Entry接口，
+HashMap定义了`Node<K,V>`类实现Map.Entry接口，一个Node类实例就是一个键值对，Node有实例域
+hash(key的hash值)，key(键), value(值)， next(相同hash值链表中的下一个Node节点)，Node类
+实现了Entry接口的setValue(v), equals(object), hashCode()等方法。
+
+HashMap最常用的get(key)是根据给定值查找对应的键，它返回null值代表两种情况，可能该键不存在，
+也可能该键对应的值就是null值。所以get(key)方法通常是和contains(key)方法一起使用，以区分这
+两种情况。
+HashMap的存储容器其实是`Node<K,V>[]`数组，get(key)方法通过计算hash值定位到数组中某个索引的
+位置(first = tab[(n -1) & hash]),再通过键值比较来解决"哈希碰撞"(不同键产生相同哈希值)的问题。
+
+get(key)实际调用的是getNode(hash, key)方法，它返回的是一个Node节点，
+containsKey(key)方法也是通过getNode(hash, key)方法的返回对象是否为空来判断是否存在该键
+对应的节点，从而判断出HashMap是否包含该键。
+
+V put(key, value)方法将新的键值对节点追加到key对应的hash值链表中，方法的返回值是该键对应的
+旧值，如果为null的话，像get(key)方法一样，可能是原来不存在这个键或原来映射的值就是null.
+查看put方法的实现注意到，找到对应链表的最后一个节点并替换值以后或是新增一个节点以后，
+它会调用afterNodeAccess()方法或AfterNodeInsertion方法，注释说是要回调LinkedHashMap的后
+处理，这样做的原因待后续补充...(ToDo)
+
+关于resize()方法的实现，网上搜索到jdk8以前扩容时需要根据`e.hash & (oldCap - 1)`重新计算
+hash值，比较耗费性能，jdk8时改为根据`e.hash & oldCap == 0`判断是否需要移位。相当于原数组相同
+索引的链条的后半部分被移动到扩增的数组部分了，前半部分保持原位不动。
+
+HashMap中为树化定义了一个内部类TreeNode, 它继承自`LinkedHashMap.Entry<K, V>`,查看定义可知
+后者是在继承HashMap.Node类的基础上新增了before, after的Node指针(即双向链表)。
+
+
+
+
+
+
+
+
+
+
 
 
 
