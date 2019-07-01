@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-01 16:51:27
+updated: 2019-07-01 23:08:59
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3336,9 +3336,17 @@ hash值，比较耗费性能，jdk8时改为根据`e.hash & oldCap == 0`判断�
 
 HashMap中为树化定义了一个内部类TreeNode, 它继承自`LinkedHashMap.Entry<K, V>`,查看定义可知
 后者是在继承HashMap.Node类的基础上新增了before, after的Node指针(即双向链表)。
+而这个TreeNode中即是定义了红黑树的相关实例域和方法。
+
+HashMap说到底还是一种符号表的实现，在《算法》第4版的第3章查找一章中对符号表的api, 使用场景
+进行了详细的说明，尤其是红黑树的讲解是公认非常棒的。
 
 
-
+以下为该书中相关知识的笔记:
+符号表性能要求就是大量查询操作和一般插入的高效性，即对get和put方法的性能要求。
+1. 最简单的实现: 无序列表
+即使用一长串无序链表来存储整个符号表，每次查询都从头节点开始查询，直到找到目标节点为止，
+若未查找到目标，则将该键作为新节点追加到链表中。
 
 
 
