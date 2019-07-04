@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-03 22:29:02
+updated: 2019-07-04 18:00:30
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3368,6 +3368,22 @@ HashMap说到底还是一种符号表的实现，在《算法》第4版的第3�
 ```
 即从左到右将每个节点的键映射到水平轴上可以得到一个从小到大的升序序列。
 二叉查找树独特的结构使得(在树平衡的情况下)查找和插入都是对数级别，极大的提高了操作效率。
+
+二叉查找树查询代码实现：
+```txt
+public V get(K key) {
+  if (key == null) throw new NullPointerException("null key");
+  return get(root, key);
+}
+public Node get(Node x, K key) {
+  if (x == null) return null;
+  int cmp = key.compareTo(x.key);
+  if     (cmp < 0) return get(x.left, key);
+  else if(cmp > 0) return get(x.right, key);
+  else             return x;
+}
+```
+
 二叉查找树最难实现的操作是删除的实现。
    1. deleteMin()方法实现。删除最小的节点很容易实现， 寻找根节点的左子树，一路向左直到某个
 节点的左子树为空，则说明该节点为最小节点，返回它的右子树根节点即可。
@@ -3405,7 +3421,7 @@ HashMap说到底还是一种符号表的实现，在《算法》第4版的第3�
 旋转: 在红黑树操作过程中可能会出现红色右链接或一个节点有2个红链接的情况，这时我们可以使用
 旋转使它变为正常的链接情况。如左旋转即从较小的键作为根节点转变为以较大的键作为根节点，同时
 这2个节点下的左右子树也进行相应移动的过程。可以将这个旋转的过程动态的想象为节点与红色链接
-向左平移的过程; 同理，右旋转是节点和红链接右移的过程。
+向左平移的过程; 同理，右旋转是节点和红链接右移的过程(或者说拉扯更形象)。
 
 实际新增时默认新增的节点都是红色的，再根据其是否是右链接，或父节点为2-节点、3-节点的情况
 进行左旋转，右旋转，变色等处理。
@@ -3426,6 +3442,36 @@ HashMap说到底还是一种符号表的实现，在《算法》第4版的第3�
 而2-3树新增节点是从下往上冒泡的过程，所以我们需要在递归调用的代码结束后进行旋转变色处理，
 即递归方法的出栈过程是逆序过程，符合了从下往上冒泡的要求。
 
+红黑树put方法实现代码:
+```txt
+public void put(K key, V val) {
+  if (key == null) throw new NullPointerException("null key");
+  if(val == null) {
+    delete(key);  
+    return;
+  }
+  root = put(root, key, val);
+  root.color = BLACK;  // 在变换最后根节点需要手动变为黑色
+}
+private Node put(Node h, K key, V val) {
+  if (h == null) return new Node(key, val, RED, 1); // new node color is red, and size = 1 
+
+  // 向下查找
+  int cmp  = key.compareTo(h.key);
+  if     (cmp < 0)  put(h.left, key, val);
+  else if(cmp > 0)  put(h.right, key, val);
+  else              h.val = val;
+
+  // 向上变幻
+  // 旋转变色使红黑树保持其特性
+  if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+  if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+  if (isRed(h.left) && isRed(h.right))  flipColors(h);
+  h.size = size(h.left) + size(h.right) + 1;  // 别忘了加1
+
+  return h;
+}
+```
 
 红黑树的5大性质(根据这些性质可以排除某些删除节点的情形是不可能发生的，如一个黑节点只有黑
 左子树或只有黑右子树，一个红节点有一个黑左子树或一个黑右子树的情况，它们都违反了性质5的高度)
@@ -3447,15 +3493,50 @@ HashMap说到底还是一种符号表的实现，在《算法》第4版的第3�
 1. 如果当前节点的左子节点不是2-节点，结束。
 2. 如果当前节点的左子节点是2-节点而左子节点的亲兄弟节点不是2-节点，从兄弟节点中移动(借)一个节点到
 左子节点中，结束。
-3. 如果当前节点的左子节点和左子节点都是2-节点，就将左子节点，父节点最小键和左子节点最近
+3. 如果当前节点的左子节点和右子节点都是2-节点，就将左子节点，父节点最小键和左子节点最近
 的兄弟节点合并为一个4-节点替换当前节点，父节点减少一个键，结束。
 
-从以上3部中任意一部结束都能得到一个包含最小键的3-或4-节点，直接删除该最小键即可。然后再
+从以上3步中任意一步结束都能得到一个包含最小键的3-或4-节点，直接删除该最小键即可。然后再
 回头向上分解生成的临时4-节点(第3布产生的)。
 
 以上是删除最小键，如果删除树中任意一个节点，同二叉树的处理类似，可以使用被删节点的后继节点
 替代被删节点，然后新节点的右子树指向删除了后继节点后的新树(删除最小键)。删除后同样需要向上
 分解临时的4-节点。
+
+红黑树删除具体代码实现:
+```txt
+public void deleteMin() {
+  if(isEmpty()) throw new NoSuchElementException("BST underflow"); 
+  // 左右子树都是黑的，将根节点变为红色，相当于根节点与左右子节点一起变为一个4-节点
+  if(!isRed(root.left) && !isRed(root.right)) {
+    root.color = RED;
+  }
+  root = deleteMin(root);
+  if (!isEmpty()) root.color = BLACK; // 删完之后还需将根节点手动置为黑色, 与插入相同。
+}
+private Node deleteMin(Node h) {
+  if (h.left == null) return null; // 无左子树，删除h节点，返回null即为用null代替节点h
+  if (!isRed(h.left) && !isRed(h.left.left)) {  //此即为上述的第2步，需要借用节点
+    h = moveRedLeft(h);
+  }
+  h.left = deleteMin(h.left);
+  return balance(h);
+}
+private Node moveRedLeft(Node h) {
+  flipColors(h);   // 对应上述的第3步  反转颜色
+  if (isRed(h.right.left)) {  // 对应上述第2步， 兄弟节点有红键
+
+  }
+}
+```
+
+
+
+
+
+
+
+
 
 
 HashMap的主要子类有LinkedHashMap.
