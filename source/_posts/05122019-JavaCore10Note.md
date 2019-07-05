@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-04 18:00:30
+updated: 2019-07-05 18:06:07
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3471,6 +3471,26 @@ private Node put(Node h, K key, V val) {
 
   return h;
 }
+private Node rotateLeft(Node h) {
+  Node x = h.right;
+  h.right = x.left;
+  x.left = h;
+  x.color = h.color;
+  h.color = RED;
+  x.size = h.size;
+  h.size = size(h.left) + size(h.right) + 1;
+  return x;
+}
+private Node rotateRight(Node h){...} // 相反即可
+private void flipColors(Node h) {
+  h.color = !h.color;  
+  h.left.color = !h.color;
+  h.right.color = !h.right.color;
+}
+private int size(Node x) {
+  if(x == null) return 0; 
+  return x.size;
+}
 ```
 
 红黑树的5大性质(根据这些性质可以排除某些删除节点的情形是不可能发生的，如一个黑节点只有黑
@@ -3489,21 +3509,21 @@ private Node put(Node h, K key, V val) {
 这时相当于在某条路径上减少了一个黑节点的高度，破坏了树的平衡性。这时我们可以将后者转化为
 前面一种情况来解决。 
 
-即同新增节点一样，在每个节点上依次进行以下操作可以实现删除:
+删除时检查是否为以下情况之一:
 1. 如果当前节点的左子节点不是2-节点，结束。
 2. 如果当前节点的左子节点是2-节点而左子节点的亲兄弟节点不是2-节点，从兄弟节点中移动(借)一个节点到
 左子节点中，结束。
 3. 如果当前节点的左子节点和右子节点都是2-节点，就将左子节点，父节点最小键和左子节点最近
 的兄弟节点合并为一个4-节点替换当前节点，父节点减少一个键，结束。
 
-从以上3步中任意一步结束都能得到一个包含最小键的3-或4-节点，直接删除该最小键即可。然后再
+从以上3种情况中任意一种结束都能得到一个包含最小键的3-或4-节点，直接删除该最小键即可。然后再
 回头向上分解生成的临时4-节点(第3布产生的)。
 
 以上是删除最小键，如果删除树中任意一个节点，同二叉树的处理类似，可以使用被删节点的后继节点
 替代被删节点，然后新节点的右子树指向删除了后继节点后的新树(删除最小键)。删除后同样需要向上
 分解临时的4-节点。
 
-红黑树删除具体代码实现:
+红黑树删除最小键具体代码实现:
 ```txt
 public void deleteMin() {
   if(isEmpty()) throw new NoSuchElementException("BST underflow"); 
@@ -3516,21 +3536,114 @@ public void deleteMin() {
 }
 private Node deleteMin(Node h) {
   if (h.left == null) return null; // 无左子树，删除h节点，返回null即为用null代替节点h
-  if (!isRed(h.left) && !isRed(h.left.left)) {  //此即为上述的第2步，需要借用节点
+  if (!isRed(h.left) && !isRed(h.left.left)) {  //此即为上述的第2种情况，需要借用节点
     h = moveRedLeft(h);
   }
-  h.left = deleteMin(h.left);
+//此时h.left本身已为红色(可再次调用moveRedLeft)，或它的子节点为红色(直接进入下一个节点的删除)
+  h.left = deleteMin(h.left); 
+// 删除之后，从下往上恢复红黑树，解除4-节点(2红键)
   return balance(h);
 }
+// 调用此方法时，h本身是红色的，h.left, h.left.left都是黑色的，即h的左子节点为2-节点的情况
+// 调用结束时h的左子节点为红色，或它的子节点之一为红色，即h
 private Node moveRedLeft(Node h) {
-  flipColors(h);   // 对应上述的第3步  反转颜色
-  if (isRed(h.right.left)) {  // 对应上述第2步， 兄弟节点有红键
 
+  flipColors(h);   // 对应上述的第3步  反转颜色 h变为黑色，左右子节点变为红色，4-节点
+  if (isRed(h.right.left)) {  // 对应上述第2种情况， 兄弟节点有红键
+
+     h.right = rotateRight(h.right);
+     h = rotateLeft(h);
+     flipColors(h);   
+
+     // 这3步变幻可以使得h.left变为红色，达到了上述的左子节点变为3-节点的要求，
+     // 从而可以对其再次调用deleteMin方法
+
+     // 从这也可以进一步思考变幻的实际意义，旋转操作实际上并没有改变树的结构，红链接在左边
+     // 或右边其实是3-节点的内部2个键哪个键为根节点的问题。只有变色才是将键在父子节点中
+     // 传递的操作(冒泡)，或者说是2-变成3-，3-变长4-节点的操作。所以这里如果不进行判断处理
+     // 的话会形成5-节点，这一点通过再次调用flipColors(h)避免，而如果没有进入该条件语句时
+     // 即h的右子节点为2-节点，则只需要一步变色为4-节点即可，不用担心5-节点。
   }
+  return h;
+}
+private void balance(Node h) {
+  
+  if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+  if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+  if (isRed(h.left) && isRed(h.right))  flipColors(h);
+
+  h.size = size(h.left) + size(h.right) + 1;  // 别忘了加1
+  return h;
 }
 ```
 
+红黑树删除任意键代码实现:
+```txt
+// 与deleteMin基本相同
+public void delete(K key) {
+  if(isEmpty()) throw new NoSuchElementException("BST underflow"); 
+  if(!contains(key)) return;
 
+  // 左右子树都是黑的，将根节点变为红色，相当于根节点与左右子节点一起变为一个4-节点
+  if(!isRed(root.left) && !isRed(root.right)) {
+    root.color = RED;
+  }
+  root = delete(root);
+  if (!isEmpty()) root.color = BLACK; // 删完之后还需将根节点手动置为黑色, 与插入相同。
+}
+private Node delete(Node h, K key) {
+
+  if (key.compareTo(h.key) < 0) {
+
+    // 目标键比当前节点小的时候与deleteMin(node)相同处理
+    if (!isRed(h.left) && !isRed(h.left.left)) {  
+      h = moveRedLeft(h);
+    h.left = delete(h.left, key);
+
+  }else{
+
+    if (isRed(h.left)) {
+      h = rotateRight(h);
+    }
+    if (key.compareTo(h.key) == 0 && (h.right == null)) { 
+      // 查询命中的是无右子节点的最大键，直接删除即可,delete方法返回null就是删除该节点
+      return null;
+    }
+    if (!isRed(h.right) && !isRed(h.right.left)) {
+      h = moveRedRight(h);     // 通过旋转变色得到红键
+    }
+    if (key.compareTo(h.key) == 0){ //命中查询，使用后继节点替换h,同时h.right中删去该后继节点
+      Node x = min(h.right);
+      h.key = x.key;
+      h.val = x.val;
+      h.right = deleteMin(h.right);
+    }else{    // 目标键还在右子树中
+      h.right = delete(h.right, key); 
+    }
+  } 
+  return balance(h);   // 同样恢复红黑树性质
+}
+// assume that h is red and both h.right and h.right.left are black,
+// using this method to make h.right or one of its children red.
+private Node moveRedRight(Node h) {
+  flipColors(h);
+  if(isRed(h.left.left)) {
+    h = rotateRight(h);  
+    flipColors(h);
+  }
+  return h;
+}
+private Node min(Node x) {
+  if (x.left == null) return x;
+  else                return min(x.left);
+}
+```
+
+以上就是红黑树的相关知识，下面来看看HashMap中红黑树的相关代码。
+上面说过put(key,value)方法中会判断一个桶中是否有过多的Node节点，如果超过一定阈值，它会进行
+树化。实际调用为putVal中的treeifyBin(table, hash)方法，treeifyBin方法中先判断hashMap容量是否
+小于64,若小于64会扩容而不是树化，若大于它，则先使用replacementTreeNode(e, null)来构造一个
+个TreeNode节点，再使用TreeNode.treeify(table)方法来生成树。
 
 
 
