@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-05 18:06:07
+updated: 2019-07-07 21:16:44
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3643,14 +3643,51 @@ private Node min(Node x) {
 上面说过put(key,value)方法中会判断一个桶中是否有过多的Node节点，如果超过一定阈值，它会进行
 树化。实际调用为putVal中的treeifyBin(table, hash)方法，treeifyBin方法中先判断hashMap容量是否
 小于64,若小于64会扩容而不是树化，若大于它，则先使用replacementTreeNode(e, null)来构造一个
-个TreeNode节点，再使用TreeNode.treeify(table)方法来生成树。
+个TreeNode节点，再使用hd.treeify(table)方法来生成树。
 
+在treeify方法中，以hd头节点开始遍历该链条，x代表该链条中的每一个节点，首先判断根节点是否为
+空，为空时设置x为根节点并置为黑色，否则从树的根节点开始查询以插入x节点，其中p表示每个被比较
+的节点，通过变量dir的正负区分键的大小，当指针变量p的左子节点(x比它小时)或右子节点(x比它大时)
+为null时，说明查询命中，可以将x键插入，调用balanceInsertion(root,x)方法，再break跳出查询树
+的循环，继续处理链条中的下一个节点。
 
+treeify方法中已经将树的根节点置为黑色，BalanceInsertion中类似于上面的红黑树的balance方法。
+其中大量有赋值语句，==比较和三目运算符混用的情况，虽然显得代码非常简洁，但是比较难理解，
+需要自己画图帮助理解。balanceInsertion方法前面2步判断是针对x或xp为根节点的情况，简单处理
+即可。后面分xp为xpp左子节点和右子节点2种情况讨论，它们是对称的，只看左子节点即可。
 
+第一个if语句的情况即上面红黑树的左右子节点都为红色链接的情况，变色即可。然后下面依次进行的
+左旋，右旋也对应上面的1,2种情况。理解代码实现中有2点需要注意:
 
+1. 经过代码 `else if(!xp.red) || (xpp = xp.parent) == null)`判断之后，继续执行下面代码时
+可以确认xp是红色的，并且xpp不为null.
 
+2. 代码`root = rotateLeft(root, x = xp);`执行时会先执行表达式赋值语句，再进行方法调用。  
+这时x,xp都指向同一个引用对象，rotateLeft方法中改变了该参数对象的属性(parent,left,right等),
+所以x,xp变量是同时指向了变换前xp的左子节点的，即左旋后的引用情况为
+`xpp (左) -> L(无变量，原来的x)(左) -> x与xp`,后面的一句为
+`xpp = (xp = x.parent) == null ? null : xp.parent;`，这里个人觉得三目运算符判断没什么意义
+(xp即为插入的x,不可能是null), 更多是利用其语法简洁性重置了xpp, xp, x的对象引用关系。
 
+再看其左旋转的具体代码实现，它增加了对根节点root的处理，看起来没有上面红黑树的实现简洁清晰，
+但画图可以发现，逻辑是一样的，如左旋转，实际上是4个相关的节点发生了改变:pp, p, r, rl,另外
+2个节点pl,rr没有发生变化;同理右旋转改变的是pp, p, l, lr节点。要注意的是，左右旋转方法中还有
+对根节点的置黑处理，而上面红黑树中是在put方法的最后才对根节点进行置黑处理的。
 
+经过treeify中针对链表每一个节点查询比较键值后插入再balance后，最后还调用了moveRootToFront
+(table, root)方法来确保树的根节点是链表的首节点。
+该方法的关键为NodeTree即是红黑树结构，也是双向链表结构。moveRootToFront的主要操作为将root
+节点从原有的链表位置删除，并与原有的first节点重新确定链表关系的过程。如以下初看难理解的代码
+`((TreeNode<K,V>)rn).prev = rp;`即为root节点的后节点的前序节点指针指向root的前序节点，这
+一步即等同于删除了root节点。后面同理是对pr,first，root节点的链表指针进行操作。
+
+最后要看的是HashMap的删除remove(key)方法,它调用的是removeNode方法，首先是查询到该节点，如
+果是树节点，则调用treeNode.getTreeNode(hash, key)方法，否则按链表来查找，同样的，找到以后
+如果是树节点调用treeNode.removeTreeNode(this, table, movable)方法，否则通过修改对应的节点
+指针来删除该链表中的节点。
+
+因为TreeNode即是红黑树，也是双向链表，所以删除节点时要先删除链表节点，再删除红黑树节点并
+做平衡处理。这里也是寻找待删除节点的后继节点与之交换并平衡的操作，具体操作不再仔细查看。
 
 HashMap的主要子类有LinkedHashMap.
       LinkedHashMap:
