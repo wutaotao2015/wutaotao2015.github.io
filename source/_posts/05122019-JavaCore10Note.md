@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-07 21:16:44
+updated: 2019-07-08 18:06:21
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3269,7 +3269,7 @@ keySet()方法一样是基于AbstractSet类，由于它的不可变性，该Set�
 反之，如果需要实现一个可变的Map集合，用户需要重写put方法，并且entrySet().iterator必须实现
 remove()方法。
 
-AbstractMap的主要子类有HashMap, WeakHashMap, IdentityHashMap,  TreeMap, EnumMap,
+AbstractMap的主要子类有HashMap, TreeMap, WeakHashMap, IdentityHashMap, EnumMap,
 ConcurrentHashMap. 
    
    1. HashMap
@@ -3691,10 +3691,58 @@ treeify方法中已经将树的根节点置为黑色，BalanceInsertion中类似
 
 HashMap的主要子类有LinkedHashMap.
       LinkedHashMap:
+```txt
+public class LinkedHashMap<K,V> extends HashMap<K,V> implements Map<K,V> {...}
+```
+同LinkedHashSet在HashSet上的处理一致(或者说更本质)，LinkedHashMap在HashMap的基础上对键增加
+了双向链表记录插入的顺序，这个链表使得LinkedHashMap的元素遍历顺序是固定的，相同键被重新
+赋值不影响键的顺序， 因为节点位置没有改变。LinkedHashMap可用来记录参数map的顺序。也由于它
+的有序性，遍历map的时间只与元素的总个数相关，与Map集合的容量无关。同样，LinkedHashMap是
+线程不安全的，可以用`Collections.synchronizedMap(new LinkedHashMap())`方法得到线程安全
+的map集合。
 
-   2. WeakHashMap
-   3. IdentityHashMap
-   4. TreeMap
+具体实现可以看到LinkedHashMap中定义了静态内部类Entry(继承自HashMap.Node类),通过这个额外的
+容器来存储键插入的顺序，其中有before，after2个方向指针。LinkedHashMap还提供了一个实例域
+accessOrder,可以在构造器中指定该布尔值为true或false(默认false).true代表访问的顺序，
+false代表迭代顺序。LinkedHashMap的查询get(key)方法比HashMap的get(key)方法多出一步处理
+就是判断该accessOrder值，如果是true,则执行afterNodeAccess(node)方法，它会将这个被访问的
+节点放到Entry链表中的尾部。由于LinkedHashIterator从链表头部开始遍历，所以如果此时开始遍历
+集合，最后访问的节点将最后被访问到。
+
+可以发现LinkedHashMap没有定义put和remove方法，即它默认使用的是父类HashMap的方法，
+虽然LinkedHashMap没有重新定义put,remove方法，但它通过重新定义newNode,newTreeNode方法，在
+其中调用linkNodeLast(node)方法维护该双向链表。另外HashMap中的空方法afterNodeInsertion,
+afterNodeRemoval在LinkedHashMap中都定义了对额外的双向链表进行处理。
+
+*即LinkedHashMap元素的容器同HashMap一样，使用Node[]数组"拉链法"存储的,只不过额外定义了
+双向链表来存储节点顺序。*
+
+注: HashMap中定义的TreeNode内部类继承的是`LinkedHashMap.Entry<K,V>`类，所以TreeNode类本身
+也是双向链表。
+
+   2. TreeMap
+```txt
+public class TreeMap<K,V> extends AbstractMap<K,V> implements NavigableMap<K,V>, Cloneable,
+  java.io.Serializable
+```
+同SortedSet, NavigableSet基本相同，SortedMap提供了submap，headMap,tailMap方法按照键的顺序
+截取子map集合。NavigableMap基于顺序提供了更多的区间操作，如floorEntry, floorKey, 
+ceilingEntry,ceilingKey等方法。
+
+TreeMap即Map的红黑树实现。保证对于containsKey,get,put,remove操作都是对数级别。TreeMap的
+红黑树算法来源于算法导论中的实现,即CLR.同样的，compare或compareTo方法需要与equals方法保持
+一致。TreeMap不是线程安全的，可以通过`Collections.synchronizedSortedMap(new TreeMap());`
+来得到线程安全的SortedMap集合。
+
+
+
+
+
+
+
+
+   3. WeakHashMap
+   4. IdentityHashMap
    5. EnumMap
 
 ### 映射
