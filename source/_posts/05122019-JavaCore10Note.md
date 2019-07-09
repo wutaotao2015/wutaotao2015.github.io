@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-08 22:00:20
+updated: 2019-07-09 17:47:21
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3743,11 +3743,50 @@ TreeMap即Map的红黑树实现。保证对于containsKey,get,put,remove操作�
 上是可以省去它的，父指针增加了额外的复杂性。
 具体实现不再赘述。
 
-
-
-
-
    3. WeakHashMap
+```txt
+public class WeakHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V> {...}
+```
+使用弱键的哈希表Map接口实现类。当WeakHashMap中的某个键不再被正常使用时，这个键值对会自动
+被删除。具体的说就是，一个已经存在的映射关系不能阻止垃圾回收机制回收这个键，当键被删除了，
+这个键值对也就不存在了。WeakHashMap同样支持null键和null值，同样是线程不安全的，可使用
+`Collections.synchronizedMap(new WeakHashMap(...))`得到线程安全的map集合。
+
+WeakHashMap主要适用于equals方法使用==号实现的键对象，如String对象。对于那些可重复创建的键
+对象来说，WeakHashMap的自动删除操作会出现问题。垃圾回收器就好像WeakHashMap背后默默运行的
+一个线程一样，它会在任何时间进行删除操作,所以WeakHashMap中的方法如size(), isEmpty(), 
+containsKey(), get(), put()调用的结果随时间可能会发生变化。每个键对象是用一个弱引用存储的，
+只有当这个弱引用在Map集合内部和外部的引用都被垃圾回收器回收后这个键才会被删除。
+
+WeakHashMap的值对象是用普通的强引用来存储的，所以应注意值对象不应该强引用(直接或间接)它
+对应的键，这样会阻止键被回收。有时候会出现这样的情况，即键x映射值X,键y映射值Y,此时值X又
+强引用键y，而值Y强引用键x,而映射本身算是强引用的，这样就形成了x,X和y,Y之间间接强引用的关系。
+为避免这样的情况，对于不依赖WeakHashMap集合来存储引用的值对象来说，可以在插入前进行包装:
+`m.put(key, new WeakReference(value));`,在查询调用get(key)方法时再进行拆箱即可。
+
+Reference分几种类型: 
+1. 强引用(Strong Reference) 即普通的引用，如Object obj = new Object();当内存不足时，虚拟机
+会抛出内存溢出异常，而不会回收强类型的引用。需要回收这种类型引用时，需要赋值obj = null.
+
+2. 软引用(Soft Reference) 当内存空间不足时，垃圾回收器就会回收软引用对象。所以它适合用于
+内存敏感的高速缓存。实际应用如网页的后退按钮，内存充足时可以将网页浏览记录保存为软引用作为
+缓存使用，但内存不够时它就会被垃圾回收器回收。
+
+3. 弱引用(Weak Reference) 弱引用对象比软引用对象生命周期更短，当垃圾回收器扫描到只具有弱
+引用的对象时，不管内存大小都会回收这个对象。但垃圾回收器优先级很低，所以通常不会很快就发现
+这些对象。
+
+4. 虚引用(PhantomReference) 虚引用并不会决定对象的生命周期，它和没有任何引用一样，随时可能
+被垃圾回收器回收。虚引用主要用来追踪对象回收的情况，它必须和引用队列ReferenceQueue一起使用，
+当垃圾回收器回收一个对象时，如果它有虚引用，则在回收前会将它加入到相应的队列中。
+
+
+
+
+
+
+
+
    4. IdentityHashMap
    5. EnumMap
 
