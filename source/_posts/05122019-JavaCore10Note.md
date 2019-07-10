@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-10 18:00:38
+updated: 2019-07-10 22:11:33
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3780,9 +3780,49 @@ Reference分几种类型:
 被垃圾回收器回收。虚引用主要用来追踪对象回收的情况，它必须和引用队列ReferenceQueue一起使用，
 当垃圾回收器回收一个对象时，如果它有虚引用，则在回收前会将它加入到相应的队列中。
 
+
+java.lang.Reference是所有引用对象的基类,它定义了所有引用对象的通用操作，因为引用对象是与
+垃圾回收器紧密合作实现的，所以不能直接继承Reference类。可以继承它的子类。
+
+Reference实例对象可能处在4种状态中:active, pending, enqueued, inactive.
+
+1. active: 新创建的实例是active状态，垃圾回收器监测到它的引用对象的可达性发生变化时，会将该
+实例对象变为pending(如果创建的时候有注册相应的引用队列ReferenceQueue)并且将该实例加入到
+pending-reference list中，或者直接为inactive(创建时未注册引用队列)。Active状态时queue为
+创建时定义的queue或为null, next = null, discovered = GC维护的discovered引用列表中当前元素
+的下一个元素。
+
+2. Pending: 该实例是pending-reference list中的一个元素，等待Reference-handler线程对它进行
+入队操作。queue为创建时定义的queue, next = this，discovered = pending-reference list中当前
+元素的下一个元素，如果当前元素为最后一个，则discovered = null.
+
+3. Enqueued: 该实例成为创建它时指定队列中的一个元素(即入队状态)，当该实例从队列中被删除时，
+它会变为inactive状态。queue = ReferenceQueue.ENQUEUED; next指向队列中的下一个实例，如果当
+前实例是队列中的最后一个元素，则next = this. discovered = null(tryHandlePending方法中有赋值)
+
+4. Inactive: 一旦一个实例变为Inactive状态，它的状态就不会再改变了，相当于结束。
+queue = ReferenceQueue.NULL; next = this.
+
+所以垃圾回收器可以通过next == null来判断一个reference实例状态是否为active.
+Reference类中的几个实例域分别为:
+
+referent:  引用指向的对象
+queue:  reference对象关联的队列，即引用队列。
+next: 上面referenceQueue中当前元素的下一个元素。
+discovered: pending-reference list中当前元素的下一个元素，jvm给它赋值。
+
+
 ReferenceQueue: 
   如果希望对象被回收的时候通知用户线程进行额外处理时，即可以使用这个引用队列。如WeakHashMap
 即使用了它。当对象被回收时，它的引用类Reference(引用的对象为referent)即会被加入到该队列中，
+
+
+
+
+
+
+
+
 
 
 
