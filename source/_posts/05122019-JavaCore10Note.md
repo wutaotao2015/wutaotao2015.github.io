@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-09 17:47:21
+updated: 2019-07-10 18:00:38
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3780,8 +3780,9 @@ Reference分几种类型:
 被垃圾回收器回收。虚引用主要用来追踪对象回收的情况，它必须和引用队列ReferenceQueue一起使用，
 当垃圾回收器回收一个对象时，如果它有虚引用，则在回收前会将它加入到相应的队列中。
 
-
-
+ReferenceQueue: 
+  如果希望对象被回收的时候通知用户线程进行额外处理时，即可以使用这个引用队列。如WeakHashMap
+即使用了它。当对象被回收时，它的引用类Reference(引用的对象为referent)即会被加入到该队列中，
 
 
 
@@ -3789,6 +3790,9 @@ Reference分几种类型:
 
    4. IdentityHashMap
    5. EnumMap
+
+以上为本人根据jdk源码整理出的java集合类笔记，下面回归到JavaCore10一书的笔记。
+#### 链表 
 
 ### 映射
 ### 视图与包装器
