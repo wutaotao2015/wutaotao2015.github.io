@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-11 16:04:30
+updated: 2019-07-11 22:36:50
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3827,7 +3827,37 @@ r是队列中最后一个元素，将head = null.删除操作即将r.queue = nul
 调用reallyPoll()方法。remove()方法提供了一个超时时间，时间为0即lock.wait(0)表示永久阻塞
 直到被唤醒。
 
+WeakReference和ReferenceQueue配合使用代码如下，可以看到对象被回收后队列中仍然存有该对象的
+引用:
+```txt
+public class TestReferenceQueue {
+    public static void main(String[] args) throws Exception{
 
+        Person person = new Person();
+        ReferenceQueue<Person> queue = new ReferenceQueue<>();
+        WeakReference<Person> weakReference = new WeakReference<>(person, queue);
+        System.out.println(weakReference);
+        System.out.println(weakReference.get());
+        person = null;
+        System.gc();
+        Thread.sleep(500);
+        Reference<? extends Person> ref = queue.remove();
+        System.out.println(ref);
+        System.out.println(ref.get());
+    }
+    private static class Person{
+        @Override
+        public String toString() {
+            return "Person{}";
+        }
+    }
+}
+结果为:
+java.lang.ref.WeakReference@1540e19d
+Person{}
+java.lang.ref.WeakReference@1540e19d
+null
+```
 
 
 
