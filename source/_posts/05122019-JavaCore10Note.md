@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-10 22:11:33
+updated: 2019-07-11 16:04:30
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3780,7 +3780,7 @@ Reference分几种类型:
 被垃圾回收器回收。虚引用主要用来追踪对象回收的情况，它必须和引用队列ReferenceQueue一起使用，
 当垃圾回收器回收一个对象时，如果它有虚引用，则在回收前会将它加入到相应的队列中。
 
-
+软引用，弱引用同垃圾回收关系
 java.lang.Reference是所有引用对象的基类,它定义了所有引用对象的通用操作，因为引用对象是与
 垃圾回收器紧密合作实现的，所以不能直接继承Reference类。可以继承它的子类。
 
@@ -3811,13 +3811,21 @@ queue:  reference对象关联的队列，即引用队列。
 next: 上面referenceQueue中当前元素的下一个元素。
 discovered: pending-reference list中当前元素的下一个元素，jvm给它赋值。
 
-
 ReferenceQueue: 
-  如果希望对象被回收的时候通知用户线程进行额外处理时，即可以使用这个引用队列。如WeakHashMap
-即使用了它。当对象被回收时，它的引用类Reference(引用的对象为referent)即会被加入到该队列中，
+  当对象可达性发生变化时该引用对象被垃圾回收器放入的注册引用队列。
+通过实现可以看出，ReferenceQueue中定义了一个Reference Head头节点，实际的队列结构是由
+Reference对象本身的next属性构成的，只是入队，出队操作定义在ReferenceQueue中。可以看到，
+Reference和它的容器ReferenceQueue是互相定义的，这一点显示了它们之间包含与注册的关系。
 
-
-
+ReferenceQueue的入队方法enqueue(reference)只能被Reference类调用，可以通过
+reference.enqueue()方法的实现明确这一点(但实际上垃圾回收器没有调用该方法，它是直接操作的)，
+referenceQueue.enqueue(r)方法一开始判断r.queue是否为NULL或ENQUEUED状态，若是直接返回false.
+其中NULL代表该引用对象创建时使用的是默认的NULL队列注册的，没有指定相应队列所以入队失败;
+ENQUEUED代表该引用对象已入队，重复入队为失败操作。下面的逻辑可以看到新入队的节点为头节点，
+r.next = (head == null) ? r : head;  r = head.实际出队方法reallyPoll()中判断r == rn，说明
+r是队列中最后一个元素，将head = null.删除操作即将r.queue = null, r.next = r. poll()即加锁
+调用reallyPoll()方法。remove()方法提供了一个超时时间，时间为0即lock.wait(0)表示永久阻塞
+直到被唤醒。
 
 
 
