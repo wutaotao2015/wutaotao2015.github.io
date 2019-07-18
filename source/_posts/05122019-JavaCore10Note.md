@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-11 22:36:50
+updated: 2019-07-18 22:30:13
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3764,9 +3764,14 @@ WeakHashMap的值对象是用普通的强引用来存储的，所以应注意值
 为避免这样的情况，对于不依赖WeakHashMap集合来存储引用的值对象来说，可以在插入前进行包装:
 `m.put(key, new WeakReference(value));`,在查询调用get(key)方法时再进行拆箱即可。
 
+
+以下为相关背景知识补充:
+
 Reference分几种类型: 
 1. 强引用(Strong Reference) 即普通的引用，如Object obj = new Object();当内存不足时，虚拟机
 会抛出内存溢出异常，而不会回收强类型的引用。需要回收这种类型引用时，需要赋值obj = null.
+它对应着Reference的子类FinalReference,JVM采用其子类Finalizer来管理每个强引用对象，要清理
+对象时将其放入对应的引用队列中并调用对象的finalize()方法进行清理。
 
 2. 软引用(Soft Reference) 当内存空间不足时，垃圾回收器就会回收软引用对象。所以它适合用于
 内存敏感的高速缓存。实际应用如网页的后退按钮，内存充足时可以将网页浏览记录保存为软引用作为
@@ -3774,7 +3779,8 @@ Reference分几种类型:
 
 3. 弱引用(Weak Reference) 弱引用对象比软引用对象生命周期更短，当垃圾回收器扫描到只具有弱
 引用的对象时，不管内存大小都会回收这个对象。但垃圾回收器优先级很低，所以通常不会很快就发现
-这些对象。
+这些对象。当内存不足时，垃圾回收器也会回收弱引用对象(即内存不足时垃圾回收器会回收一切可回收
+对象)。
 
 4. 虚引用(PhantomReference) 虚引用并不会决定对象的生命周期，它和没有任何引用一样，随时可能
 被垃圾回收器回收。虚引用主要用来追踪对象回收的情况，它必须和引用队列ReferenceQueue一起使用，
@@ -3858,6 +3864,49 @@ Person{}
 java.lang.ref.WeakReference@1540e19d
 null
 ```
+
+WeakHashMap弱引用实战代码:
+```txt
+public class WeakHashMapDemo {
+    public static void main(String[] args){
+         
+        WeakHashMap<String, byte[]> whm = new WeakHashMap<String, byte[]>();
+     // HashMap<String, byte[]> whm = new HashMap<String, byte[]>();
+        String s1 = new String("s1");
+        String s2 = new String("s2");
+        String s3 = new String("s3");
+         
+        whm.put(s1, new byte[100]);
+        whm.put(s2, new byte[100]);
+        whm.put(s3, new byte[100]);
+         
+        s2 = null;
+        s3 = null;
+         
+        /*此时可能还未执行gc,所以可能还可以通过仅有弱引用的key找到value*/
+        System.out.println(whm.get("s1"));
+        System.out.println(whm.get("s2"));
+        System.out.println(whm.get("s3"));
+         
+        System.out.println("-------------------");
+         
+        /*执行gc,导致仅有弱引用的key对应的entry(包括value)全部被回收*/
+        System.gc();
+        System.out.println(whm.get("s1"));
+        System.out.println(whm.get("s2"));
+        System.out.println(whm.get("s3"));
+    }
+}
+结果为WeakHashMap中s2,s3对应的值已变为null,HashMap仍存在。
+```
+
+从WeakHashMap的实现可以看出，它的存储容器同HashMap类似，是Entry[]数组，但是WeakHashMap
+自定义的Entry类为
+`private static class Entry<K,V> extends WeakReference<Object> implement Map.Entry<K,V>{}`,
+从这可以看出，WeakHashMap的键属于弱引用类型。从代码中可以看到，get(key), size(), put()方法
+都间接调用了expungeStaleEntries()方法，该方法对引用队列进行出队操作，利用队列中的引用来
+删除WeakHashMap链表中已经失效的节点。
+ 
 
 
 
