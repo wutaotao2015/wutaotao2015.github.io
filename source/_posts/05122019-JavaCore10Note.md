@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-18 22:30:13
+updated: 2019-07-21 18:38:25
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3907,16 +3907,58 @@ public class WeakHashMapDemo {
 都间接调用了expungeStaleEntries()方法，该方法对引用队列进行出队操作，利用队列中的引用来
 删除WeakHashMap链表中已经失效的节点。
  
-
-
-
-
-
-
-
-
    4. IdentityHashMap
+```txt
+public class IdentityHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, 
+  java.io.Serializable, Cloneable{...}
+```
+该map使用引用的等价性而不是对象的对价性来比较键，即使用==符号而不是equals方法来区分不同的
+键。从这一点上说，它违反了Map接口默认使用equals方法进行比较键的定义，所以它不适合作为常用
+接口使用，只适用于需要使用引用等价性的场景，如序列化，深度拷贝，代理对象集合等。这个类实现
+了Map接口的所有方法，同HashMap一样允许null键null值，不保证键的顺序。它有一个预计最大容量的
+参数来决定初期桶的数量，同样，超出后自动扩容重新哈希化的代价很高，同时，过大的容量又会造成
+迭代元素实践过长，所以需要定义一个合适的容量大小。IdentityHashMap也不是线程安全的，可以使用
+Collections.synchronizedMap(...)得到线程安全的map集合。它的迭代器也是快速失败的，不保证
+一定会抛出异常。
+
+IdentityHashMap是哈希表的线性探测法实现，可以在《算法》第4版中看到该算法实现。
+以下为书中的相关笔记。
+
+散列表有2种实现: 拉链法(HashMap)和线性探测法(IdentityHashMap)，拉链法是让哈希值相同的键
+放入同一个索引的桶中形成链表来解决碰撞问题，而线性探测法是利用数组中的空位来解决碰撞问题。
+一般将检查一个数组位置上是否是需要查找的键的操作称为探测，与追加链表不同，当发生碰撞时，
+它会探测下一个索引的元素是否为空，如果为空就将新键写入其中。查询时按索引递增进行查找，若
+碰到空元素即代表相同哈希值的键(键簇)遍历结束，即查找元素不存在。同时也由于空元素代表结束，
+所以删除一个元素时不能简单的将其置为null(这样会使得后面的元素无法被查询到，因为哈希值是
+通过哈希函数计算得出所以是固定的), 这时可以将后面的元素重新哈希化插入到数组中。 
+(一组连续的非空元素具有相同的哈希值，也叫做键簇。键簇越小查询效率越高)。
+
+这种利用空元素来作为结束的机制决定了线性探测法的数组容量必须足够大，对于不同的哈希值都要
+有一个空元素作为结束符。所以在插入元素前或删除元素后都需要判断元素个数和数组容量的比值大小，
+适当进行扩容或缩容操作，使得数组的使用率保持一定的大小。
+
+《算法》书中使用2个大数组来分别存储键和值，而从IdentityHashMap的实现中可以看到它只使用了
+一个数组来存储键值对，由put(key, value)方法可以看出，一对键值对是存储到2个紧邻的元素位置中。
+put方法中根据哈希值查询到对应的索引，然后向后递增查找(nextKeyIndex方法也是以2追加), 使用
+==判断对象引用相同时，将tab[i+1]赋值为新的键值。内存循环结束条件为item == null, 即该键为
+新键时，下面有判断`s + (s << 1) > len`条件，即`size > len / 3`, 意思为元素个数超过容量的
+1/3时，它就会进行扩容操作(扩大一倍)，扩容完毕后重新进行插入逻辑判断。get(key)方法也是通过
+==进行键的比较，并返回下一个索引位置的键值。同HashMap一样，IdentityHashMap允许null键null值，
+所以get方法返回null值可能是该键不存在，也可能它的键对应就是null值，这一点可以通过调用
+containskey(key)方法进行区分。remove()方法即将被删除元素后的键全部都重新哈希并插入，直到
+遇到空元素为止。
+
    5. EnumMap
+```txt
+public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K,V> implements
+  java.io.Serializable, Cloneable{...}
+```
+同EnumSet类似，EnumMap的键都属于同一个枚举类。插入空键会报空指针异常 ，允许空值。EnumMap
+也是线程不安全的，可以使用Collections.synchronizedMap(new EnumMap())得到线程安全的map集合。
+因为枚举类型本身的有序性(ordinal()方法), 所以EnumMap只需要定义一个存储值的数组即可，数组
+的索引为枚举的索引值，数组元素值为对应的键值。可以看到，这种方式get,put方法都是常量时间性能。
+
+
 
 以上为本人根据jdk源码整理出的java集合类笔记，下面回归到JavaCore10一书的笔记。
 #### 链表 
