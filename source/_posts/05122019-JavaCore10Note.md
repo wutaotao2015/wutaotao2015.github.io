@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-30 17:57:15
+updated: 2019-07-30 21:49:10
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4183,11 +4183,26 @@ Collections.unmodifiableXXX内部就是使用了视图技术实现的，所以�
 参数如上面的例子一样是一个特殊对象，而不是一个常见的集合对象。
 
 ### 遗留的集合
-
-
-
-
-
+1. Hashtable类
+不应当使用它，它与HashMap有相同的接口，一般正常使用是HashMap,需要并发时使用ConcurrentHashMap.
+2. 枚举
+遗留集合使用Enumeration接口对集合进行遍历，有hasMoreElement和nextElement方法，与迭代器
+Iterator接口功能相同。应当使用Iterator接口。
+注: C++中使用迭代器作为参数十分普遍，java中一般直接使用集合作为参数，需要时从集合中获取
+迭代器即可。
+3. 属性映射
+Properties类(继承自HashTable):
+   1. 键和值都是字符串
+   2. 表可以保存到一个文件中，也可以从文件中加载
+   3. 使用一个默认的辅助表
+4. 栈
+Stack类，它继承了Vector类，从而可以使得Stack类可以调用不属于栈操作的insert和remove方法。
+5. 位集
+BitSet类，用于存放一个位序列，表示一系列boolean值，BitSet使用字节存储每一位，所以比Boolean
+对象的ArrayList更高效。bits.get(i)获得第i位的状态，bits.set(i)将第i位设置为true, 
+bits.clear(i)将第i位设置为false.
+BitSet实际应用例子有查找素数的方法，先将范围内索引的位都设置为true,然后将相应的倍数设置为
+false,最后留下来为true的位即为素数。
 
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
 
