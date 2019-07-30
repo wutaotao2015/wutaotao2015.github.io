@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-29 20:24:32
+updated: 2019-07-30 17:57:15
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4079,14 +4079,118 @@ typeCheck方法是使用isInstance()方法进行判断的，它对泛型类型�
 ### 算法
 集合接口为不同的数据结构提供了一种统一的算法实现。比如得到一个数组，或数组列表，或链表中
 的最大元素，就不需要重复编写类似的代码，只需要定义一个通用接口类型如Collection类作为方法参数，
-在此基础上实现算法逻辑(如统一利用迭代器进行迭代处理)，从而达到算法通用的目的。
+在此基础上实现算法逻辑(如统一利用迭代器进行迭代处理)，从而达到算法通用的目的。总的来说，
+算法的实现都是建立在泛型集合的基础上的。
 
+1. 排序与混排
+Collections.sort(List)方法调用的是List接口的List.sort(Comparator)方法，它是将集合转换为
+数组排序完成后再通过迭代一个个复制回集合中。Arrays.sort方法使用了归并排序算法，而不是
+通用的快速排序，因为归并排序算法不会比较相同的元素，所以它是更稳定的算法。
+
+在集合的基础上实现算法，需要集合本身是可以修改的，但不一定需要可以更改大小: 即可以使用set
+方法，不一定需要支持add或remove方法。
+```txt
+排序相关的方法有:
+1. Collections.sort(List)
+2. Collections.shuffle(List)
+3. List.sort(Comparator)
+4. Comparator.reverseOrder() 接口静态方法
+5. Comparator.reversed()     接口默认方法
+```
+2. 二分查找
+```txt
+Collections.binarySearch(collection, element)
+Collections.binarySearch(collection, element, comparator)
+```
+这2个方法定义了二分查找的算法实现。二分查找是建立在支持随机访问的有序列表基础上的，即被
+比较的集合应当实现RandomAccess接口，否则它将利用迭代器进行遍历比较，这样就失去了二分查找
+的优势。方法的返回值若为正数，代表搜索命中的元素索引，未找到返回的是最后搜索结束的位置
+(如i),可以将新元素插入-i-1位置处(具体是使用List.add(index, el)方法，在指定的索引处插入元素
+el, 该位置原有元素及以后元素全部右移，二分查找方法返回值为-(low+1), 所以可以认为是应在low
+位置处插入新元素)，从而保证列表的有序性。
+
+3. 简单算法
+```txt
+Collections类:
+1. T min(Collection)
+2. T max(Collection)
+3. T min(Collection, Comparator)
+4. T max(Collection, Comparator)
+5. void copy(List to, List from)
+6. void fill(List, value)
+7. boolean addAll(Collection, T... values)
+8. boolean replaceAll(List, T oldValue, T newValue)
+9. int indexOfSubList(List l, List s)   第一个子列表的索引，如s为s,t, l为a,s,t,则方法返回1
+10. int lastIndexOfSubList(List l, List s) 最后一个子列表的索引 
+11. void swap(List, int i, int j) 交换给定索引的2个元素
+12. void reverse(List) 反转列表的顺序
+13. void rotate(List l, int d) 将索引i的元素移动到位置(i + d) % l.size()处。从这个计算公式
+可以看出d为正数时是向右移动(backward)，d为负数时向左移动(forward)。
+文档注释中提到如果只需要移动一个元素从j移动到k位置(j<k),其余元素不变，可以使用sublist,代码为
+Collections.rotate(list.subList(j, k + 1), -1);
+14. int frequency(Collection, Object obj)  返回集合中与obj元素相同的元素个数 
+15. boolean disjoint(Collection c1, Collection c2) 如果2个集合没有共同元素，返回true
+// 
+Collection接口:
+1. boolean removeIf(Predicate<T>)  删除满足条件的元素
+//
+List接口:
+1. void replaceAll(UnaryOperator<T>)  对集合中所有元素进行指定操作
+示例如:
+wordList.removeIf(word -> word.length() < 3);
+wordList.replaceAll(String::toLowerCase);
+```
+
+4. 批操作
+快速取出a, b集合的交集可以这样实现:
+```txt
+HashSet resultSet = new HashSet(a);
+resultSet.retainAll(b);
+```
+同样，可以利用前面提到的视图技术方便的集合进行批处理，如删除HashMap中的部分映射:
+```txt
+Set toBeDeletedSet = ...;
+hashmap.keySet().removeAll(toBeDeletedSet);
+```
+
+5. 集合与数组的转换
+数组->集合: Arrays.asList(T... values)
+集合->数组: 
+```txt
+String[] arr = new String[collectionSize];
+collection.toArray(arr);
+```
+
+6. 编写自己的算法
+应当尽可能使用接口而不是具体的实现类作为方法参数来实现操作。同样的，方法的返回值也应当
+尽可能是接口，这样方便以后可以修改方法的实现。如原方法是将集合中每个元素处理后的新集合
+返回给调用者，后面可以修改为集合的视图(自定义匿名内部类)返回，这样返回的集合是不可修改的，
+某些情况下更加安全。代码如下:
+```txt
+public List<JMenuItem> getAllItems(JMenuItem item) {
+
+   return new AbstractList<>(){
+      public JMenuItem get(int i) {
+        return menu.getItem(i); 
+      }
+      public int size() {
+        return menu.getItemCount();  
+      }
+   }; 
+}
+```
+Collections.unmodifiableXXX内部就是使用了视图技术实现的，所以实际编程中可以使用它: 除非
+参数如上面的例子一样是一个特殊对象，而不是一个常见的集合对象。
 
 ### 遗留的集合
 
 
 
+
+
+
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
+
 ## 部署java应用程序
 ## 并发
 
