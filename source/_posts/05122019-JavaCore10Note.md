@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-21 18:38:25
+updated: 2019-07-29 20:24:32
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -3958,14 +3958,130 @@ public class EnumMap<K extends Enum<K>, V> extends AbstractMap<K,V> implements
 因为枚举类型本身的有序性(ordinal()方法), 所以EnumMap只需要定义一个存储值的数组即可，数组
 的索引为枚举的索引值，数组元素值为对应的键值。可以看到，这种方式get,put方法都是常量时间性能。
 
-
-
 以上为本人根据jdk源码整理出的java集合类笔记，下面回归到JavaCore10一书的笔记。
 #### 链表 
+LinkedList的ListIterator迭代器add方法返回值为void类型，即它默认即是要改变链表结构的，它在
+当前的光标位置处插入新元素，add方法只依赖迭代器的位置，所以可以连续调用add方法，而remove方法
+依赖于迭代器的状态，不能连续调用，调用前必须移动一次光标位置。
+
+关于迭代的并发修改问题，书中明确指出迭代器是建立了自己独立的计数器，在方法开始的时候即检查
+自己改动的操作次数是否与集合的被改动次数一致，如果不一致，说明有除迭代器以外的操作改动了集合，
+这时即可以抛出并发修改异常。
+
+注: set方法不被认为是集合的结构性修改，不计入改动次数，Collections类的许多算法都使用了这个
+功能。
+
+java中散列表用链表数组实现，每个列表被称为桶(bucket), 将散列码与桶的总数(数组长度)取余即
+得到查找键所在的桶索引，当出现散列冲突(哈希碰撞)时，即将查找键与桶中对象逐一进行比较。这个
+过程在前面的HashMap实现中可以看出，这里用桶的概念再次说明。
+
+散列函数由于不需要关心排序，所以查询和操作元素的速度是最快的，如果需要排序，应使用树集。
+
+双端队列接口为Deque,实现类有LinkedList, ArrayDeque.
+
+优先级队列PriorityQueue调用remove方法时，删除的是当前队列中最小的元素。在实际使用中，我们
+经常需要取到优先级最高的元素，此时，我们可以将1(最小元素)设置为优先级最高，次高为2,依次
+类推，数值越大优先级越低，从而达到应用的目的。
 
 ### 映射
+map接口中有一个getOrDefault方法可以在对应键不存在时返回默认值(对应值确实为null时即返回null)
+迭代一个map集合最方便的方法为Map接口的`forEach(BiConsumer<T,U>)`方法，如
+```txt
+map.forEach((k,v) -> System.out.println("key=" + k + ", value=" + v));
+```
+
+更新映射的值时如果键存在我们可以先获取原值再修改，如对不同的单词计数:
+`map.put(key, map.get(key) + 1);`
+但如果键不存在，get方法将会抛出空指针异常。这时我们可以使用以下方法：
+1. 使用getOrDefault方法，如`map.put(key, map.getOrDefault(key, 0) + 1);`
+2. 先调用putIfAbsent方法，先存入不存在的键值映射，如
+```txt
+map.putIfAbsent(key, 0);
+map.put(key, map.get(key) + 1);
+```
+3. 使用Map接口的merge方法，如
+`map.merge(key, 1, Integer::sum);`
+
+查看源码实现，merge(key, value, BiFunction(V,V,V))方法实现为
+```txt
+V newValue = (oldValue == null) ? value : remappingFunction.apply(oldValue, value);
+if (newValue == null) { 
+  remove(key); 
+}else{
+  put(key, newValue); 
+}
+```
+从实现看，正是我们需要实现的功能: 将函数应用到旧value和新value上，得到的结果作为新的映射值，
+当新value本身为null或BiFunction返回null时会进行删除操作。Map接口还提供了其他如
+compute(key, BiFunction(k,V,V))方法对键和值本身进行计算得到新值的方法等，用途比较小(从应用
+上说，键和值进行关联得到新值使用场景很小)。
+
+弱散列映射
+WeakHashMap周期性的检查队列，如果其中有新添加的弱引用，说明该引用已经不再被使用了，那么
+WeakHashMap即会删除该键值对(即expungeStaleEntries()方法)。
+
+LinkedHashSet和LinkedHashMap用来记住插入元素的顺序。
+链表映射需要使用访问顺序而不是插入顺序进行迭代时，可以在初始化链表时指定accessOrder参数为
+true.这一点对实现高速缓存的"最近最少使用"原则非常重要。LinkedHashMap中定义了
+removeEldestEntry(oldestEntry)方法，它在插入元素后使用，可以自定义子类重写该方法实现该功能，
+代码如下:
+```txt
+// 该map存储的是访问次数最多的100条数据  get,put方法调用都进行计数
+Map<K,V> cache = new LinkedHashMap<>(128, 0.75F, true) {
+   protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
+     return size() > 100;  
+   } 
+}();
+```
+
+EnumSet使用位序列实现，对应的值在set集合中时，对应的位即为1.
+EnumMap使用值数组实现，数组索引对应枚举键。
+
+IdentityHashMap使用System.identityHashCode计算散列值，使用==比较对象，在对象序列化时很有用。
+
 ### 视图与包装器
+如HashMap的KeySet集合不是新建一个set集合，向其中填充元素再返回，而是返回一个实现了Set接口的
+类对象，这种集合即称为视图。
+
+1. 轻量级集合包装器
+如Arrays.asList(T...)方法返回的不是ArrayList,而是一个视图，不支持改变list的大小。
+同理有Collections.nCopies(n, obj)可以得到一个包含了n个相同的obj对象的集合，但它实际只存储
+了一个obj对象引用。其他还有Collections.singleton(obj), singletonList(T), singletonMap(K,V)
+方法。
+2. 子范围
+可以对取出的子范围进行操作，如删除等，它会反映到全集中。
+对于有序集或映射，如SortedSet, SortedMap等也有相应的方法， NavigableSet, NavigableMap则有更
+进一步的处理，对边界元素的控制。
+3. 不可修改的视图
+Collections类有几个方法可以得到集合的不可修改视图，如Collections.unmodifiableList等，得到
+的视图可以调用List接口的方法，但所有更改器方法都会抛出UnsupportedOperationException.视图
+只是包装了接口而不是实际对象，所以实际类中的非接口方法将不能调用。
+4. 同步视图
+Collections类的synchronizedMap等方法即使用了视图(内部类)来得到线程安全的map集合。
+5. 受查视图
+针对泛型检查不到的情况。如以下代码:
+```txt
+  ArrayList<Integer> ints = new ArrayList<>();
+  ArrayList raw = ints;
+  raw.add("str");
+  System.out.println(ints.get(0).intValue());  //这一行报错，在使用时报错，不利于debug
+
+  List safes = Collections.checkedList(ints, Integer.class);
+  safes.add("sd");   // 这一行报错，checkedList在add方法时即进行类型检查
+  System.out.println(ints.get(0).intValue());
+```
+注意: `ArrayList<Pair<String>>的受查视图无法检测出Pair<Date>类型。CheckedCollection的
+typeCheck方法是使用isInstance()方法进行判断的，它对泛型类型是无效的。`
+6. 可选操作
+可选操作是类库设计者综合各方便需求，如易于学习，使用方便，泛型化，通用性与算法高效性综合
+考虑的结果，并不值得应用到实际的编程中。
+
 ### 算法
+集合接口为不同的数据结构提供了一种统一的算法实现。比如得到一个数组，或数组列表，或链表中
+的最大元素，就不需要重复编写类似的代码，只需要定义一个通用接口类型如Collection类作为方法参数，
+在此基础上实现算法逻辑(如统一利用迭代器进行迭代处理)，从而达到算法通用的目的。
+
+
 ### 遗留的集合
 
 
