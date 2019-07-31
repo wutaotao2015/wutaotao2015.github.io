@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-30 21:49:10
+updated: 2019-07-31 16:01:51
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4205,8 +4205,22 @@ BitSet实际应用例子有查找素数的方法，先将范围内索引的位�
 false,最后留下来为true的位即为素数。
 
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
-
 ## 部署java应用程序
+1. JAR文件
+
+   1.1 创建jar文件
+使用jdk自带的jar命令创建jar文件，如:
+`jar cvf jarFileName file1 file2 ...`
+jar命令类似于tar命令。jar包中除了包含类文件，还可以包含图像，声音等其他类型文件。
+注: 前面的包密封性中有提到相关命令。
+
+   1.2 清单文件
+每个jar文件都包含一个用于描述归档特征的清单文件(manifest), 文件名为MANIFEST.MF。
+
+
+
+
+
 ## 并发
 
 <hr />
