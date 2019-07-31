@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-07-31 16:01:51
+updated: 2019-07-31 22:07:42
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4215,7 +4215,17 @@ jar命令类似于tar命令。jar包中除了包含类文件，还可以包含�
 注: 前面的包密封性中有提到相关命令。
 
    1.2 清单文件
-每个jar文件都包含一个用于描述归档特征的清单文件(manifest), 文件名为MANIFEST.MF。
+每个jar文件都包含一个用于描述归档特征的清单文件(manifest), 文件名为MANIFEST.MF, 位于
+META-INF目录下。清单中可以包含多个条目，分为多个节，节之间用空行分开，第一节称为主节，
+作用于整个jar包。
+`jar cvfm  XXX.jar .\manifest.txt .`
+   1.3 可执行jar文件
+可以通过以下2种方式指定程序执行入口:
+1. `jar cvfe MyProgram.jar com.xxx.MainAppClass files`
+2. 清单文件中指定主类: `Main-Class: com.xxx.MainAppClass`
+清单文件最后一行必须以换行符结束。
+指定后使用`java -jar XXX.jar`命令启动程序。
+
 
 
 
