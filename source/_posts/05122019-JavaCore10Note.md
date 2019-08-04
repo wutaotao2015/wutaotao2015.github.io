@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-01 22:25:43
+updated: 2019-08-04 15:11:31
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4266,6 +4266,71 @@ java.util.Properties类
    6. void store(outputStream, String header)  将映射保存到一个输出流，header为标题
 ```
 2. 首选项API
+使用Properties类存储配置信息存在2大问题:
+  1. 有些操作系统没有主目录的概念，所以无法确定统一的配置文件存储位置。
+  2. 关于配置文件命名没有规范(程序员自己在程序中指定)，所以用户安装多个应用程序时会产生命名
+冲突。
+java.util.prefs.Preferences类解决了这个问题。在windows系统中它使用注册表存储配置信息，Linux
+系统中使用文件系统存储配置信息。Preferences存储结构是树状结构，每个树节点的路径类似于包名，
+节点中是一个单独的键值对表。不同的用户可以有不同的树，另外还有一颗系统树(从前面这些树特性
+来看，Preferences与windows的注册中心拥有一样的特性, 实际上Preferences是个抽象类，它的具体
+实现类即WindowsPreferences, 就是基于Windows系统的注册表实现的)。
+
+可以从用户树或系统树的根节点开始访问树，再根据根节点和节点路径得到具体的节点对象:
+```txt
+Preferences root = Preferences.userRoot();
+// Preferences root = Preferences.systemRoot();
+Preferences node = root.node("/com/xxx/myapp");
+```
+当节点路径为某个类的包名时，可以根据该类的对象获取该节点:
+```txt
+Preferences node = Preferences.userNodeForPackage(class);
+// Preferences node = Preferences.systemNodeForPackage(class);
+```
+获取属性值必须指定一个默认值，因为可能该属性不存在，或程序与存储库断开链接等原因，具体方法
+有get(String key, String defaultValue), getInt(key, int df), getDouble(key, double df), 
+getByteArray(key, byte[] df)等，相应的设置属性值的方法为put(String key, String value), 
+putDouble(key, val)等方法。node.keys()方法可以返回该节点的所有键。
+
+另外当需要迁移属性配置时，可以使用Preferences类的导入导出功能，
+方法为:
+```txt
+void exportSubtree(outputStream);  // 导出一颗子树 xml格式
+void exportNode(OutputStream);  // 导出一个节点
+void importPreferences(inputStream); // 导入数据
+```
+总之，Preferences类为修改Windows系统注册表配置项提供了一个便利的工具，是一个方便多应用协作
+的系统级配置工具。
+
+### 服务加载器
+看完书，ServiceLoader类的源码和网上查找相关资料才发现这是一个非常重要的设计思想。
+调用服务分2方，服务调用者和服务提供者，由服务提供者(或服务实现者)制定调用的规则时，这是
+我们熟知的API(Application Programming Interface: 应用编程接口)。但有些情况下需要服务调用
+者指定调用的规则，如eclipse, IntelliJ的插件体系，这种情况叫SPI(Service Provider Interface:
+服务提供接口), 即调用者给实现者指定了需要实现的接口规则。
+
+jdk通过ServiceLoader类实现了SPI思想，ServiceLoader类本身是一个泛型类，可以指定具体的接口类型，
+它定义了SPI的具体操作步骤: 即SPI本身实现的机制，具体的接口还是要程序员自己定义。
+
+如ServiceLoader类指定了服务提供者的jar包的META-INF/services目录下需要一个UTF-8编码的文本
+文件，文件名为接口的全限定名，文件内容是该接口的实现类。通过ServiceLoader.load(service.class)
+方法初始化ServiceLoader类，然后就可以调用ServiceLoader类的迭代器遍历文本文件中的实现类了，
+在遍历时进行处理得到需要的实现类。
+
+SPI的具体应用有DriverManager的驱动实现，通过mysql-connector-java.jar包的META-INF/services
+目录下既可以发现这样一个配置文件, 文件名为java.sql.Driver，即同一个驱动接口类，其中定义了
+mysql的驱动实现类(oracle的驱动实现jar包没有使用spi，所以它还是需要使用Class.forName方法
+加载相应的驱动)。
+
+eclipse或idea的插件体系是SPI思想的很好体现，作为服务调用方它们指定插件需要的文件和配置信息，
+插件开发者按要求开发完集成到开发平台时，开发平台不用知道插件的具体实现，按"接口"进行统一加载
+处理即可。
+
+其他的SPI应用有spring的自动扫描注解，自定义作用域scope, 自定义标签等。
+可以说只要是服务调用者制定了实现接口时，都属于SPI的应用。
+
+### applet
+### Java Web Start
 
 ## 并发
 
