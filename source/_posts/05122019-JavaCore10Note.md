@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-04 15:11:31
+updated: 2019-08-06 15:20:52
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4330,6 +4330,9 @@ eclipse或idea的插件体系是SPI思想的很好体现，作为服务调用方
 可以说只要是服务调用者制定了实现接口时，都属于SPI的应用。
 
 ### applet
+java的applet都知道已经过时了，但可以作为技术发展历史了解一下:它是通过html页面上一个特殊
+的applet标签来加载对应的jar包和class类, 同时需要指定applet的位置。applet标签可以给java类
+传递参数，还可以处理图像和音频。
 ### Java Web Start
 
 ## 并发
