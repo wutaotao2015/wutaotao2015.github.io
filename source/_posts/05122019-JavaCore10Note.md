@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-06 15:20:52
+updated: 2019-08-11 21:56:48
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4336,6 +4336,196 @@ java的applet都知道已经过时了，但可以作为技术发展历史了解�
 ### Java Web Start
 
 ## 并发
+线程和进程的区别:
+不同进程有自己的一整套变量，而线程是共享数据。共享数据使得线程间通信比进程间通信更容易。
+同时，创建、销毁一个线程开销比进程小。
+
+1. 什么是线程
+
+书中弹球的例子说明了多线程一个最常用的使用场景: 用户对程序处理的中断请求操作。
+即点击关闭按钮需要能够中断弹球的循环移动处理。
+推荐建立线程的方法:
+1. 使用λ表达式实现Runnable接口。
+2. 使用该Runnable接口初始化一个线程Thread thread = new Thread(runnable);
+3. 启动线程thread.start()(调用run()方法只是执行一个方法，没有启动线程);
+
+不推荐使用继承Thread类的方式启动线程，因为通过继承的方式比实现接口的方式耦合性更强。
+弹球例子中每点击一次start按钮都会生成一个新球和新线程，而主线程就可以监听到关闭按钮的事件，
+调用System.exit(0)方法从而实现中断操作。
+
+2. 中断线程
+当线程执行完run()方法并返回或者出现未捕获异常的时候，线程将终止。没有可以主动强制终止一个
+线程的方法，只有一个interrupt()方法用来请求中断线程，它会设置一个中断标志位，我们可以通过
+检查这个标志位来决定线程是否需要停止运行。
+
+在阻塞的线程(调用了wait(), join()或sleep()方法的线程)中调用interrupt()方法会抛出中断异常
+从而结束阻塞状态，并且它会清空中断状态。从这里可以看出，我们可以使用interrupt()方法提前结束
+阻塞的线程。线程本身决定如何响应中断请求，我们可以结束该线程，也可以忽略该中断请求
+(如前面说的不可中断线程)。
+
+发生上述的interrupted异常时不应当不做任何处理，可以调用Thread.currentThread.interrupt()
+方法将被清空的中断状态重新定义出来， 或者可以直接将该异常抛给调用者处理。
+同时，如果线程run()方法处理逻辑中如果使用了sleep()或其他阻塞方法，由于它们在调用时如果被
+中断会抛出异常，所以此时就不需要再去检查中断标志位了，直接捕捉该异常即可。
+
+Thread.interrupted()方法将返回线程的中断状态，同时它会清除该中断状态，停止中断！(即中断
+线程连续2次调用interrupted()方法，第一次返回true,第二次将返回false.)而thread.isInterrupted()
+是一个实例方法，仅返回中断状态，不会改变中断状态。
+
+下面是一个简单的通过中断来终止线程的例子:
+```txt
+public class InterruptTest {
+    public static void main(String[] args) throws InterruptedException{
+
+        Runnable r = () -> {
+
+          while(!Thread.currentThread().isInterrupted()) {
+              try {
+                  System.out.println("sss");
+                  Thread.sleep(10000);
+              } catch (InterruptedException e) {
+                  // 抛出异常的同时清除了中断状态，所以这里需要手动设置中断状态, 
+                  // 以退出循环，结束run方法和thread线程
+                  Thread.currentThread().interrupt();
+              }
+          }
+        };
+
+        Thread thread = new Thread(r);
+        thread.start();
+
+        Thread.sleep(2000);
+        thread.interrupt();
+    }
+}
+```
+
+3. 线程状态
+线程有6种状态，可以调用getState()方法确定线程的当前状态。
+
+  1. New 新创建状态
+使用new操作符新建一个线程时，此时线程还没有开始运行，在做一些线程的基础工作。
+
+  2. Runnable 可运行状态
+一旦调用start方法，线程即处于可运行状态。一个可运行状态的线程可能在运行中，也可能不在运行中，
+这取决于系统时间分配。即运行中的线程也是可运行状态。
+
+桌面和服务器操作系统都使用抢占式调度系统，即系统给每一个可运行线程一个时间片执行任务，时间片
+用完时系统停止运行该线程，再根据线程优先级确定下一个运行的线程。但在手机等小型设备上是使用
+协作式调度系统，只有当一个线程调用yield()方法，或者被阻塞，等待时，线程才会停止运行。
+
+  3. Blocked，Waiting, Timed waiting 被阻塞和等待, 计时等待状态
+这三种状态统称为非活动状态。有以下几种情况线程会进入非活动状态:
+     1. 一个线程试图获取一个对象锁(不是Concurrent包中的锁)而该锁被其他线程持有时，该线程
+进入阻塞状态，直到该锁被释放并且该线程得到该锁时才会变为非阻塞状态。
+     2. 当一个线程等待另一个线程通知调度器某个条件时，该线程是等待状态。如Object.wait()，
+Thread.join()方法，或是等待concurrent包中的Lock或Condition时。阻塞状态与等待状态是不同的。
+     3. 某些方法有一个计时参数，如Thread.sleep(),Object.wait(), Thread.join()等方法，此时
+线程进入计时等待状态。
+
+当一个线程阻塞或等待时，另一个线程被调整为运行状态。而一个线程重新激活时(如获得锁或计时结束),
+调度器检查线程优先级，如果该线程优先级更高，就将它替换当前运行中的某个线程。
+
+  4. Terminated 终止状态
+前面提到过，一个线程终止有2种情况:
+     1. run()方法正常结束而终止线程。
+     2. run()方法运行过程中出现了未捕获的异常而终止线程。
+
+注: thread.stop()方法已经过时，不应当使用它终止线程。
+thread.join()方法注释为`wait for this thread to die`, 即当前线程进入等待状态，等待join()
+方法的调用线程终止。以下为join方法测试:
+```txt
+public class JoinTest {
+    public static void main(String[] args) {
+
+        Runnable r = () -> {
+            try {
+                Thread.sleep(3000);
+                System.out.println("t end");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Thread t = new Thread(r);
+        t.start();
+
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("main end");
+    }
+}
+输出为
+t end
+main end
+注释掉join方法时输出为
+main end 
+t end
+```
+
+4. 线程属性
+
+   1. 线程优先级
+一个线程的优先级默认是继承了其父线程的优先级，可以调用setPriority()方法设置，优先级从1到10,
+最低为1,最高为10，普通优先级为5。
+
+线程的优先级是高度依赖于具体的操作系统的，java的优先级转换到具体的操作系统时该优先级可能
+会发生变化，所以不应当依赖于优先级来进行编程，它只是提供了参考，但没有确定性。
+
+Thread.yield()方法指示当前线程愿意让出自己的时间片，调度器可以选择一个优先级相同或更高的
+线程运行。文档注释说该方法是线程向调度器发起的通知，调度器可以忽略它。yield方法很少有适当
+的场景需要使用，它可以用于测试bug，或一些并发控制的包(如java.util.concurrent.locks)中。
+
+   2. 守护线程
+守护线程也叫后台线程，可以通过thread.setDaemon(true)将线程转换为守护线程。它的唯一用途就是
+为其他线程提供服务，如进行计时操作等。当程序中只剩下守护线程时，程序就会结束。守护线程不
+应当访问固有资源，如文件、数据库等，因为它们是不稳定的，访问失败时会导致守护线程中断，无法
+提供应有的服务。
+
+   3. 未捕获异常处理器
+thread.run()方法不支持抛出受查异常，它只能因为未捕获异常终止。我们可以调用
+setUncaughtExceptionHandler(UncaughtExceptionHandler eh)方法自定义一个未捕获异常处理器来
+处理这个异常(只需要实现Thread.UncaughtExceptionHandler接口即可)，还可以使用
+setDefaultUncaughtExceptionHandler(UncaughtExceptionHandler eh)来设置该线程的默认处理器。
+
+文档注释中说，一个线程的未捕获异常处理器是先查找用户指定的处理器，如果为空，就寻找线程
+所属的线程组的处理器，如果线程组(包括更高层级的父类线程组)都没有指定处理器时，最后才会调用
+线程默认的处理器。所以如果想要自定义处理器，直接使用setUncaughtExceptionHandler(eh)方法即可，
+如可以在自定义处理器中将异常日志写入到特定的日志文件中。
+
+当用户没有指定处理器时，默认的处理器就是线程组对象threadGroup, 它实现了UncaughtExceptionHandler
+接口。我们常见到的程序异常错误信息即为调用了线程组中的uncaughtException(Thread, Throwable)
+方法打印出来的，其中定义了上面说的处理器寻找顺序。(其中异常如果是一个ThreadDeath对象，栈轨迹
+是被禁用的，ThreadDeath是由stop方法产生的，而stop方法已经过时)
+
+5. 同步
+   1. 竞争条件
+当多个线程同时对同一数据进行修改时，就会出现竞争条件(race condition).
+
+书中转账的例子里，100个账户建立了100个线程，它们同时进行转账操作，转入对象是随机的，每次
+转账后打印所有账户的总余额。经测试发现，该金额是在不断变化的，而不是固定不变的，这就是典型
+的并发问题。
+
+   2. 竞争条件详解
+出现这个问题的原因在于修改余额语句如`accounts[to] += amount;`编译后的字节码指令是由多个指令
+构成的，如装载，计算，存储等。在并发的情况下，执行这一串指令的线程会在任意一个中间节点处
+被中断，从而导致数据错误。
+   
+   3. 锁对象
+
+
+
+
+
+
+
+
+
+
+
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
