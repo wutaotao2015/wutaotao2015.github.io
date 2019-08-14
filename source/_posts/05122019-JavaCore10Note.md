@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-13 22:18:49
+updated: 2019-08-14 18:07:06
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4603,18 +4603,22 @@ java对象内部锁来源于监视器的概念。监视器要求每个监视器�
 注: Object类的wait, notify, notifyAll方法在当前线程未拥有对象内部锁时调用这些方法就会抛出一个
 名为IllegalMonitorStateException异常，从这里也可以看出这个概念。
 
-   8. Volatile域
+   8. volatile域
 volatile关键字为实例域的同步访问提供了免锁机制。如果一个域使用了volatile关键字修饰，编译器
-和虚拟机就知道这个域是可能会被并发修改的。
+和虚拟机就知道这个域是可能会被并发修改的。volatile单词本意是反复无常的，不稳定的，从这里
+可以看出volatile修饰的域是会被并发访问操作的。
 
-注: volative关键字不能保证原子性，即线程在调用修改或读取该域的方法时仍有可能被中断。
+注: volatile关键字不能保证原子性，即线程在调用修改或读取该域的方法时仍有可能被中断。
+再注: volatile关键字提供了对于不同线程间通信的机制(java内存模型的happens-before原则也有关于
+volatile的行为的定义)。一个读取volatile域的线程可以"看"到所有其他线程在写入该域前的内存内容，
+比如其他域的值等。
 
    9. final变量
-除了使用锁和volative关键字，使用final修饰的域也是可以被安全并发访问的。final域的值不可变，
+除了使用锁和volatile关键字，使用final修饰的域也是可以被安全并发访问的。final域的值不可变，
 所有线程需要等到赋值结束后才能看到它的值。
 
-
-
+   10. 原子性
+对于实例域的简单修改可以使用volatile关键字，更复杂的操作可以使用atom
 
 
 
