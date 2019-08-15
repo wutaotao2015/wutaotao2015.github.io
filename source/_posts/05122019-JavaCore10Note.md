@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-15 18:23:04
+updated: 2019-08-15 23:12:40
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4610,8 +4610,9 @@ volatile的行为的定义)。一个读取volatile域的线程可以"看"到所�
 比如其他域的值等(可见性)。
 
 volatile单词本意是反复无常的，不稳定的。当一个线程发现操作的变量是volatile变量，知道该变量是
-"可变"的，操作完后将结果写入内存，其他线程会直接从内存中(而不是缓存)取得最新操作结果。
-相比加锁和同步处理的"重量级"工具，volatile更轻量，适合少数实例域的并发控制。
+"可变"的，操作完后将结果写入内存，其他线程会直接从内存中(而不是缓存)取得最新操作结果(意为
+该变量会发生变化，无法使用缓存中的值)。相比加锁和同步处理的"重量级"工具，volatile更轻量，
+适合少数实例域的并发控制。
 
 java内存模型是jvm对计算机实际物理内存的虚拟化处理，所以需要先了解实际物理内存机制。
 由于CPU速度太快，读取内存太慢，所以中间使用多级缓存和寄存器进行内容暂存提高速度，其中速度
@@ -4675,8 +4676,43 @@ JMM的happen-before原则提供了程序运行的有序性，它规定了如果2
 所有线程需要等到赋值结束后才能看到它的值。
 
    10. 原子性
-前面说volatile不能保证原子性。
+volatile只能保证对实例域的赋值操作的原子性，稍微复杂一点的操作可以使用
+java.util.concurrent.atomic包中的类，更进一步的原子性只能使用锁或同步来完成。
 
+atom包中如AtomicInteger类有incrementAndGet方法，它包含的3个操作获取值，增加1,得到结果是一个
+原子性操作，不会被中断。AtomicInteger还提供了compareAndSet(expectedValue, newValue)方法可以
+将当前原子类的值与期望值进行比较，相等的时候才会更新为新值。
+
+如以下代码寻找不同线程观察得到的最大值:
+```txt
+do{
+  oldValue = largest.get();  
+  newValue = Math.max(oldValue,  observed);
+}while(!largest.compareAndSet(oldValue, newValue));
+```
+当a线程执行该段代码时，largest值与oldValue相等，compareAndSet方法更新成功，返回true,跳出
+循环，程序结束。当b线程并发的执行时，由于compareAndSet方法的原子性，等a线程操作结束时，
+b线程调用compareAndSet方法发现largest最新值(已被a改变)与oldValue值不等，所以largest值不会
+更新，并且循环条件为true,继续执行循环体，再次进行比较，此时将b线程的观察值与a线程得到的最
+大值进行比较，从而达到获取多个线程中最大观察值的目的。
+
+compareAndSet方法提供了比较后赋值操作的原子性，而上面的代码提供了按需更新值操作的原子性，
+它通过获取原子变量的值实现了线程间的通信。jdk8更进一步，将以上代码封装为一个新的方法
+updateAndGet(IntUnaryOperator)，只需要传入如何更新值的λ表达式就可以得到这样一个原子性的
+更新方法。其中IntUnaryOperator只接收一个参数，可以将上面例子使用表达式
+`x -> Math.max(x, observed);`实现。
+
+AtomicInteger还提供了一个类似的方法
+accumulateAndGet(int x, IntBinaryOperator), 其中IntBinaryOperator可以接收2个参数，第一个参数
+为当前原子整数的值，第二个参数为方法参数x。这时上面的例子可以直接调用方法
+`largest.accumulateAndGet(observed, Math::max);`。
+
+此外，getAndUpdate和getAndAccumulate方法可以返回原子类的原值。
+类似的，其他原子类如AtomicIntegerArray, AtomicLong, AtomicLongArray, AtomicReference,
+AtomicReferenceArray等也都提供了这些原子性的更新方法。 
+
+但是如果有大量线程更新同一个原子值，调用以上更新方法时大部分线程需要进行大量的循环，性能
+非常低。
 
 
 
