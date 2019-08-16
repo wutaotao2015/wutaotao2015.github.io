@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-05-10 15:04:26
+updated: 2019-08-16 16:03:35
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -240,6 +240,19 @@ vi fcitx-pinyin.config
  alias pub 'git push github source;and echo "done"'
  funcsave pub
       ```
+  2019-08-16 15:41:06 添加:
+Linux下使用sdcv作为终端查单词非常方便，直接使用sudo apt install sdcv即可安装，其中词典
+需要自己下载，google一个星际译王的网站，里面有大量词典。其中有些字典在终端下排版格式不
+好看，无法阅读，只能放弃。
+目前本人使用的字典有(排序分先后):
+Collins Thesaurus (En-En)
+Concise Oxford English Dictionary (En-En)
+Oxford Advanced Learner's Dictionary 8th Ed.
+Cambridge Advanced Learners Dictionary 3th Ed. (En-En)
+
+通过man sdcv查看相关命令配置等。fish的别名使用上面的alias命令无法生效，报错找不到文件，直接
+写function然后保存反倒是成功了，说明了function的适用性更强一点。
+
    16. vim中输入中文的插件，实现插入模式中自动切换为中文，leave insertMode时切换为英文，
    按教程安装vundle,plugin有
   ```txt

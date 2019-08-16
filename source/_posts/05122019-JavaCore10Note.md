@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-15 23:12:40
+updated: 2019-08-16 18:16:00
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4644,8 +4644,67 @@ java内存模型是jvm对计算机实际物理内存的虚拟化处理，所以�
 所有并发的问题都是由这三个原因引起的，原子性，有序性，可见性，java并发也不例外。
 
 volatile关键字保证了线程的可见性和一定的有序性，但并不能保证原子性。如DCL(double check lock)
-单例模式的双重检查锁就使用了volatile关键字来保证一个线程构造完成的实例对象可以被其他线程
-看见。
+单例模式的双重检查锁就使用了volatile关键字来屏蔽指令重排。
+
+DCL代码:
+```txt
+public class Singleton{
+
+  private Singleton(){}  
+
+  private static Singleton instance;
+
+  public static Singleton getInstance() {
+
+     if (instance == null) {
+       synchronized(Singleton.class) {
+          if(instance == null) {
+             instance = new Singleton();  
+          } 
+       } 
+     }
+     return instance;
+  }
+}
+```
+第一个判空条件避免了对象已经初始化后不必要的加锁性能消耗，第2个判空条件保证第一个获取到锁
+的线程初始化完成对象并释放锁后，那些通过了第一个判空条件被阻塞的线程进入临界区后再次进行
+判断时会发现instance已经有值了，所以不会再次初始化对象。
+
+但是由于`instance = new Singleton();`语句本身并不是原子性操作。它分为3步:
+1. 分配内存区域
+2. 在内存中构造对象
+3. 将对象引用指向该内存区域
+其中，指令重排会打乱2,3的顺序，即先给引用赋值，再进行对象构造。这样当线程a返回这样一个
+未构造好的对象时，线程b在判断第一个条件时发现`instance != null`,从而b线程就拿到这个"半成品"
+的单例对象，进而在后续使用中报错。
+
+解决方法:
+1. 禁止指令重排, 即通过使用volatile关键字实现。不过volatile也有性能消耗。
+2. 利用类加载时自带的初始化锁。
+
+每一个java类或接口都有一个初始化锁与之对应，在初始化类的时候线程会获取到这个初始化锁进行
+初始化操作，并且其他线程会至少获取一次该锁来确保该类完成了初始化操作。也就是说，类初始化
+过程只能由一个线程完成，其他线程都被阻塞。将上面的初始化对象过程加入到类初始化的过程中，
+即使发生指令重排，其他线程也无法拿到该对象(或者说其他线程看不见这个初始化的过程)，
+从而避免了问题产生。具体代码如下:
+```txt
+public class Singleton{
+
+  private Singleton(){}  
+
+  public static Singleton getInstance() {
+      return SingletonHolder.instance;
+  }
+
+  private static class SingletonHolder{
+     public static Singleton instance = new Singleton();  
+  }
+}
+```
+类只有被调用的时候才会初始化，所以这个方案也是懒加载的。
+注: 枚举本身是线程安全的，所以可以直接使用枚举获得一个单例。
+
 
 JMM的happen-before原则提供了程序运行的有序性，它规定了如果2个操作不能从happen-before原则中
 推导得出运行顺序，那么就无法保证它们的操作顺序，可以被随意指令重排(包括编译器重排和处理器重排)。
@@ -4712,7 +4771,13 @@ accumulateAndGet(int x, IntBinaryOperator), 其中IntBinaryOperator可以接收2
 AtomicReferenceArray等也都提供了这些原子性的更新方法。 
 
 但是如果有大量线程更新同一个原子值，调用以上更新方法时大部分线程需要进行大量的循环，性能
-非常低。
+非常低。如果我们不需要中间的处理结果，只需要多个线程最后的总结果，可以使用atomic包中的
+LongAdder或DoubleAdder类，其中add(long)方法对每一个线程会添加一个加数，可以通过sum()方法
+得到截至到目前的多线程的累加和。increment()方法即为自增1.
+如果存在大量竞争的情况，就应当考虑使用LongAdder或DoubleAdder, 而不是AtomicLong与AtomicDouble.
+
+LongAccumulator类可以对任意形式的累加进行操作，初始化该对象时传入具体累加的函数表达式。
+需要注意的是，该累加操作应当满足交换律和结合律，因为线程被累加的顺序是无法确定的。
 
 
 
