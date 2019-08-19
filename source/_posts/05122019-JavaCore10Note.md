@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-16 18:16:00
+updated: 2019-08-19 18:13:57
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4779,11 +4779,30 @@ LongAdder或DoubleAdder类，其中add(long)方法对每一个线程会添加一
 LongAccumulator类可以对任意形式的累加进行操作，初始化该对象时传入具体累加的函数表达式。
 需要注意的是，该累加操作应当满足交换律和结合律，因为线程被累加的顺序是无法确定的。
 
+注: 可以发现AtomicInteger.compareAndSet(oldValue, newValue)的实现是调用了一个Unsafe类的
+本地方法compareAndSwapInt(object, offset, expectedValue, newValue).这样通过本地方法
+(JNI: java native interface)使用C语言就可以利用操作系统硬件本身支持的并发特性。
 
+而上面的循环样板代码即为Java中的CAS(compare and swap)原理，使得读取-修改-写入整个操作变为
+原子操作。而整个JUC(java util concurrent)包都是建立在CAS原理上的。
 
+synchronized关键字通过阻塞其他线程的方式属于悲观锁，而CAS则属于乐观锁，先执行操作，当发生
+冲突的时候再终止操作，即非阻塞的方式，这样的方式要比同步锁性能更高。
 
+单核CPU实现CAS很方便，多核CPU较复杂: 需要使用总线锁或者缓存锁来实现。
+CAS有3个缺点: 
+1. 只能有一个共享变量。
+这是由其实现方式决定的。可以将多个共享变量整合到一个变量中解决这个问题。
+2. 循环时间长
+可以通过限制CAS自旋次数解决这个问题。
+3. ABA问题
+如果在获取值和进行比较过程中，该值经历了`A->B->A`的变化过程，由于开始和结束值是一样的，
+所以比较时会认为值没有变化并更新，这样就造成了错误更新。可以通过给对象值打上版本号，记录
+变化的过程来解决这个问题，AtomicStampedReference类的compareAndSet()方法即是使用这种机制。
 
-
+注: 
+1. 自旋CAS
+2. 缓存一致性
 
 
 

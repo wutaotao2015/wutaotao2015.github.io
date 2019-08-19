@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-08-16 16:03:35
+updated: 2019-08-19 18:04:51
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -699,6 +699,18 @@ Done!
 command:
 xfce4-screenshooter -r
 按键prt-sc定义快捷键，done!
+
+## ubantu内核升级后回退版本
+最近在系统中安装了sdcv方便查找单词，不自觉的按网上常规"要求"执行`sudo apt update`命令后
+在乖乖执行`sudo apt upgrade`进行系统升级操作。结果上班发现vmware-workstation启动不起来，
+报错`cannot build vmnet`, 经过多番尝试，发现可以回退内核版本，回退就可以正常工作了，所以
+没事还是不能随便升级!尤其是在工作电脑上！
+
+回退步骤:
+1. 修改/etc/default/grub文件，将其中的`grub_timeout`值修改为3以上的数字。
+2. 重启时按esc(EFI固件)进入grub页面，选择ubantu高级操作，选择需要回退的内核版本(不要选择
+有其他后缀的版本，如rollback等)。
+3. done!
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
