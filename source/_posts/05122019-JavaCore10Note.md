@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-19 22:45:33
+updated: 2019-08-20 18:02:21
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4801,10 +4801,93 @@ CAS有3个缺点:
 变化的过程来解决这个问题，AtomicStampedReference类的compareAndSet()方法即是使用这种机制。
 
 注: 
-1. 自旋CAS
+1. CAS自旋锁
 以上线程使用循环来试图获得锁而不是阻塞线程的方式称为乐观锁或自旋锁。又称为CAS自旋锁。在
 递归调用中如果程序试图获取相同的锁，这时线程会一直在等待自己释放该锁，从而造成死锁的情况。
 所以递归程序不应当在持有自旋锁时调用自己，也不能在递归调用时试图获取相同的锁。
+
+可以使用以下代码自定义一个简单的CAS自旋锁:
+```txt
+package cn.taoBlog;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * SpinLock
+ *
+ * @author wutaotao
+ * @version 2019/8/20 14:57
+ */
+public class SpinLock{
+    private AtomicReference<Thread> threadOwner = new AtomicReference<Thread>();
+
+    public void lock() {
+        Thread current = Thread.currentThread();
+        while (!threadOwner.compareAndSet(null, current)) {
+            System.out.println(current + " is selfSpinning!");
+        }
+    }
+    public void unlock() {
+        System.out.println(Thread.currentThread() + " release lock!");
+        Thread current = Thread.currentThread();
+        threadOwner.compareAndSet(current, null);
+    }
+
+    public static void main(String[] args) throws InterruptedException{
+
+        System.out.println("main thread start");
+        SpinLock casLock = new SpinLock();
+        Runnable a = () -> {
+            System.out.println(Thread.currentThread() + " start");
+            casLock.lock();
+            // got lock and go on
+            System.out.println(Thread.currentThread() + " got lock!");
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                casLock.unlock();
+            }
+            System.out.println(Thread.currentThread() + " over");
+        };
+        Thread aThread = new Thread(a);
+        Thread bThread = new Thread(a);
+        aThread.start();
+        bThread.start();
+        aThread.join();
+        bThread.join();
+
+        System.out.println("main thread over");
+    }
+}
+输出为:
+main thread start
+Thread[Thread-0,5,main] start
+Thread[Thread-0,5,main] got lock!
+Thread[Thread-1,5,main] start
+Thread[Thread-1,5,main] is selfSpinning!
+...
+Thread[Thread-1,5,main] is selfSpinning!
+Thread[Thread-0,5,main] release lock!
+Thread[Thread-0,5,main] over
+Thread[Thread-1,5,main] got lock!
+Thread[Thread-1,5,main] release lock!
+Thread[Thread-1,5,main] over
+main thread over
+```
+可以看到Thread-1一直在自旋等待线程Thread-0释放锁。
+
+但是这个cas自旋锁存在2个问题:
+   1. 这个是锁是不可重入的，即已经获得锁的线程无法再次获得该锁。这个问题可以使用前面提到过
+的计数器实现。加锁时计数值加1, 释放锁时计数值减一，当计数值为0时即真正释放该锁。
+
+   2. 这个锁是不公平锁，等待时间最长的线程并不能优先获得锁。这个问题类似于cas的ABA问题解决
+方案一样，给每一个线程一个递增的排队号码，每当一个线程试图获取锁时，就给它一个排队号。锁
+有一个服务号，每当该锁被释放时，服务号加一。这样，当线程的排队号与服务号相等时，该线程就
+获得该锁，因为排队号递增，所以保证了公平性。
+
+
 
 2. 缓存一致性
 
