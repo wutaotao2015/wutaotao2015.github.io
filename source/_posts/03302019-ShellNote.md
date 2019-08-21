@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-08-19 18:04:51
+updated: 2019-08-21 09:40:26
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -252,6 +252,10 @@ Cambridge Advanced Learners Dictionary 3th Ed. (En-En)
 
 通过man sdcv查看相关命令配置等。fish的别名使用上面的alias命令无法生效，报错找不到文件，直接
 写function然后保存反倒是成功了，说明了function的适用性更强一点。
+
+ 2019-08-21 09:38:15 添加:
+在写博客的过程中如果要使用命令行查单词，需要先退出vim编辑器，比较麻烦，可以使用linux
+命令ctrl+z将当前任务暂时挂起并停止运行，查询完单词后使用fg命令将挂起命令恢复到前台。
 
    16. vim中输入中文的插件，实现插入模式中自动切换为中文，leave insertMode时切换为英文，
    按教程安装vundle,plugin有
