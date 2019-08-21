@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-21 10:52:35
+updated: 2019-08-21 22:59:45
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4887,7 +4887,66 @@ main thread over
 方案一样，给每一个线程一个递增的排队号码，每当一个线程试图获取锁时，就给它一个排队号。锁
 有一个服务号，每当该锁被释放时，服务号加一。这样，当线程的排队号与服务号相等时，该线程就
 获得该锁，因为排队号递增，所以保证了公平性。
+```txt
+package com.test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * TicketLock
+ *
+ * @author wutaotao
+ * @version 2019/8/21 22:17
+ */
+public class TicketLock {
+
+    private AtomicInteger serviceNum = new AtomicInteger();
+    private AtomicInteger ticketNum = new AtomicInteger();
+
+    public int lock() {
+        Thread current = Thread.currentThread();
+        int currentTicketNum = ticketNum.getAndIncrement();
+        while (!(currentTicketNum == serviceNum.get())) {
+            System.out.println(current + " is selfSpinning!");
+        }
+        return currentTicketNum;
+    }
+    public void unlock(int ticketnum) {
+        System.out.println(Thread.currentThread() + " release lock!");
+        Thread current = Thread.currentThread();
+        serviceNum.compareAndSet(ticketnum, ticketnum + 1);
+    }
+
+    public static void main(String[] args) throws InterruptedException{
+
+        System.out.println("main thread start");
+        TicketLock ticketLock = new TicketLock();
+        Runnable a = () -> {
+            System.out.println(Thread.currentThread() + " start");
+            int tickNum = ticketLock.lock();
+            // got lock and go on
+            System.out.println(Thread.currentThread() + " got lock!");
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                ticketLock.unlock(tickNum);
+            }
+            System.out.println(Thread.currentThread() + " over");
+        };
+        Thread aThread = new Thread(a);
+        Thread bThread = new Thread(a);
+        aThread.start();
+        bThread.start();
+        aThread.join();
+        bThread.join();
+
+        System.out.println("main thread over");
+    }
+}
+```
 
 
 2. 缓存一致性
