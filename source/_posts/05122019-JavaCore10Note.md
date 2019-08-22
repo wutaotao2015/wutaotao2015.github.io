@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-21 22:59:45
+updated: 2019-08-22 18:08:49
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4933,6 +4933,71 @@ public class TicketLock {
                 e.printStackTrace();
             }finally {
                 ticketLock.unlock(tickNum);
+            }
+            System.out.println(Thread.currentThread() + " over");
+        };
+        Thread aThread = new Thread(a);
+        Thread bThread = new Thread(a);
+        aThread.start();
+        bThread.start();
+        aThread.join();
+        bThread.join();
+
+        System.out.println("main thread over");
+    }
+}
+```
+以上代码中lock()方法返回获得锁的线程分配到的排队号，而解锁时需要校验服务号与排队号是否相等，
+所以解锁就需要前面获得锁的线程的排队号进行解锁——正如main方法中所作的一样。但是这样明显
+将锁的一部分"职责"内容交由应用处理，而且该排队号如果在中间发生变化，就无法正确解锁，造成
+其他线程永远阻塞的状态。(tickNum变量在其他线程调用lock()方法时是不断累加的，无法解锁用)
+
+所以我们需要一个变量来保存每个线程获得的排队号，解锁时直接取该变量即可，这就是ThreadLocal
+类的用途！它内部使用一个内部类ThreadLocalMap集合来保存每个线程保存的变量值，键是弱引用。
+```txt
+package cn.taoBlog;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * TicketLock
+ *
+ * @author wutaotao
+ * @version 2019/8/22 14:27
+ */
+public class TicketLock {
+
+    private AtomicInteger serviceNum = new AtomicInteger();
+    private AtomicInteger ticketNum = new AtomicInteger();
+    private ThreadLocal<Integer> ticketHolder = new ThreadLocal<>();
+
+    public void lock() {
+        int ticknum = ticketNum.getAndIncrement();
+        ticketHolder.set(ticknum);
+        while(ticknum != serviceNum.get()) {
+            System.out.println(Thread.currentThread() + " is spining");
+        }
+    }
+    public void unlock() {
+        System.out.println(Thread.currentThread() + "release lock");
+        Integer ticket = ticketHolder.get();
+        serviceNum.compareAndSet(ticket, ticket + 1);
+    }
+    public static void main(String[] args) throws InterruptedException{
+
+        System.out.println("main thread start");
+        TicketLock lock = new TicketLock();
+        Runnable a = () -> {
+            System.out.println(Thread.currentThread() + " start");
+            lock.lock();
+            // got lock and go on
+            System.out.println(Thread.currentThread() + " got lock!");
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
             }
             System.out.println(Thread.currentThread() + " over");
         };

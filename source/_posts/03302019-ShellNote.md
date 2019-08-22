@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-08-21 09:40:26
+updated: 2019-08-22 16:22:03
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -667,6 +667,9 @@ funcsave xlock
 耗尽自动关机后还是抛弃了xmonad,转向xfce,xfce也没有自带电池监控软件，但是可以
 `sudo apt install xfce4-battery-plugin`插件，实际使用很方便，到设定的百分比时在虚拟机
 全屏界面下也可以正常给出弹框提示。
+ 2019-08-22 16:19:45 添加:
+xfce4桌面不能调节屏幕亮度，网上搜索到可以安装`sudo apt install xfce4-power-manager-plugins`,
+可以实现鼠标拖动修改屏幕亮度，还有电池电量监控，所以可以不用安装上面的battery插件。
 
 在实际使用虚拟机时发现一个快捷键问题，在ctrl+alt跳出虚拟机后，在不知情的情况下按下Idea
 的快捷键ctrl+e来查看最近打开的文件，结果虚拟机关闭了！！！
