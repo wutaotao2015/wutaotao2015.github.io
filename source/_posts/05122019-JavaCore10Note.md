@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-22 18:08:49
+updated: 2019-08-25 21:54:34
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5013,11 +5013,45 @@ public class TicketLock {
 }
 ```
 
+针对某个类中的字段，如它是int, long或普通的引用类型，如果也想对它实现类似于AtomicInteger,
+AtomicLong, AtomicReference一样的原子性操作，就可以使用AtomicIntegerFieldUpdater, 
+AtomicLongFieldUpdater, AtomicReferenceFieldUpdater类来实现相同的功能。它的原理是利用
+反射得到指定字段的内存地址，即offset值，再调用Unsafe包中的相应方法(如compareAndSet)直接对
+相应的内存操作来达到原子性操作的目的，从这几个类的实现也可以看出Unsafe包的强大之处。
+实际使用:
+   1. 初始化得到更新器，如
+`AtomicReferenceFieldUpdater<ClassType> updater = AtomicReferenceFieldUpdater
+   .newUpdater(ClassType.class, FieldType.class, String fieldName);`
+   2. 使用更新器调用相应的原子性方法，如
+`updater.compareAndSet(obj, expectedValue, newValue);`
+
+实际使用中，比如有一个大的链表，其中的节点需要原子性的get-set, 如果节点类型都定义为
+原子类型，会消耗很多内存，这时候可以定义一个静态更新器来实现原子操作，而节点仍未普通类型。
+
 
 2. 缓存一致性
 
+缓存本身的一致性指的是其基本定律(任意时刻，任意级别缓存中的缓存段的内容，等同于它对应
+内存中的内容)和回写定律(当所有的脏段被回写后，任意级别缓存中的缓存段的内容，等同于它对应
+内存中的内容)。但是在多核处理器计算机中，每个处理器都有自己的缓存组，不同处理器对相同内存
+的操作就需要通知到其他处理器的缓存组，实现不同缓存组之间的一致性。
 
+一般是通过"窥探"(snooping)协议定义缓存组之间通信, 即所有内存传输都发生在一条共享的总线上。
+具体一般使用MESI(Modified, Exclusive, Shared, Invalid)协议来保证不同缓存组之间的一致性，遵守
+该协议的处理器系统可以说是完全一致的。上面四个单词代表缓存段的不同状态:
 
+  1. Modified代表已修改，属于脏段。
+  2. Exclusive代表独占状态。
+  3. Shared代表内存的拷贝，只读不可写的状态。
+  4. Invalid代表缓存段失效状态，
+
+当缓存需要写入内存时，需要发送获得独占权的请求到总线上，通知其他缓存，让它们对应的缓存变为
+失效状态。当有其他处理器需要写入该内存时，当前处理器需要从已修改或独占状态变为共享状态，
+同时将修改内容写入到内存中。
+
+多核处理器实现写入数据操作的原子性时，可以使用总线加锁或缓存加锁两种方法，总线加锁使得其他
+处理器无法访问内存，开销较大所以不推荐。缓存加锁就是利用了缓存的一致性原理，处理器修改自己
+对应于该内存地址的缓存组内容，其他处理器无法同时修改来达到原子性操作的目的。
 
 
 
