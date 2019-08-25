@@ -117,3 +117,14 @@ symbols_count_time:
   total_symbols: true
   total_time: true
 
+# RSS订阅支持
+plugin:
+- hexo-generator-feed
+
+# Feed Atom
+feed:
+type: atom
+path: atom.xml
+limit: 0
+
+
