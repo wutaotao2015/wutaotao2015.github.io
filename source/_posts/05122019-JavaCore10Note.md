@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-27 18:07:45
+updated: 2019-08-27 22:45:47
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5096,8 +5096,38 @@ class AndersonQueueLock{
        flags[threadTicket.get() + 1 % flags.length] = true;
    }
 }
+// CLH Queue Lock
 class ClHLock {
 
+    private static class QNode{
+        // 默认是未获得锁状态
+        private volatile boolean locked = false;
+    }
+    // 节点链表中始终指向最后一个试图获得锁的节点, 即最新自旋的线程
+    AtomicReference<QNode> tail = new AtomicReference<>(new QNode());
+    // 每个线程生成自己的节点，作为获得锁的标志
+    ThreadLocal<QNode> myNode = ThreadLocal.withInitial(() -> new QNode());
+    // 每个线程保存自己的前序节点，在线程本地变量上自旋
+    ThreadLocal<QNode> myPred = new ThreadLocal<>();
+
+    public void lock() {
+        QNode qNode = myNode.get();
+        // 获取tail的前序节点(旧值)
+        QNode pre = tail.getAndSet(qNode);
+        // 拷贝前序节点到本地
+        myPred.set(pre);
+        // 前一个线程未释放锁时，本线程自旋
+        while (pre.locked){}
+        // 加锁
+        qNode.locked = true;
+    }
+    public void unlock() {
+       QNode qNode = myNode.get();
+       // 释放锁
+       qNode.locked = false;
+       // recycle predecessor's node
+       myNode.set(myPred.get());
+    }
 }
 ```
 
