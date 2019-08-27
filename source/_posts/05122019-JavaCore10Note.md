@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-25 21:54:34
+updated: 2019-08-27 11:32:25
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -4737,6 +4737,8 @@ JMM的happen-before原则提供了程序运行的有序性，它规定了如果2
    10. 原子性
 volatile只能保证对实例域的赋值操作的原子性，稍微复杂一点的操作可以使用
 java.util.concurrent.atomic包中的类，更进一步的原子性只能使用锁或同步来完成。
+需要注意的是atomic包中的类内部使用了volatile关键字修饰其具体代表的值，可以这些原子类是同时
+满足了原子性(cas)和可见性的(volatile)的。
 
 atom包中如AtomicInteger类有incrementAndGet方法，它包含的3个操作获取值，增加1,得到结果是一个
 原子性操作，不会被中断。AtomicInteger还提供了compareAndSet(expectedValue, newValue)方法可以

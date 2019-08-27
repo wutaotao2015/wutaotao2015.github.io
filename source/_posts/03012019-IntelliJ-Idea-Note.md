@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-04-09 17:28:26
+updated: 2019-08-27 10:51:51
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -581,6 +581,27 @@ tsv(tab-separated values)文件。
 ## 小问题
 idea记住git密码,在项目目录下执行
 > git config --global credential.helper store
+
+2019-08-27 10:08:32 添加:
+编程时经常需要重命名变量名，idea下的快捷键是Shift + F6, 按下之后idea给出可选提示，不过这时
+使用ideaVim插件时无法直接编辑，经网上搜索需要先进入编辑模式，这时候idea模式替换了vim模式，
+再直接输入新的变量值可以发现整个变量名被清空了。该问题属于idea和ideaVim插件的模式替换问题。
+命令顺序为`Shift + F6  -> i or s -> type new name -> enter`.
+
+提取变量时先将ctrl + w快捷键设置为idea的extend selection智能选择功能(vim中这个快捷键没什么用)，
+然后使用idea的快捷键ctrl + alt + v提取为本地变量。
+命令顺序为`ctrl + w  -> ctrl + alt + v -> i or s-> type new name -> enter`.
+
+总结: 由以上2个功能来看，当使用idea快捷键后编辑器选中了某个值并给出提示时(包括alt + enter
+智能提示的结果, alt + j 选取相同变量的结果), 进入插入模式后再进行输入即可替换选中值。
+注意这里的实现是必须清空，无法在提示内容上追加，直接按a是只修改当前值。
+在不是手动输入，而是复制粘贴的情况下，因为使用编辑模式进入了idea模式，这时无法使用vim的p
+进行粘贴，应当使用通用的shift + insert进行粘贴。
+
+另: ctrl + w正式名称为structural selection, 属于idea快捷键，但它选中的内容在vim 普通模式下
+还无法获得，需要先进入可视模式, 再使用ctrl + w进行选择后vim就可以获得选取的内容了，使用p
+可以正常复制。(该bug再未来ideaVim中将会修复)
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
