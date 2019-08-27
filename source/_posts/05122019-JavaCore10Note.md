@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-27 11:32:25
+updated: 2019-08-27 18:07:45
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5015,6 +5015,7 @@ public class TicketLock {
 }
 ```
 
+注: Atom包中的FieldUpdater类:
 针对某个类中的字段，如它是int, long或普通的引用类型，如果也想对它实现类似于AtomicInteger,
 AtomicLong, AtomicReference一样的原子性操作，就可以使用AtomicIntegerFieldUpdater, 
 AtomicLongFieldUpdater, AtomicReferenceFieldUpdater类来实现相同的功能。它的原理是利用
@@ -5030,6 +5031,75 @@ AtomicLongFieldUpdater, AtomicReferenceFieldUpdater类来实现相同的功能�
 实际使用中，比如有一个大的链表，其中的节点需要原子性的get-set, 如果节点类型都定义为
 原子类型，会消耗很多内存，这时候可以定义一个静态更新器来实现原子操作，而节点仍未普通类型。
 
+不同层次的自旋锁代码:
+```txt
+package cn.taoBlog;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * TAS
+ *
+ * @author wutaotao
+ * @version 2019/8/26 10:05
+ */
+public class TAS {
+    AtomicBoolean state = new AtomicBoolean(false);
+    void lock() {
+        while(state.getAndSet(true)) {}
+    }
+    void unlock() {
+        // this step invalidate other memories' cache
+        state.set(false);
+    }
+}
+class TTAS {
+    AtomicBoolean state = new AtomicBoolean(false);
+    void lock() {
+        long delay = 1000;
+        while (true) {
+           while (state.get()) {}
+           // lock is free now, many threads contend to get it
+           if (!state.getAndSet(true)) {
+               return;
+           }
+           // if get lock failed, delayed to try getting it again, reduce contention
+            try {
+                Thread.sleep( (long)(Math.random() * 10 + 1) * delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (delay < 10000) {
+                delay = delay * 2;
+            }
+        }
+    }
+}
+// similar to ticket lock, but it use array instead of lock's serviceNum
+class AndersonQueueLock{
+   // one thread one bit cause cache invalidation unnecessary, we can use [false, null, null, false...]
+    // to make each thread use only one cache line.
+   private volatile  boolean[] flags = {false, false, false, false};
+   AtomicInteger next = new AtomicInteger(0);
+   ThreadLocal<Integer> threadTicket;
+
+   public void lock() {
+       int curTicket = next.getAndIncrement();
+       threadTicket.set(curTicket);
+       while(!flags[curTicket % flags.length]) {}
+       // after got lock, make current slot false to reuse it, because of the % upward,
+       flags[curTicket % flags.length] = false;
+   }
+   public void unlock() {
+       // next thread free to go
+       flags[threadTicket.get() + 1 % flags.length] = true;
+   }
+}
+class ClHLock {
+
+}
+```
 
 2. 缓存一致性
 
