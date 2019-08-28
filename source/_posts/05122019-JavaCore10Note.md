@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-08-27 22:45:47
+updated: 2019-08-28 18:24:39
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5103,7 +5103,7 @@ class ClHLock {
         // 默认是未获得锁状态
         private volatile boolean locked = false;
     }
-    // 节点链表中始终指向最后一个试图获得锁的节点, 即最新自旋的线程
+    // 节点链表中的尾节点始终指向最后一个试图获得锁的节点
     AtomicReference<QNode> tail = new AtomicReference<>(new QNode());
     // 每个线程生成自己的节点，作为获得锁的标志
     ThreadLocal<QNode> myNode = ThreadLocal.withInitial(() -> new QNode());
@@ -5112,24 +5112,33 @@ class ClHLock {
 
     public void lock() {
         QNode qNode = myNode.get();
+        // 试图获得锁时即设置为加锁状态
+        qNode.locked = true;
         // 获取tail的前序节点(旧值)
         QNode pre = tail.getAndSet(qNode);
         // 拷贝前序节点到本地
         myPred.set(pre);
         // 前一个线程未释放锁时，本线程自旋
         while (pre.locked){}
-        // 加锁
-        qNode.locked = true;
     }
     public void unlock() {
        QNode qNode = myNode.get();
        // 释放锁
        qNode.locked = false;
        // recycle predecessor's node
+       // 得到锁的前序节点实际上是整个链表的头节点(first node) 
+       // 通过将当前节点设置为前序节点，相当于删除了旧的前序节点
        myNode.set(myPred.get());
     }
 }
 ```
+CLH在常用的SMP(symmetric multi-processor)处理器架构上运行良好，多个处理器共享一个内存, 每个
+CPU访问的内存是相同的的(但访问相同的内存地址会造成CPU资源的浪费)。而NUMA
+(non-uniform memory architecture)处理器架构则是每个CPU都有自己的内存，对自己的内存访问速度远高于
+其他CPU的内存，所以对不同内存地址的访问速度是不一致的。
+
+CLH在本地内存上自旋非常快，在远程内存上自旋就很慢。所以CLH锁不适用于NUMA系统架构。
+这时可以使用MCSLock.
 
 2. 缓存一致性
 
