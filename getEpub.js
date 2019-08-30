@@ -2,7 +2,6 @@
 const path = require('path');
 var fs = require('fs');
 
-
 // app.js
 // const Koa = require('koa');
 // const router = require('koa-route');
@@ -12,8 +11,9 @@ var fs = require('fs');
 // const main = ctx => {
 //   ctx.response.body = 'Hello World';
 
-// put pocket's html in blog directory, no need to contain in this blog
-const data = fs.readFileSync(path.resolve(__dirname, '../ril_export.html'), 'utf-8');
+// pocket list html's location defined to /home/tao/Downloads/ril_export.html
+const data = fs.readFileSync
+(path.resolve(__dirname, '../../Downloads/ril_export.html'), 'utf-8');
 
 console.log(data);
 console.log('#####################################');
