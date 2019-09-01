@@ -11,7 +11,8 @@ var fs = require('fs');
 // const main = ctx => {
 //   ctx.response.body = 'Hello World';
 
-// pocket list html's location defined to /home/tao/Downloads/ril_export.html
+// pocket list html's location defined to ~/Downloads/ril_export.html
+// this getEpub.js location is ~/wtt/blog/getEpub.js
 const data = fs.readFileSync
 (path.resolve(__dirname, '../../Downloads/ril_export.html'), 'utf-8');
 
@@ -19,8 +20,8 @@ console.log(data);
 console.log('#####################################');
 console.log('pocketFile read done!')
 console.log('#####################################');
-// 删除不匹配的内容，用正向否定环视定位，.*来具体匹配字符
-const regexp = RegExp('(?<=")http(s)?://.*?(?=")', 'g');
+// 只提取标签tag值为page的url地址
+const regexp = RegExp('(?<=")http(s)?://.*?(?=".*tags="page")', 'g');
 let urlArr = [];
 while((matches = regexp.exec(data)) != null){
   console.log(matches[0]);
@@ -49,6 +50,7 @@ ebook.publish().then(() => {
   console.log('epub done!');
   console.log('#####################################');
 });
+
 
 // };
 // 
