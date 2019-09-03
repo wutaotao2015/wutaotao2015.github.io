@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-09-03 17:58:51
+updated: 2019-09-03 22:38:23
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5166,6 +5166,10 @@ CLH在本地内存上自旋非常快，在远程内存上自旋就很慢。所�
 
 3. "What every programmer should know about memory" note
 
+注: ROM(read-only memory)是只读内存，只能读取，不能修改或删除储存的资料，资料不会因电源
+关闭而消失。而RAM(random-access memory)可以用任何顺序访问资料，停电后资料即消失，如内存就是
+RAM.
+
   1. 略
   2. Commodity Hardware Today
 一般商用计算机的主板上分2部分，北桥和南桥。CPU通过FSB(front side bus)总线进行相互通信。
@@ -5204,13 +5208,13 @@ DDR模块的时间耗时主要由以下几部分组成: CL(CAS latency), `t_RCD`
 刷新的时间间隔是由内存控制器控制，DRAM模块用队列存储每个请求的计数值以延迟执行。
 
 SDR(Single Data Rate SDRAM)能以内存总线的传输速度相同的速度输出内存中的内容。
-DDR1相比SDR而言,DDR1可以在同一个周期内传输双倍的数据，它没有改变时钟频率.
+DDR1相比SDR而言,DDR1可以在同一个周期内传输双倍的数据，它并没有改变时钟频率, 在信号的上升和
+下降沿都可以传输数据。DDR1让2个DRAM cell取相同的列值，读取时并发的访问它们。
 
-
+DDR2则在DDR1的基础上将频率翻了一倍。它是通过让IO buffer以更快的速度运行，可以在每个时钟周期
+中传输4位而不是DDR1的2位(SDR是1位)。DDR3中外部总线运行的更快，它传输的是8位的I/O buffer。
 
 2.3 其他主内存使用者
-
-
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
