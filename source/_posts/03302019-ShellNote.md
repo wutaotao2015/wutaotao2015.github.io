@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-08-22 16:22:03
+updated: 2019-09-05 18:11:59
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -189,6 +189,23 @@ add Lock = Caps_Lock
     注：xfce下之前测了可以，但在ubantu默认的gnome3下该交换重启后又不行了，gnome3下重启后
     仍生效的是执行下面这个命令，使用gnome3默认安装的dconf工具：
     > dconf write "/org/gnome/desktop/input-sources/xkb-options" "['caps:swapescape']"
+
+2019-09-05 14:41:45 添加:
+xfce中一直使用上面的xmodmap配置文件来交换esc和capslock键，但最近总失灵，
+需要重新执行xmodmap文件，并且开启新的窗口报错。
+在网上又找到个方案，目前看可以使用，没有报错，步骤记录如下:
+```txt
+1. 删除上面的.XmodMap文件，不然无效
+2. vi /usr/share/X11/xkb/rules/base.lst
+3. 搜索esc, 找到交换capslock和esc的配置项`caps:swapescape`.
+4. sudo vi /etc/default/keyboard 
+5. 修改为XKBOPTIONS="caps:swapescape"
+6. sudo dpkg-reconfigure keyboard-configuration
+7. 我选择了general 104 key and us layout, 最后确定保留配置
+8. 重启电脑生效
+```
+另外linux下的pdf编辑工具，使用libreOffice Draw进行编辑，可以下载pdfshuffler来进行删除和
+合并pdf操作。经测试重组的pdf仍然会有些小问题，还是可以看，有问题再对照原版吧。
 
     4. 安装fish shell.
     > sudo apt-get install fish
