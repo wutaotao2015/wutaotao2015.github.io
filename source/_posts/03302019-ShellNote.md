@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-08 16:19:32
+updated: 2019-09-08 21:29:25
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -763,6 +763,20 @@ vim模式在命令提示符前会给出当前模式的提示符，但是fish的�
 可以同时使用Emacs和vim的快捷键，但还是没有模式提示), 经测试比较，还是决定直接使用vim模式，
 需要补全的，按Esc跳到普通模式后使用w进行补全操作，也不是很麻烦.
 
+# SSH to Vmware Fusion ubantu guest from mac 
+1. ubantu上要安装ssh-server, 关闭防火墙。
+2. 查看ip addr show查看ip地址, 之前用ip route show查看的default不是它的IP地址，下面的ens33
+网卡的IP才是真实IP, 因为IP搞错了，搞得一晚上连不上也是无语了。
+3. 确认是桥接模式的网卡适配器。
+4. mac上直接使用`ssh tao@xxx.xxx.xx.xx`进行连接，输入密码后即可登录。
+
+注: 可以将本地mac的SSH公钥传输到VM guest上，这样下次登录就不用输入密码了，命令为
+`ssh-copy-id tao@xxx.xxx.xx.xx`.
+
+再注: 使用mac SSH登录到虚拟机上时发现fcitx-vim的输入法切换插件无法使用了，估计它还是需要底层
+的输入法控制，fcitx-vim插件作者在博客中有提到在不同linux主机间的ssh操作可以使用socat转发
+套接字，不过mac就不行了。最后发现我之前的小工具博客中有记录具体的fcitx-vim-for-osx的操作
+过程，配置成功！
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
