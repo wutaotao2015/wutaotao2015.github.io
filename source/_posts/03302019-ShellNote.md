@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-05 18:11:59
+updated: 2019-09-08 16:19:32
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -735,6 +735,34 @@ xfce4-screenshooter -r
 2. 重启时按esc(EFI固件)进入grub页面，选择ubantu高级操作，选择需要回退的内核版本(不要选择
 有其他后缀的版本，如rollback等)。
 3. done!
+
+# command line editor in fish shell
+1. 发现可以用ssh远程登录自己的ubantu虚拟机来写博客，如果要在本地的mac上使用ubantu上的
+zathura看pdf的话，还需要在mac上配置X11forwarding=yes, 并且启动Xquartz, 折腾了一下，mac
+终端卡住没反应。想想还是觉得没必要，mac也有zathura的brew版本，不过毕竟zathura原本是linux
+上的软件，移植过来性能或配置可能会有些问题(看其github的issue等), 还是用虚拟机本体看pdf吧。
+
+2. mac的终端有些命令如ls和linux终端还是不一样的，还是不同流派的原因，所以也没有必要非要将
+mac都改造成linux的功能, 如使用命令`brew install coreutils`等。我还是就使用虚拟机玩ubantu, 
+RHEL等原生linux系统吧。
+
+3. 在网上突然发现命令行上也可以使用vim，虽然之前在银行的服务器上看到过这样的效果，但以为
+那是它自带的效果，今天发现原来它是命令行绑定的键盘映射。我们平时经常用的是默认的Emac模式，
+如ctrl + a, ctrl + e跳到开始和结束位置等快捷键都是Emac的快捷键。因为我使用的shell是fish,
+所以它修改为vim的命令行编辑器的命令为
+```txt
+# 切换为vim模式 -U universal 重启Shell后也生效
+set -U fish_key_bindings fish_vi_key_bindings 
+
+# 切换为默认的Emac模式
+set -U fish_key_bindings fish_default_key_bindings  
+```
+vim模式在命令提示符前会给出当前模式的提示符，但是fish的自动补全功能快捷键ctrl+f在vim模式中
+无法使用了。fish的github的issue中讨论了这个问题，说可以单独指定，但这样很可能vi的模式提示
+符就没有了(fish document中还给出了一个`hybrid_bindings`方案，经测试可以使用，功能很强大，
+可以同时使用Emacs和vim的快捷键，但还是没有模式提示), 经测试比较，还是决定直接使用vim模式，
+需要补全的，按Esc跳到普通模式后使用w进行补全操作，也不是很麻烦.
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
