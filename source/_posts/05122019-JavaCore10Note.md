@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-09-04 18:07:09
+updated: 2019-09-07 17:37:55
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5226,8 +5226,27 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 和新的RAS信号，硬件和软件可以通过提前读取数据来利用这段延迟时间，这样也减少了后面的读写操作
 竞争。
 
-
 2.3 其他主内存使用者
+除了CPU，还有其他如网卡，或大容量存储控制器也需要访问主内存(即DMA).这样它们与CPU在总线上
+产生了竞争。可以通过技术手段和程序接口减少竞争，提高性能。
+
+3. CPU caches
+由于程序代码的空间和时间的局部性，所以使得CPU使用SRAM作为高速缓存的设计是具有实际意义的。
+空间的局部性体现为代码中出现循环时相同的代码被不断的重复执行，时间的局部性体现为循环中
+内存位置很远的方法调用在时间上被快速多次调用。
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg" class="full-image" />
