@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-09-10 18:05:31
+updated: 2019-09-10 22:14:42
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5260,9 +5260,10 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 即让一个缓存段只能存储一个对应的内存地址中的值，但由于空间和时间的局部性，某些缓存会被经常
 用到，而某些缓存则一直是空置状态。这样即浪费了资源，也使得热点资源造成竞争。
 
-所以合理的方案是使用Set-associative cache.每个目标数据内容不是由一个Tag中的固定的值表示，
-每个tag和associative cache一样可以存储任意的目标值，所以它也需要多路复用器来选择正确的tag值，
-这样就避免了某个tag值成为热点，或一直被空置的情况。
+所以合理的方案是使用Set-associative cache.将需要请求的内存地址分散到每一个tag和data中，每次
+请求读写时经过转换，每个tag或data都有机会作为存储目标内容的小单元，这样整个set集合是
+associate的。
+
 
 
 
