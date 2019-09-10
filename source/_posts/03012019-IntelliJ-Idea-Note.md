@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-08-27 10:51:51
+updated: 2019-09-10 16:46:02
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -601,6 +601,15 @@ idea记住git密码,在项目目录下执行
 另: ctrl + w正式名称为structural selection, 属于idea快捷键，但它选中的内容在vim 普通模式下
 还无法获得，需要先进入可视模式, 再使用ctrl + w进行选择后vim就可以获得选取的内容了，使用p
 可以正常复制。(该bug再未来ideaVim中将会修复)
+
+2019-09-10 16:21:34 加
+Idea的alt + J快捷键在可视模式下进行操作会出现问题，而IdeaVim插件内置了一个原生的vim插件
+vim-multiple-cursors, 默认快捷键是alt + n, 还支持取消选中(alt + p)，跳过选中功能(alt + x).
+选中以后经测试直接a, i, A, I都无法使用(无反应或不是对选中值操作), 可用的只有c和s键，所以
+若需要修改时需要先复制原内容，进行编辑模式后就是真正的多光标操作，vim的dw, vws等全都支持。
+所以需要重构时应使用alt + n + c/s， 而不是用alt + j, 后者有很多问题。
+又注: 单个变量应使用alt + n, 但对于整句的情况，multi-cursor出现无法选择全部的情况，而
+ctrl + J可以，所以还是应根据场景结合使用这两者。
 
 
 <hr />
