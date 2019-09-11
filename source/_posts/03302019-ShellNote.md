@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-11 18:21:33
+updated: 2019-09-11 18:30:59
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -274,6 +274,53 @@ main = do
         -- swap it with the next window in the stack. Focus stays in the master.
         , ((mod4Mask,               xK_Return), dwmpromote)
         ]
+```
+.xmobarrc配置
+```txt
+Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+       , additionalFonts = []
+       , borderColor = "black"
+       , border = TopB
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = Top
+       , textOffset = -1
+       , iconOffset = -1
+       , alpha = 255
+       , lowerOnStart = False
+       , hideOnStart = False
+       , pickBroadest = True
+       , persistent = False
+       , iconRoot = "."
+       , allDesktops = True
+       , overrideRedirect = False
+       , commands = [ Run Weather "ZUUU" ["-t","<station>: <tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
+             , Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+             , Run Network "eth1" ["-L","0","-H","32","--normal","green","--high","red"] 10
+             , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+             , Run Battery [ "--template" , "Batt: <acstatus>"
+               , "--Low"      , "10"        -- units: %
+               , "--High"     , "80"        -- units: %
+               , "--low"      , "darkred"
+               , "--normal"   , "darkorange"
+               , "--high"     , "darkgreen"
+               , "--" -- battery specific options
+                      -- discharging status
+               , "-o"	, "<left>% (<timeleft>)"
+                      -- AC "on" status
+               , "-O"	, "<fc=#dAA520>Charging</fc>"
+                      -- charged status
+               , "-i"	, "<fc=#006000>Charged</fc>"
+             ] 50
+             , Run Memory ["-t","Mem: <usedratio>%"] 10
+             , Run Swap [ ] 10
+             , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+             , Run StdinReader
+             ]
+, sepChar = "%"
+, alignSep = "}{"
+, template = "%StdinReader% | %cpu% | %memory% * %swap% | %eth0% - %eth1% }{ %ZUUU% | <fc=#ee9a00>%date%</fc> | %battery% | %uname% "
+}
 ```
 
    13. 安装fcitx来使用小鹤双拼，以及vim中输入中文输入的插件
