@@ -7,7 +7,7 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
 abbrlink: 2a1ddb5b
-updated: 2019-09-10 22:14:42
+updated: 2019-09-11 17:24:48
 date: 2019-05-12 20:10:28
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -5253,7 +5253,8 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 程序差别)，所以提高程序对于缓存的利用率对于性能的提升有时是非常巨大的。
 
 3.3 CPU cache implementation details
-3.3.1 Associativity
+
+    3.3.1 Associativity
 如果每个缓存行可以存储任意内存地址的内容，这样设计的缓存称为fully associative cache, 但是
 寻址时CPU要搜索的条目(entry)就太多了，每个缓存行都需要一个比较器比较请求地址和每个缓存段的
 地址，无论是提高比较器的速度或者复用比较器都无法有效提高性能。所以我们可以设计减少比较器，
@@ -5261,9 +5262,15 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 用到，而某些缓存则一直是空置状态。这样即浪费了资源，也使得热点资源造成竞争。
 
 所以合理的方案是使用Set-associative cache.将需要请求的内存地址分散到每一个tag和data中，每次
-请求读写时经过转换，每个tag或data都有机会作为存储目标内容的小单元，这样整个set集合是
-associate的。
+请求读写时地址经过转换后，每个tag或data都有机会作为存储目标内容的小单元。这种设计使得缓存
+总容量增加时，只需要增加tag和data的列数，而不需要增加行数(对应着缓存本身的associativity, 
+同时每一行对应一个比较器), 从而使得缓存的增加不再受限于比较器的数量。
 
+在缓存行大小，缓存总容量固定的情况下，缓存associativity值越高，缓存未命中(cash miss)的次数
+就越少。从数据图标中可以看出，从直连(no associativity)到associativity=2的性能提升是最大的，
+有时甚至和缓存总容量翻倍的效果是一样的！不过当associativity再增加时，性能提升效果就一般了。
+
+    3.3.2 Measurements of cache effects
 
 
 

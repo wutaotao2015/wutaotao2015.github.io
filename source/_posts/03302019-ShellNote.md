@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-08 21:29:25
+updated: 2019-09-11 18:21:33
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -222,6 +222,59 @@ xfce中一直使用上面的xmodmap配置文件来交换esc和capslock键，但�
 
     xmonad下蓝灯无效果，而且中文输入法也出不来，只能暂时放弃，等以后有需求和时间再来折腾
     一下。
+
+   2019-09-11 12:42:15 添加: 
+今天又折腾了一下xmonad, 发现切换workspace不方便，默认的mod+w/e不好按，看到有插件CycleWS,
+仔细看了一下xmonad和扩展的官方文档，并找了xmonad config archive中别人写的配置，配置成功了！
+本人不懂Haskell, 完全安装文档操作，说明文档还是写的不错的。
+```txt
+import XMonad
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.EZConfig(additionalKeys)
+import System.IO
+import XMonad.Actions.CycleWS
+import XMonad.Actions.DwmPromote
+import XMonad.Hooks.ManageHelpers
+
+main = do
+    xmproc <- spawnPipe "xmobar"
+
+    xmonad $ defaultConfig
+        { manageHook = composeAll [
+             manageDocks,
+             -- hide xmobar when fullscreen
+             isFullscreen --> doFullFloat,
+             manageHook defaultConfig
+          ]
+        , layoutHook = avoidStruts  $  layoutHook defaultConfig
+        , logHook = dynamicLogWithPP xmobarPP
+                        { ppOutput = hPutStrLn xmproc
+                        , ppTitle = xmobarColor "green" "" . shorten 50
+                        }
+        , modMask = mod4Mask     -- Rebind Mod to the Windows key
+        } `additionalKeys`
+        [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock; xset dpms force off")
+        , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s")
+        , ((0, xK_Print), spawn "scrot")
+        -- a basic CycleWS setup
+        -- Switch to the next/prev workspace.
+        , ((mod4Mask,               xK_Down),  nextWS)
+        , ((mod4Mask,               xK_Up),    prevWS)
+        --  Move the focused window to the next/prev workspace.
+        , ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
+        , ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
+        , ((mod4Mask,               xK_Right), nextScreen)
+        , ((mod4Mask,               xK_Left),  prevScreen)
+        , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
+        , ((mod4Mask .|. shiftMask, xK_Left),  shiftPrevScreen)
+        , ((mod4Mask,               xK_z),     toggleWS)
+        -- Swaps focused window with the master window. If focus is in the master,
+        -- swap it with the next window in the stack. Focus stays in the master.
+        , ((mod4Mask,               xK_Return), dwmpromote)
+        ]
+```
 
    13. 安装fcitx来使用小鹤双拼，以及vim中输入中文输入的插件
 ```txt
