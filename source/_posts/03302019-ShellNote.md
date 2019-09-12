@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-11 18:30:59
+updated: 2019-09-12 18:21:16
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -223,105 +223,6 @@ xfce中一直使用上面的xmodmap配置文件来交换esc和capslock键，但�
     xmonad下蓝灯无效果，而且中文输入法也出不来，只能暂时放弃，等以后有需求和时间再来折腾
     一下。
 
-   2019-09-11 12:42:15 添加: 
-今天又折腾了一下xmonad, 发现切换workspace不方便，默认的mod+w/e不好按，看到有插件CycleWS,
-仔细看了一下xmonad和扩展的官方文档，并找了xmonad config archive中别人写的配置，配置成功了！
-本人不懂Haskell, 完全安装文档操作，说明文档还是写的不错的。
-```txt
-import XMonad
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig(additionalKeys)
-import System.IO
-import XMonad.Actions.CycleWS
-import XMonad.Actions.DwmPromote
-import XMonad.Hooks.ManageHelpers
-
-main = do
-    xmproc <- spawnPipe "xmobar"
-
-    xmonad $ defaultConfig
-        { manageHook = composeAll [
-             manageDocks,
-             -- hide xmobar when fullscreen
-             isFullscreen --> doFullFloat,
-             manageHook defaultConfig
-          ]
-        , layoutHook = avoidStruts  $  layoutHook defaultConfig
-        , logHook = dynamicLogWithPP xmobarPP
-                        { ppOutput = hPutStrLn xmproc
-                        , ppTitle = xmobarColor "green" "" . shorten 50
-                        }
-        , modMask = mod4Mask     -- Rebind Mod to the Windows key
-        } `additionalKeys`
-        [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock; xset dpms force off")
-        , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s")
-        , ((0, xK_Print), spawn "scrot")
-        -- a basic CycleWS setup
-        -- Switch to the next/prev workspace.
-        , ((mod4Mask,               xK_Down),  nextWS)
-        , ((mod4Mask,               xK_Up),    prevWS)
-        --  Move the focused window to the next/prev workspace.
-        , ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
-        , ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
-        , ((mod4Mask,               xK_Right), nextScreen)
-        , ((mod4Mask,               xK_Left),  prevScreen)
-        , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
-        , ((mod4Mask .|. shiftMask, xK_Left),  shiftPrevScreen)
-        , ((mod4Mask,               xK_z),     toggleWS)
-        -- Swaps focused window with the master window. If focus is in the master,
-        -- swap it with the next window in the stack. Focus stays in the master.
-        , ((mod4Mask,               xK_Return), dwmpromote)
-        ]
-```
-.xmobarrc配置
-```txt
-Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
-       , additionalFonts = []
-       , borderColor = "black"
-       , border = TopB
-       , bgColor = "black"
-       , fgColor = "grey"
-       , position = Top
-       , textOffset = -1
-       , iconOffset = -1
-       , alpha = 255
-       , lowerOnStart = False
-       , hideOnStart = False
-       , pickBroadest = True
-       , persistent = False
-       , iconRoot = "."
-       , allDesktops = True
-       , overrideRedirect = False
-       , commands = [ Run Weather "ZUUU" ["-t","<station>: <tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
-             , Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
-             , Run Network "eth1" ["-L","0","-H","32","--normal","green","--high","red"] 10
-             , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
-             , Run Battery [ "--template" , "Batt: <acstatus>"
-               , "--Low"      , "10"        -- units: %
-               , "--High"     , "80"        -- units: %
-               , "--low"      , "darkred"
-               , "--normal"   , "darkorange"
-               , "--high"     , "darkgreen"
-               , "--" -- battery specific options
-                      -- discharging status
-               , "-o"	, "<left>% (<timeleft>)"
-                      -- AC "on" status
-               , "-O"	, "<fc=#dAA520>Charging</fc>"
-                      -- charged status
-               , "-i"	, "<fc=#006000>Charged</fc>"
-             ] 50
-             , Run Memory ["-t","Mem: <usedratio>%"] 10
-             , Run Swap [ ] 10
-             , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
-             , Run StdinReader
-             ]
-, sepChar = "%"
-, alignSep = "}{"
-, template = "%StdinReader% | %cpu% | %memory% * %swap% | %eth0% - %eth1% }{ %ZUUU% | <fc=#ee9a00>%date%</fc> | %battery% | %uname% "
-}
-```
 
    13. 安装fcitx来使用小鹤双拼，以及vim中输入中文输入的插件
 ```txt
@@ -877,6 +778,172 @@ vim模式在命令提示符前会给出当前模式的提示符，但是fish的�
 的输入法控制，fcitx-vim插件作者在博客中有提到在不同linux主机间的ssh操作可以使用socat转发
 套接字，不过mac就不行了。最后发现我之前的小工具博客中有记录具体的fcitx-vim-for-osx的操作
 过程，配置成功！
+
+# Xmonad Latest and Fullest config
+.xmonad/xmonad.hs
+```txt
+import XMonad
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.EZConfig(additionalKeys)
+import System.IO
+import XMonad.Actions.CycleWS
+import XMonad.Actions.DwmPromote
+import XMonad.Hooks.ManageHelpers
+import XMonad.Layout.Fullscreen
+import XMonad.Layout.NoBorders
+
+myLayout =
+ avoidStruts (
+     noBorders (fullscreenFull Full)
+     ||| Tall 1 (3/100) (60/100) 
+     ||| Mirror (Tall 1 (3/100) (1/2)))
+
+main = do
+    xmproc <- spawnPipe "xmobar"
+    xmonad $ defaultConfig
+        {manageHook  = manageDocks <+> manageHook defaultConfig
+        --, layoutHook = avoidStruts  $ layoutHook defaultConfig
+        , layoutHook = smartBorders $ myLayout
+        -- this event hook ensure xmobar visible with full screen application
+        -- this must be in this order, docksEventHook must be last
+        , handleEventHook = handleEventHook defaultConfig <+> docksEventHook
+        , logHook = dynamicLogWithPP xmobarPP
+                      { ppOutput = hPutStrLn xmproc
+                        , ppTitle = xmobarColor "green" "" . shorten 50
+                        , ppHiddenNoWindows = xmobarColor "grey" ""
+                      }
+        , modMask = mod4Mask     -- Rebind Mod to the Windows key
+        } `additionalKeys`
+        [ ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock; xset dpms force off")
+        , ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s")
+        , ((0, xK_Print), spawn "scrot")
+        -- a basic CycleWS setup
+        -- Switch to the next/prev workspace.
+        , ((mod4Mask,               xK_Down),  nextWS)
+        , ((mod4Mask,               xK_Up),    prevWS)
+        --  Move the focused window to the next/prev workspace.
+        , ((mod4Mask .|. shiftMask, xK_Down),  shiftToNext)
+        , ((mod4Mask .|. shiftMask, xK_Up),    shiftToPrev)
+        , ((mod4Mask,               xK_Right), nextScreen)
+        , ((mod4Mask,               xK_Left),  prevScreen)
+        , ((mod4Mask .|. shiftMask, xK_Right), shiftNextScreen)
+        , ((mod4Mask .|. shiftMask, xK_Left),  shiftPrevScreen)
+        , ((mod4Mask,               xK_z),     toggleWS)
+        -- Swaps focused window with the master window. If focus is in the master, 
+        -- swap it with the next window in the stack. Focus stays in the master.
+        , ((mod4Mask,               xK_Return), dwmpromote)
+        ]
+
+```
+
+.xmobarrc
+```txt
+Config { --font = "-*-Fixed-Bold-R-Normal-*-16-*-*-*-*-*-*-*"
+    font = "xft:monospace-12",
+       , additionalFonts = []
+       , borderColor = "black"
+       , border = TopB
+       , bgColor = "black"
+       , fgColor = "grey"
+    -- right_padding = num_icons * icon_size
+    -- right_padding = 12 * 25 = 300
+       , position = TopP 0 300,
+       , textOffset = -1
+       , iconOffset = -1
+       , alpha = 255
+       , lowerOnStart = False
+       , hideOnStart = False
+       , pickBroadest = False
+       , persistent = True
+       , iconRoot = "."
+       , allDesktops = True
+       , overrideRedirect = False
+       , commands = [ Run Weather "ZUUU" ["-t","<station>: <tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
+             , Run Network "eth0" ["-L","0","-H","32","--normal","green","--high","red"] 10
+             , Run Network "eth1" ["-L","0","-H","32","--normal","green","--high","red"] 10
+             , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+             , Run Battery [ "--template" , "Batt: <acstatus>"
+               , "--Low"      , "10"        -- units: %
+               , "--High"     , "80"        -- units: %
+               , "--low"      , "darkred"
+               , "--normal"   , "darkorange"
+               , "--high"     , "darkgreen"
+               , "--" -- battery specific options
+                      -- discharging status
+               , "-o"	, "<left>% (<timeleft>)"
+                      -- AC "on" status
+               , "-O"	, "<fc=#dAA520>Charging</fc>"
+                      -- charged status
+               , "-i"	, "<fc=#006000>Charged</fc>"
+             ] 50
+             , Run Memory ["-t","Mem: <usedratio>%"] 10
+             , Run Swap [ ] 10
+             , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+             , Run StdinReader
+             ]
+, sepChar = "%"
+, alignSep = "}{"
+, template = "%StdinReader% | %cpu% | %memory% * %swap% }{ <fc=#ee9a00>%date%</fc> | %battery% | %uname% "
+}
+```
+
+.stalonetrayrc
+```txt
+# 1 row of 12 icons, each 23px wide/tall. Resolution 3840x2160.
+# This icon size aligns with the size of xmobar with font "xft:monospace-8"
+# position = display_width - (num_icons * icon_size)
+# position = 1366 - (12 * 23) = 1090
+# Example: geometry 12x1+3564
+geometry 12x1+1066
+icon_size 25
+sticky 1
+window_type dock
+dockapp_mode wmaker
+window_strut auto
+skip_taskbar 1
+icon_gravity NE
+background black
+kludges force_icons_size
+```
+
+.xsessionrc
+```txt
+#!/bin/bash
+
+# Load resources
+xrdb -merge .Xresources
+
+# Set up an icon tray
+stalonetray &
+# block the stalonetray back black
+terminator &
+
+# Fire up apps
+xscreensaver -no-splash &
+
+# xmodmap ~/.Xmodmap &
+feh --bg-scale /home/tao/Pictures/back.jpg &
+
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+fcitx &
+
+# Start udiskie to handle media
+udiskie &
+
+xfce4-power-manager &
+
+if [ -x /usr/bin/nm-applet ] ; then
+   nm-applet --sm-disable &
+fi
+
+exec xmonad
+```
+for now, fcitx can't input shuangpin chinese...to be done.
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />
