@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-14 10:20:03
+updated: 2019-09-14 23:26:50
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -948,6 +948,17 @@ for now, fcitx can't input shuangpin chinese...to be done.
 2019-09-14 09:32:14 注:
 发现fcitx在终端中无法输入的原因是fcitx在启动terminal后定义的，所以修改.xsessionrc文件将
 启动terminator放到最后即可。以上配置文件已修改为正确配置。
+
+# Ubantu安装Typora 
+之前是使用pandoc将markdown文件转换为epub文件放到kindle中，发现效果不好，后来发现了
+donot print插件可以很方便的重组pdf方便不同设备阅读pdf,所以想到可以安装typora先将markdown
+转换为pdf, 再进行重组，初步看效果不错。以下将安装过程记录下:
+```txt
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE
+sudo add-apt-repository 'deb http://typora.io linux/'
+sudo apt install typora
+```
+注: 使用pandoc将html转换为pdf效果不好，还需要安装一个很大的pdflatex引擎(textlive-full)
 
 
 <hr />
