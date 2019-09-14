@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-12 18:21:16
+updated: 2019-09-14 10:20:03
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -917,8 +917,6 @@ xrdb -merge .Xresources
 
 # Set up an icon tray
 stalonetray &
-# block the stalonetray back black
-terminator &
 
 # Fire up apps
 xscreensaver -no-splash &
@@ -940,9 +938,16 @@ if [ -x /usr/bin/nm-applet ] ; then
    nm-applet --sm-disable &
 fi
 
+# put teminator behind fcitx to make it work 
+# block the stalonetray back black
+terminator &
+
 exec xmonad
 ```
 for now, fcitx can't input shuangpin chinese...to be done.
+2019-09-14 09:32:14 注:
+发现fcitx在终端中无法输入的原因是fcitx在启动terminal后定义的，所以修改.xsessionrc文件将
+启动terminator放到最后即可。以上配置文件已修改为正确配置。
 
 
 <hr />
