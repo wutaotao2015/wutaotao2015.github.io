@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-09-10 16:46:02
+updated: 2019-09-15 22:37:21
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -610,6 +610,23 @@ vim-multiple-cursors, 默认快捷键是alt + n, 还支持取消选中(alt + p)�
 所以需要重构时应使用alt + n + c/s， 而不是用alt + j, 后者有很多问题。
 又注: 单个变量应使用alt + n, 但对于整句的情况，multi-cursor出现无法选择全部的情况，而
 ctrl + J可以，所以还是应根据场景结合使用这两者。
+
+## ubantu上通过snap安装idea
+在idea官网的安装教程上突然发现ubantu上可以通过一个叫"snap"的东西安装，还支持自动更新操作。
+查看过大致资料后发现snap的目标是建立一个可以在所有不同版本的linux系统中通用的应用管理工具，
+在ubantu, fedora, minx等不同linux流派中都能使用的包管理工具。它不能取代deb, 更多的是在应用
+层为用户提供统一的服务，简化了安装过程，同时开发者也可以不用再针对不同平台开发不同的特定平台
+的应用版本。
+
+下面是使用snap安装idea的过程:
+```txt
+snap find "intelliJ idea"
+snap info intellij-idea-ultimate
+sudo snap install intellij-idea-ultimate --classic
+设置代理
+sudo snap set system proxy.http="http://addr:port"
+sudo snap set system proxy.https="http://addr:port"
+```
 
 
 <hr />
