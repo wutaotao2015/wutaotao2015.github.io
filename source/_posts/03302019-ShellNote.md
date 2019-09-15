@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-14 23:26:50
+updated: 2019-09-15 10:36:39
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -941,6 +941,7 @@ fi
 # put teminator behind fcitx to make it work 
 # block the stalonetray back black
 terminator &
+lantern &
 
 exec xmonad
 ```
@@ -960,6 +961,18 @@ sudo apt install typora
 ```
 注: 使用pandoc将html转换为pdf效果不好，还需要安装一个很大的pdflatex引擎(textlive-full)
 
+# Terminator theme 
+在Terminator中安装Dracula主题，将安装步骤记录如下:
+```txt
+pip install requests
+mkdir -p $HOME/.config/terminator/plugins
+wget https://git.io/v5Zww -O $HOME"/.config/terminator/plugins/terminator-themes.py"
+preference --> plugin --> terminator theme
+theme --> dracula --> install
+// 如果点击theme无反应，使用sudo apt install python-requests命令
+vi ~/.config/terminator/config
+replace Dracula with default under profiles setting
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg" class="full-image" />

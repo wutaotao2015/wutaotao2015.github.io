@@ -3,7 +3,7 @@ title: Markdown基本语法
 tags: Markdown
 categories: Markdown
 image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901292.jpg
-updated: 2019-03-16 17:52:22
+updated: 2019-09-15 10:07:35
 abbrlink: 47caaf1e
 date: 2019-01-22 21:51:18
 ---
@@ -121,7 +121,7 @@ Typora中的表格语法手工输入较麻烦，有2种方法。
 ​	有的平台不支持
 
 ​	`[toc]`
-[TOC]
+`[TOC]` 略去展示效果
 #### 流程图
   还是引用代码块的语法，不过语言类型可以选择2个js包，一个是flowchart.js,它适用于画流程图，
   其他的时序图可以选择mermaid(美人鱼)，技术博客一般还是普通流程图用的多,掌握flow就可以。
