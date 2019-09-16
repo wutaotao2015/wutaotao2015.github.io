@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-15 10:36:39
+updated: 2019-09-16 11:19:19
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -236,6 +236,7 @@ cd ~/.config/fcitx/conf
 vi fcitx-pinyin.config
 设置为DefaultShuangpinSchema=XiaoHe
 ```
+另: fcitx输入中文变繁体，按ctrl + shift + f变回简体输出。
 
    14. 在ubantu系统启动时执行某些命令，如`sudo tlp start`软件减少散热的，还有命令别名
    设置等，之前放到.bash_profile中不行，网上搜索到可以放在.bashrc中，查看.bashrc文件，发现

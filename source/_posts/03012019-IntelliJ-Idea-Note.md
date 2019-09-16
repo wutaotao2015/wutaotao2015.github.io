@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-09-15 22:37:21
+updated: 2019-09-16 11:18:37
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -627,6 +627,8 @@ sudo snap install intellij-idea-ultimate --classic
 sudo snap set system proxy.http="http://addr:port"
 sudo snap set system proxy.https="http://addr:port"
 ```
+经过测试使用，即时挂上代理，速度也非常慢，所以无法使用(网上搜索到这是snap store本身的问题),
+还是下载后安装单个版本吧。
 
 
 <hr />
