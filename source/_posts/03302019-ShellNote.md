@@ -7,7 +7,7 @@ tags:
   - Vmware workstation
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190330_1.jpg'
 abbrlink: 45ed956e
-updated: 2019-09-16 11:19:19
+updated: 2019-09-16 21:14:41
 date: 2019-03-30 11:40:15
 ---
 Shell,ubantu,vmware workstation
@@ -973,6 +973,15 @@ theme --> dracula --> install
 // 如果点击theme无反应，使用sudo apt install python-requests命令
 vi ~/.config/terminator/config
 replace Dracula with default under profiles setting
+```
+
+# Linux处理usb设备 
+```txt
+sudo fdisk -l  # 查看分区情况，可以看到插入的usb设备，类型一般为dos?也可通过size判断
+               # 还可以看见usb的格式类型
+sudo mkdir -p /mnt/usb  # 创建挂载点
+sudo mount /dev/sdb3 /mnt/usb # 挂载  分区点根据实际情况变化
+sudo umount /dev/sdb3     # 卸载
 ```
 
 <hr />
