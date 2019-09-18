@@ -15,6 +15,11 @@ now=$(date +"%T:%N")
  cd ~/Downloads/
  sed -i 's#<img src=".*"\s*/>##g' taoblog${now}.md
  sed -i 's#!\[.*\](.*)##g' taoblog${now}.md
+ sed -i 's@<hr\s*/>@@g' taoblog${now}.md
+ sed -i 's@---@```@g' taoblog${now}.md
+ sed -i 's@<!--\s*more\s*-->@@g' taoblog${now}.md
+ #sed -i 's@\(```\ntitle:\(.*\)\)@#\2\r\1@g' taoblog${now}.md
+ sed -i 's@\A@[toc]\r\r@' taoblog${now}.md
 
 #else 
 #  if [ ${mode}=2 ]; then
