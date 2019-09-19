@@ -21,7 +21,7 @@ now=$(date +"%T:%N")
  #sed -i 's@\(```\ntitle:\(.*\)\)@#\2\r\1@g' taoblog${now}.md
  perl -0777 -pi -e 's@(```\ntitle:(.*))@#$2\n$1@g' taoblog${now}.md 
  # at last add toc at head
- sed -i 's@\A@[toc]\r\r@' taoblog${now}.md
+ sed -i '1s@^@[toc]\n\n@' taoblog${now}.md
 
 #else 
 #  if [ ${mode}=2 ]; then
