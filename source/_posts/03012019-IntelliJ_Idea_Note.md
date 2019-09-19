@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-09-16 11:18:37
+updated: 2019-09-19 10:16:56
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -629,6 +629,21 @@ sudo snap set system proxy.https="http://addr:port"
 ```
 经过测试使用，即时挂上代理，速度也非常慢，所以无法使用(网上搜索到这是snap store本身的问题),
 还是下载后安装单个版本吧。
+
+## IntelliJ Idea在xmonad中显示问题
+安装ToolTip博客中的步骤安装好jdk和Maven后，启动idea时窗口无法正常显示，开始一直以为是Idea
+本身的问题，后来在ubuntu中发现可以正常打开，经网上查找原来是xmonad不在jdk的gui展示列表中，
+(很多新的窗口管理工具jdk都不支持), 在mac上使用xmonad.hs中修改的setWMName  "LG3D"可以正常
+打开，但thinkpad上就不行，后来在xmonad faq中发现最方便的方法是添加环境变量，thinkpad也能正常
+打开Idea窗口了。
+```txt
+If you are using openjdk6 >= 1.6.1, the cleanest way to work around the hardcoded 
+list is to warn the vm that xmonad is non-reparenting by exporting the appropriate 
+environment variable:
+
+_JAVA_AWT_WM_NONREPARENTING=1
+// 经本人测试， jdk 8也有效
+```
 
 
 <hr />
