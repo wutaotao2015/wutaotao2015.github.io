@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
 abbrlink: 481236cd
-updated: 2019-09-19 10:16:56
+updated: 2019-09-20 15:35:09
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -645,6 +645,16 @@ _JAVA_AWT_WM_NONREPARENTING=1
 // 经本人测试， jdk 8也有效
 ```
 
+## IntelliJ idea新项目运行时警告编译的jdk版本问题
+新建项目时默认是jdk5，会给出提示，即时在project module setting里面设置为jdk8，重启后又会
+恢复原值，最根本的解决方法是在maven中指定具体的jdk版本，默认设置为jdk8时可以进行如下设置:
+```txt
+<properties>
+  <java.version>1.8</java.version>
+  <maven.compiler.source>${java.version}</maven.compiler.source>
+  <maven.compiler.target>${java.version}</maven.compiler.target>
+</properties>
+```
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
