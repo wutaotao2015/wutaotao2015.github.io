@@ -5,9 +5,9 @@ tags:
   - Java
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190917_1.jpg'
-updated: 2019-09-24 18:12:12
+abbrlink: 65ea4e77
+updated: 2019-09-24 22:13:52
 date: 2019-09-17 16:26:16
-abbrlink:
 ---
 description
 <!-- more -->
@@ -1063,7 +1063,7 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 
 3.3 CPU cache implementation details
 
-    3.3.1 Associativity
+  3.3.1 Associativity
 如果每个缓存行可以存储任意内存地址的内容，这样设计的缓存称为fully associative cache, 但是
 寻址时CPU要搜索的条目(entry)就太多了，每个缓存行都需要一个比较器比较请求地址和每个缓存段的
 地址，无论是提高比较器的速度或者复用比较器都无法有效提高性能。所以我们可以设计减少比较器，
@@ -1079,30 +1079,30 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 就越少。从数据图标中可以看出，从直连(no associativity)到associativity=2的性能提升是最大的，
 有时甚至和缓存总容量翻倍的效果是一样的！不过当associativity再增加时，性能提升效果就一般了。
 
-    3.3.2 Measurements of cache effects
+  3.3.2 Measurements of cache effects
 略
-    3.3.3 write behavior 
+  3.3.3 write behavior 
 如前面说过的直写和回写模式。
-    3.3.4 multi-processor support
+  3.3.4 multi-processor support
 MESI协议，保证多核处理器间的缓存一致性。
 多线程访问
-    3.3.5 other details 
+  3.3.5 other details 
 virtual memory address and physical memory address
 
 3.4 Instruction Cache
 不只是执行指令时用到的数据被缓存，指令本身也会被缓存(这里指的是编译器编译后生成的代码指令)。
-    3.4.1 self modifying code
+  3.4.1 self modifying code
 should avoid this.
 
 3.5 Cache Miss Factors
-    3.5.1 Cache and memory bandwidth 
-    3.5.2 Critical Word Load
+  3.5.1 Cache and memory bandwidth 
+  3.5.2 Critical Word Load
 缓存行一般有64或128字节，从主内存传输到缓存的效率是一次传输64位，这意味着加载一行缓存段需要
 8或16次传输，为了程序继续执行，内存控制器可以将"关键字"优先上传，这样程序可以在缓存还未处于
 连续状态前就开始执行, i.e., Critical word first & early restart.
 
-    3.5.3 Cache Placement
-    3.5.4 FSB Influence
+  3.5.3 Cache Placement
+  3.5.4 FSB Influence
 
 
 
