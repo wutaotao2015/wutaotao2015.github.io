@@ -6,12 +6,11 @@ tags:
   - C++
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190917_1.jpg'
 abbrlink: 65ea4e77
-updated: 2019-09-24 22:13:52
+updated: 2019-09-25 14:27:27
 date: 2019-09-17 16:26:16
 ---
-description
+Java, Char with UTF-16, C++, 数组，  
 <!-- more -->
-
 
 ## 图形程序设计，事件处理，Swing用户界面组件(略)
 ## 部署java应用程序
@@ -1062,7 +1061,6 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 程序差别)，所以提高程序对于缓存的利用率对于性能的提升有时是非常巨大的。
 
 3.3 CPU cache implementation details
-
   3.3.1 Associativity
 如果每个缓存行可以存储任意内存地址的内容，这样设计的缓存称为fully associative cache, 但是
 寻址时CPU要搜索的条目(entry)就太多了，每个缓存行都需要一个比较器比较请求地址和每个缓存段的
@@ -1078,7 +1076,6 @@ FB-DRAM(Fully Buffered)采用串行buffer总线来解决这个问题，FB-DRAM�
 在缓存行大小，缓存总容量固定的情况下，缓存associativity值越高，缓存未命中(cash miss)的次数
 就越少。从数据图标中可以看出，从直连(no associativity)到associativity=2的性能提升是最大的，
 有时甚至和缓存总容量翻倍的效果是一样的！不过当associativity再增加时，性能提升效果就一般了。
-
   3.3.2 Measurements of cache effects
 略
   3.3.3 write behavior 
@@ -1100,9 +1097,11 @@ should avoid this.
 缓存行一般有64或128字节，从主内存传输到缓存的效率是一次传输64位，这意味着加载一行缓存段需要
 8或16次传输，为了程序继续执行，内存控制器可以将"关键字"优先上传，这样程序可以在缓存还未处于
 连续状态前就开始执行, i.e., Critical word first & early restart.
-
   3.5.3 Cache Placement
   3.5.4 FSB Influence
+
+4. Virtual Memory
+  4.1 Simplest Address Translation 
 
 
 
