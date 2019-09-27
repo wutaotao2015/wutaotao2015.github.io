@@ -4,7 +4,7 @@ categories: Interview
 tags:
   - Interview
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190925_1.jpg'
-updated: 2019-09-26 18:22:14
+updated: 2019-09-27 08:16:51
 date: 2019-09-25 22:02:43
 abbrlink:
 ---
@@ -122,15 +122,15 @@ function f(x) {
 尾递归例子，计算阶乘。
 ```txt
 // 普通递归
-function fac(n) { // n >= 1
-  if (n == 1) return 1;   
+function fac(n) { 
+  if (n <= 0) return 1;   
   return n * fac(n - 1);
 }
 fac(5);
 
 // 尾递归
-function facTail(n, total) { // n >= 1
-  if (n == 1) return 1;
+function facTail(n, total) { 
+  if (n <= 0) return 1;   
   return facTail(n - 1, n * total);
 }
 facTail(5, 1);   // total初始值为1，保存每次调用时得到的中间结果
@@ -152,12 +152,10 @@ function curry(fn, n) {
 const ff = curry(facTail, 1); // total = 1
 ff(5);
 
-// jdk 8的柯里化
-//Function<Integer, Function<Integer>> curry = x -> y -> facTail(y, 1);
-bf(5, 0)
+// jdk 8 λ表达式的柯里化
+Function<Integer, Supplier<Integer>> curry = x -> () -> facTail(x, 1);
+curry.apply(5).get();  // 按照箭头顺序从左到右执行
 ```
-
-
 
 ### 例子和练习
 1. 
@@ -181,8 +179,8 @@ if语句本身是O(1), 所以整体的时间复杂度为O(ab)，不是O(N^2), �
 3. 有一个字符串数组，如果需要先对其中每个字符串进行排序，然后对整个数组排序，它的时间复杂度
 是多少?
 
-这里最大的错误就是简单的用O(n)之类的表达式来表示，因为它有2个输入集合，数组的长度a和最大
-字符串的长度s。
+这里最大的错误就是简单的用O(n)之类的表达式来表示，因为它有2个输入集合(与题1一样)，数组的
+长度a和最大字符串的长度s。
   1. 字符串排序，快排实现复杂度为O(slog s), a个元素就是O(a * slog s);
   2. 数组排序，这里不是简单的O(alog a), 因为字符串比较与字符或数字比较不同，它不是常量时间，
 而是线性的O(s), 所以数组排序为O(s * a log a);
@@ -212,6 +210,38 @@ boolean isPrime(int n) {
 }
 ```
 这个方法的复杂度是O(sqrt(N)), N的二分之一次方。不能近似为O(N)!
+
+6. 打印出一个字符串中所有字符的全排列all permutations of a string
+下面这个算法巧妙利用了循环中的递归(类似深度优先排序)的方法实现了全排列:
+```txt
+void permutation(String str) {
+  permutation(str, ""); // 空前缀代表全排列，有值时为部分排列(前缀部分不可变) 
+}
+void permutation(String str, String prefix) {
+  
+  if (str.length() == 0) {
+     System.out.println(prefix);  // 已无可排字符，打印出一种组合   
+  }else{
+     for (int i = 0; i < str.length(); i++) {
+       String remainder = str.subString(0, i) + subString(i+1); 
+       permutation(remainder, prefix + str.charAt(i));   
+       // 每次排好(挖掉)一个后，继续排列剩余部分 
+     }
+  }
+}
+```
+如何计算它的时间复杂度?
+循环中套用递归，它的函数栈可以了解是非常复杂的——一颗巨大的树。我们可以从一些特性出发得到
+该算法的一个近似的上界。
+```txt
+1. 先考虑所有排列的种数，对于长度为n的字符串，第一个位置有n种选择，第一个位置排好后，
+对于第二个位置有n-1种选择(对应于前面第一个位置的每种情况)，依次类推，可以得到全部排列的
+总数为n*(n-1)*(n-2)*... = n!.因为每种排列都需要列出并打印，所以permutation(string, prefix)
+方法需要调用n!次。
+2. 
+```
+
+
 
 ## 
 
