@@ -4,7 +4,7 @@ categories: Interview
 tags:
   - Interview
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190925_1.jpg'
-updated: 2019-09-27 08:16:51
+updated: 2019-09-27 14:57:07
 date: 2019-09-25 22:02:43
 abbrlink:
 ---
@@ -142,15 +142,26 @@ facTail(5, 1);   // total初始值为1，保存每次调用时得到的中间结
 function int fac(int n){
   return facTail(n, 1); 
 }
-2. 使用函数式编程中的柯里化的概念，将多参数变为单参数。
-// ES6的柯里化
-function curry(fn, n) {
+或者
+function seal(fn, n) {
   return function(m) {
     return fn.call(this, m, n); // 这里利用闭包特性保存了fn中的参数作为m  
   } 
 }
-const ff = curry(facTail, 1); // total = 1
+const ff = seal(facTail, 1); // total = 1
 ff(5);
+2. 使用函数式编程中的柯里化的概念，将多参数变为单参数，返回由剩下参数组成的函数
+// 柯里化函数
+function curry(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return function () {
+        var innerArgs = Array.prototype.slice.call(arguments);
+        var finalArgs = innerArgs.concat(args);
+        return fn.apply(null, finalArgs);
+    }
+}
+var factorial = curry(facTail, 1); 
+factorial(5);
 
 // jdk 8 λ表达式的柯里化
 Function<Integer, Supplier<Integer>> curry = x -> () -> facTail(x, 1);
@@ -215,7 +226,8 @@ boolean isPrime(int n) {
 下面这个算法巧妙利用了循环中的递归(类似深度优先排序)的方法实现了全排列:
 ```txt
 void permutation(String str) {
-  permutation(str, ""); // 空前缀代表全排列，有值时为部分排列(前缀部分不可变) 
+  permutation(str, ""); 
+  // 空前缀代表全排列，这里有值时最终结果是str所有排列前都有相同的前缀(由以下算法实现决定)
 }
 void permutation(String str, String prefix) {
   
@@ -223,7 +235,7 @@ void permutation(String str, String prefix) {
      System.out.println(prefix);  // 已无可排字符，打印出一种组合   
   }else{
      for (int i = 0; i < str.length(); i++) {
-       String remainder = str.subString(0, i) + subString(i+1); 
+       String remainder = str.subString(0, i) + subString(i+1); // 挖掉str.charAt(i)
        permutation(remainder, prefix + str.charAt(i));   
        // 每次排好(挖掉)一个后，继续排列剩余部分 
      }
@@ -231,30 +243,61 @@ void permutation(String str, String prefix) {
 }
 ```
 如何计算它的时间复杂度?
-循环中套用递归，它的函数栈可以了解是非常复杂的——一颗巨大的树。我们可以从一些特性出发得到
-该算法的一个近似的上界。
+循环中套用递归，它的函数栈可以理解为一颗巨大的树。我们可以从一些特性出发得到该算法的一个
+近似上界。
+
 ```txt
-1. 先考虑所有排列的种数，对于长度为n的字符串，第一个位置有n种选择，第一个位置排好后，
-对于第二个位置有n-1种选择(对应于前面第一个位置的每种情况)，依次类推，可以得到全部排列的
-总数为n*(n-1)*(n-2)*... = n!.因为每种排列都需要列出并打印，所以permutation(string, prefix)
-方法需要调用n!次。
-2. 
+1. 计算permutation(String, prefix)调用的总次数。
+
+  1. 先计算base permutation的次数，即执行了打印语句的permutation()方法的调用次数，也可以
+理解为整棵树的叶子节点个数。
+
+考虑所有排列的种数，对于长度为n的字符串，
+第一个位置有n种选择，第一个位置排好后，对于第二个位置有n-1种选择(对应于前面第一个位置的
+每种情况)，依次类推，可以得到全部排列的总数为n*(n-1)*(n-2)*... = n!.
+因为每种排列都需要列出并打印，所以叶子节点个数为O(n!).
+
+  2. 计算base permutation调用前调用permutation()方法的次数，即那些不满足打印条件未打印的
+permutation方法调用次数，也可以理解为树中非叶子节点的个数。
+
+可以从树的角度出发，一共有n!个叶子节点，每个节点到根节点的距离都是n(每次循环都挖掉(排列)
+一个字符，得到最终的排列结果需要每个位置都排好，所以路径长度是n), 所以树的总节点个数不
+超过n! * n个。
+
+2. 计算每次permutation(string, prefix)方法调用消耗的时间。
+
+对于打印语句执行的次数: str即remainder, 当remainder为空时就打印一次(由于循环中每次挖掉一个
+字符), 即只剩一个字符时打印一次(当多于一个字符时str.length() > 0不满足条件不打印).
+每个字符都要打印，所以打印语句的执行次数即为字符串的长度，为O(n).
+同理，由于循环内每次循环都是挖掉一个字符，循环内的拼接字符串和递归调用也是执行O(n)次。
+所以每次permutation方法执行的复杂度是O(n)。
+
+3. 计算总共花的时间 
+单此调用为O(n)次，总共需要调用O(n * n!)次，所以时间复杂度为O(n^2 * n!)。
 ```
 
+7. 斐波纳契数列的复杂度
+```txt
+function fib(n) {
+  if (n <= 0) return 0;
+  if (n == 1) return 1;
+  return fib(n - 1) + fib(n - 2);
+}
+```
+由前面递归的公式得出时间复杂度为O(2^N), 高度为n(从n一直到1)
+注: 更精确的上界为O(1.6^n).可由特征根方程得出。
 
+8. 顺序打印斐波纳契数列中的数字
+```txt
+void allFib(int n) {
+  for (int i = 0; i < n; i++) {
+    System.out.println(i + ":" + fib(i));  
+  } 
+}
+```
+复杂度为1 + 2^1 + 2^2 + 2^3 +...+2^n = 2^(n+1);所以复杂度仍然为O(2^n);
 
 ## 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
