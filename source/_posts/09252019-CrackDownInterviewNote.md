@@ -4,7 +4,7 @@ categories: Interview
 tags:
   - Interview
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190925_1.jpg'
-updated: 2019-09-27 14:57:07
+updated: 2019-09-28 22:41:04
 date: 2019-09-25 22:02:43
 abbrlink:
 ---
@@ -297,13 +297,44 @@ void allFib(int n) {
 ```
 复杂度为1 + 2^1 + 2^2 + 2^3 +...+2^n = 2^(n+1);所以复杂度仍然为O(2^n);
 
+9. 顺序打印1到n(闭区间)中2的指数值，如1, 2, 4, 8...
+```txt
+int powerOf2(int n) {
+  if (n == 0) {
+    return 0;
+  }else if (n == 1) {
+    System.out.println(1);  
+    return 1;
+  }else{
+    int prev = powerOf2(n/2);
+    int cur = prev * 2;
+    Sytem.out.println(cur);
+    return cur;
+  }
+}
+```
+  1. 从它做了什么来计算，即算法轨迹。从n到n/2, n/4,...到1，到1或0时结束递归开始返回
+(0不打印), 每次都打印当前值，所以同二分查找一样，1以2倍的速度递增到n，为O(logN). 
+
+  2. 从题目意思来计算，它需要打印2的指数为1到n的值，而每次powerOf2方法都打印1次，所以
+powerOf2方法的调用次数需要与1到n间2的指数值个数相同，即O(logN).
+
+  3. 从O(N)的含义出发，即输入规模增加时耗用时间的增加速率。可以从代码中看到，当n变为n+1时，
+它并不会打印语句，因为除以2后调用的是同样的powerOf2(n/2).需要是2n才会多调用1次方法，
+即输入翻倍后才会多调用一次，所以方法的调用次数等于从1到n的翻倍次数，为O(logN).
+
+注: 该题虽然简单，但提供了3种计算的不同角度: 最常见的算法轨迹，题目要求和实现的结合(需要
+保证算法的正确性)，从O(N)的定义出发。
+
+O(b)
+O(ab)
+O(1)
+O(a/b)
+O()
+O()
+O()
+
 ## 
-
-
-
-
-
-
 
 
 
