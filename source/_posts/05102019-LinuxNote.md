@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-06-26 22:06:50
+updated: 2019-10-13 08:33:32
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -332,7 +332,23 @@ linux终端执行命令步骤:
 可以使用export命令导出自定义的环境变量，这样做相当于将其提升为全局变量。
 
 ## vim编辑器与Shell命令脚本
+TBD
 
+## scp命令
+因为工作中经常需要上传前台页面的jsp和js文件到服务器上(只有服务器上才能调用后台接口), 一直
+使用ftp工具图形化界面上传，用久了突然反应过来可以用ssh远程登录和scp命令进行操作，方便快捷。
+
+```txt
+upload to server
+scp 1.txt 2.txt user@ip:/home/XXX/XXX
+
+download from server
+  // many files
+scp user@ip:"/path/of/file1 /path/of/file2" ./
+  // recursive download, such a dir 
+scp -r user@ip:/path/of/dir ./
+```
+scp默认覆盖已经存在的文件和目录。
 
 
 
