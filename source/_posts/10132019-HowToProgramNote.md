@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-13 22:25:02
+updated: 2019-10-14 17:21:00
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -35,6 +35,9 @@ note of how to program
   
   1. 确定世界中不随时间变化的性质作为常量。一种是对象的物理性质常量，另一种是对象的图片常量.
   后者通常使用前者进行复合计算得到。这些图片常量组合起来即可得到世界的某个完整状态。
+
+  常量的表达式可以在交互区测试得到。
+  同状态的最小集类似，在编写常量实现时应尽可能减小变量个数，这称为"单点控制"(single control)
   
   2. 确定世界中随时间变化的性质，将它们集合起来用一个数据对象来表示，它应该是能确定整个世界
   图像的最小集。这个最小集就是该世界的状态。
@@ -52,13 +55,18 @@ note of how to program
  ```txt
   ; worldstate -> image
   ; place image of car x pixels from the left of margin of the background image
-  (define (render x) backgroundImage)
+  (define (render x) (place-image CAR X Y BG))
   
   ; worldstate -> worldstate
   ; add 3 to x to move the car right
-  (define (tock x) x)
+  (define (tock x) (+ x 3))
+
+  ; worldstate -> boolean
+  ; when to stop, 注意这里不能只用=号，toc + 3可能取不到该值，
+  ; 跳过后继续运行，end?一直为#f
+  (define (end? ws) (>= ws 100))
  ```
-  
+
   4. write a main function. 它不需要设计和测试，作为就是方便在交互区启动世界项目。需要考虑的
   仅为它的方法参数。如初始状态等。代码为
 ```txt
