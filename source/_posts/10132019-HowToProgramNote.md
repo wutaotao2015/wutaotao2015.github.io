@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-14 17:21:00
+updated: 2019-10-14 22:24:53
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -74,6 +74,9 @@ note of how to program
   ; launch program from some initial state
   (define (main ws) (big-bang ws [on-tick tock] [to-draw render]))
 ```
+  on-tick默认计数频率为1/28, 即1秒28次tick.
+  mouse-event:  button-down, button-up, drag, move, enter, leave
+
 
 ##
 ##
