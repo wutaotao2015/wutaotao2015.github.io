@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-15 14:41:43
+updated: 2019-10-16 07:55:11
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -146,6 +146,13 @@ note of how to program
 
  ```
  
+### 枚举，区间和泛化
+除了用基本数据类型，如string, number, image, boolean作为状态对象，我们还可以使用枚举，
+区间和条目作为数据类型，它们使用cond表达式在基本类型的基础上进行处理，按照各自概念进行定义。
+如枚举使用=, string=?, false?(没有true?的定义)等判断每一个条件，区间使用>, <判断每一个条件。
+泛化适用于不同判断条件类型的cond表达式，如NorF即为元素类型在num和#f中进行判断。
+
+注: cond表达式可以嵌套在其他方法中，使用时应包含最小变量集合表达式。
 
 ##
 ##
