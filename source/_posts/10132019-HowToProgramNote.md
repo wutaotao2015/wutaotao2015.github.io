@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-16 07:55:11
+updated: 2019-10-16 16:03:20
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -153,6 +153,89 @@ note of how to program
 泛化适用于不同判断条件类型的cond表达式，如NorF即为元素类型在num和#f中进行判断。
 
 注: cond表达式可以嵌套在其他方法中，使用时应包含最小变量集合表达式。
+新的数据类型为更复杂的控制提供了可能，下面是我写的用空格键触发火箭升空的小动画(在查看
+教程代码之前)。
+```txt
+(require 2htdp/image)
+(require 2htdp/batch-io)
+(require 2htdp/universe)
+
+; constants
+(define BGW 100)
+(define BGH 300)
+(define BG (empty-scene BGW BGH))
+(define UFO (overlay/align "middle" "bottom" 
+                           (ellipse 40 10 "solid" "blue")
+                           (circle 10 "solid" "red")))
+(define V 2)
+;(place-image/align UFO (/ BGW 2) BGH "middle" "bottom" BG)
+
+; world state is LR(itemization)
+; LR is "starting" or the pixels from the top
+
+; ws -> ws
+; render ws to image
+(define (render ws) 
+  (place-image/align UFO (/ BGW 2) 
+          (cond 
+           [(string? ws) BGH] 
+           [else ws] 
+          )
+          "middle" "bottom" BG))
+(check-expect (render "s") (place-image/align UFO (/ BGW 2) BGH  "middle" "bottom" BG))
+(check-expect (render 30) (place-image/align UFO (/ BGW 2) 30  "middle" "bottom" BG))
+
+; ws -> ws
+; tick handler "stop" is static, number means ufo is getting up
+(define (tock ws) 
+          (cond 
+           [(string? ws) ws] 
+           [else (- ws V)] 
+          )
+)
+(check-expect (tock "s") "s")
+(check-expect (tock 10) (- 10 V))
+
+; ws->ws
+; only when ufo is not launching, press space key will launch ufo
+(define (kh ws key) 
+  (if (and (string=? key " ") (string? ws)) BGH ws))
+
+(check-expect (kh "s" " ") BGH)
+(check-expect (kh "s" "r") "s")
+(check-expect (kh 1 "r") 1)
+(check-expect (kh 6 " ") 6)
+
+; ws->boolean
+; when getting to the top, world ends
+; because of cond mechanism, it must judge string first, than it can use <= 0 operation
+(define (end? ws) 
+          (cond 
+           [(string? ws) #f] 
+           [(<= ws 0) #t] 
+           [else #f] 
+          ))
+(check-expect (end? "s") #f)
+(check-expect (end? -1) #t)
+(check-expect (end? 23) #f)
+
+; ws -> ws 
+; if main function here has no parameter, it is just a constant, using (define main ...),
+; drrackt will evaluate it and execute big-bang,
+; using (main ws) will make it a function and do not execute big-bang
+(define (main ws)
+  (big-bang "starting"
+    [on-tick tock]
+    [to-draw render]
+    [stop-when end?]
+    [on-key kh]
+    ))
+
+; (main "go")
+```
+
+
+
 
 ##
 ##
