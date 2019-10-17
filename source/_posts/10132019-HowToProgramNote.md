@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-17 08:23:39
+updated: 2019-10-17 10:27:53
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -77,9 +77,12 @@ note of how to program
   on-tick默认计数频率为1/28, 即1秒28次tick.
   mouse-event:  button-down, button-up, drag, move, enter, leave
   
-  下面为我的exercise 47的习题答案，主要是place-image的用法花了较多时间，搞清楚图片的定位
-  (anchor)和偏移距离的计算起始点。代码如下, language: BSL, beginning student language
+  下面为我的exercise 47的习题答案，主要是
+  place-image的用法花了较多时间，搞清楚图片的定位(anchor)和偏移距离的计算起始点。
+  代码如下, language: BSL, beginning student language
  ```txt
+;; using up and down to charge battery
+
 (require 2htdp/image)
 (require 2htdp/universe)
 
@@ -156,6 +159,8 @@ note of how to program
 新的数据类型为更复杂的控制提供了可能，下面是我写的用空格键触发火箭升空的小动画(在查看
 教程代码之前)。
 ```txt
+;; using space key to launch ufo, with counting down feature
+
 (require 2htdp/image)
 (require 2htdp/batch-io)
 (require 2htdp/universe)
@@ -261,17 +266,22 @@ note of how to program
 3. 区间的边界情况我的程序中没有加以判断，如倒计时为-1时需要将ws变为height.但由于我考虑的是
 ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可以看出先递增后递减也是可以实现的
 (end? 方法加以判断即可，本质还是因为ws的区间范围是明确划分的，所以先递增后递减也行)。
-但书中也提出，使用负数作为倒计时的设计是比较脆弱的。
+但书中也提出，使用负数作为倒计时的设计是比较脆弱的。如我将ufo的速度YDELTA调整为40，程序
+结束后提示show中的cond表达式全部为false, 即升空后ws以YDELTA速度递减，到顶后变为负数
+(小于-3)，调整V大小ws甚至可能落入-3至0的区间内，从而导致bug。所以这里使用负数表示倒计时
+是不合适的。
 
 下面为书中程序代码:
 ```txt
+;; using space key to launch ufo, with counting down feature
+
 (require 2htdp/image)
 (require 2htdp/universe)
 (require 2htdp/batch-io)
 
 (define HEIGHT 300) ; distances in pixels 
 (define WIDTH  100)
-(define YDELTA 3)
+(define YDELTA 40)
  
 (define BACKG  (empty-scene WIDTH HEIGHT))
 (define ROCKET (rectangle 5 30 "solid" "red"))
@@ -294,19 +304,14 @@ ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可�
  (show 53)
  (place-image ROCKET 10 (- 53 CENTER) BACKG))
 
+(define (place x)(place-image ROCKET 10 (- x CENTER) BACKG))
+
 (define (show x)
   (cond
-    [(string? x)
-     (place-image ROCKET 10 (- HEIGHT CENTER) BACKG)]
+    [(string? x) (place HEIGHT)]
     [(<= -3 x -1)
-     (place-image (text (number->string x) 20 "red")
-                  10 (* 3/4 WIDTH)
-                  (place-image ROCKET
-                               10 (- HEIGHT CENTER)
-                               BACKG))]
-    [(>= x 0)
-     (place-image ROCKET 10 (- x CENTER) BACKG)]))
-
+     (place-image (text (number->string x) 20 "red") 10 (* 3/4 WIDTH) (place HEIGHT))]
+    [(>= x 0) (place x)]))
 
 (check-expect (launch "resting" " ") -3)
 (check-expect (launch "resting" "a") "resting")
@@ -320,7 +325,6 @@ ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可�
     [(string? x) (if (string=? " " ke) -3 x)]
     [(<= -3 x -1) x]
     [(>= x 0) x]))
-
 
 ; LRCD -> LRCD
 (define (main1 s)
@@ -346,7 +350,6 @@ ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可�
 
 
 ; ws->image
-(define (last ws) (text "UFO\nfly\naway!" 20 "red"))
 (define (end? ws) (cond 
                     [(string? ws) #f]
                     [(<= 0 ws CENTER) #t]
@@ -357,8 +360,8 @@ ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可�
   (big-bang s
     [to-draw show]
     [on-key launch]
-    [on-tick fly]
-    [stop-when end? last]
+    [on-tick fly 1]
+    [stop-when end?]
     ))
 (main2 "test")
 ```

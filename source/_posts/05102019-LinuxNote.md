@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-10-13 08:33:32
+updated: 2019-10-17 18:02:34
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -350,13 +350,35 @@ scp -r user@ip:/path/of/dir ./
 ```
 scp默认覆盖已经存在的文件和目录。
 
+## cdh 和 pushd
+vim作为文本编辑器非常强大，但很多时候还是要跳出vim到命令行进行操作，如复制文件，运行命令
+行命令等。vim中可以使用ctrlp的MRU File功能，但命令行中切换mru dir怎么办？
+我记得之前有个autojump插件(fish shell也支持), 打算装上，但在stack overflow上看到了更多
+的解决方案，相比这个简单需要完全不需要装插件。
+```txt
+1. cd -  在2个目录间进行跳转，类似于vim的ctrl+6交互文件
+2. pushd/popd  
+   下面这个是fish shell的man页面
+   The pushd function adds DIRECTORY to the top of the directory stack and makes it the 
+   current working directory. popd will pop it off and return to the original directory.
 
+   Without arguments, it exchanges the top two directories in the stack.
 
+   pushd +NUMBER rotates the stack counter-clockwise i.e. from bottom to top
+   pushd -NUMBER rotates clockwise i.e. top to bottom.
 
+   See also dirs and dirs -c.
+   You may be interested in the cdh command which provides a more intuitive way to navigate to recently visited directories.
 
-
-
-
+   经测试，bash下pushd, dirs也可以使用，cdh是fish shell自己封装的一个交互跳转页面
+```
+总体来说，我本地是fish, 用cdh比较方便，其他环境使用以下命令组合:
+```txt
+pushd /path/of/dir
+dirs -v
+pushd +n // n 是dirs -v显示的序号
+pushd    // 等同于 pushd +0
+```
 
 
 
