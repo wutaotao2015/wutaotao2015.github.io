@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-16 16:03:20
+updated: 2019-10-17 08:23:39
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -161,47 +161,59 @@ note of how to program
 (require 2htdp/universe)
 
 ; constants
-(define BGW 100)
-(define BGH 300)
+(define BGW 400)
+(define BGH 600)
 (define BG (empty-scene BGW BGH))
 (define UFO (overlay/align "middle" "bottom" 
                            (ellipse 40 10 "solid" "blue")
                            (circle 10 "solid" "red")))
-(define V 2)
+(define V 4)
+; 6 seconds
+(define C -3)
+(define CN (* C 28))
 ;(place-image/align UFO (/ BGW 2) BGH "middle" "bottom" BG)
 
 ; world state is LR(itemization)
-; LR is "starting" or the pixels from the top
+; LR is "starting" or the pixels to the bottom(it is getting bigger as ticks go)
+; or -N is countDown
+
+; ws -> image
+(define (place ws) (place-image/align UFO (/ BGW 2) ws "middle" "bottom" BG))
 
 ; ws -> ws
 ; render ws to image
 (define (render ws) 
-  (place-image/align UFO (/ BGW 2) 
-          (cond 
-           [(string? ws) BGH] 
-           [else ws] 
-          )
-          "middle" "bottom" BG))
+  (cond
+    [(string? ws) (place BGH)]
+    [(> ws 0) (place (- BGH ws))]
+    [else (place-image 
+            (text (number->string ws)
+                  20 "red") 100 100 (place BGH))]
+    )
+)
 (check-expect (render "s") (place-image/align UFO (/ BGW 2) BGH  "middle" "bottom" BG))
-(check-expect (render 30) (place-image/align UFO (/ BGW 2) 30  "middle" "bottom" BG))
+(check-expect (render 30) (place-image/align UFO (/ BGW 2) (- BGH 30) "middle" "bottom" BG))
+(check-expect (render CN) (place-image (text  (number->string CN) 20 "red") 100 100 (place BG)))
 
 ; ws -> ws
 ; tick handler "stop" is static, number means ufo is getting up
 (define (tock ws) 
           (cond 
            [(string? ws) ws] 
-           [else (- ws V)] 
+           [(<= ws 0) (+ ws 1)]
+           [else (+ ws V)] 
           )
 )
 (check-expect (tock "s") "s")
-(check-expect (tock 10) (- 10 V))
+(check-expect (tock CN) (+ CN 1))
+(check-expect (tock 10) (+ 10 V))
 
 ; ws->ws
 ; only when ufo is not launching, press space key will launch ufo
 (define (kh ws key) 
-  (if (and (string=? key " ") (string? ws)) BGH ws))
+  (if (and (string=? key " ") (string? ws)) CN ws))
 
-(check-expect (kh "s" " ") BGH)
+(check-expect (kh "s" " ") CN)
 (check-expect (kh "s" "r") "s")
 (check-expect (kh 1 "r") 1)
 (check-expect (kh 6 " ") 6)
@@ -212,12 +224,16 @@ note of how to program
 (define (end? ws) 
           (cond 
            [(string? ws) #f] 
-           [(<= ws 0) #t] 
+           [(>= ws BGH) #t] 
            [else #f] 
           ))
 (check-expect (end? "s") #f)
-(check-expect (end? -1) #t)
+(check-expect (end? -6) #f)
 (check-expect (end? 23) #f)
+(check-expect (end? (+ 1 BGH)) #t)
+
+; ws->image
+(define (last ws) (text "UFO\nfly\naway!" 20 "red"))
 
 ; ws -> ws 
 ; if main function here has no parameter, it is just a constant, using (define main ...),
@@ -227,14 +243,125 @@ note of how to program
   (big-bang "starting"
     [on-tick tock]
     [to-draw render]
-    [stop-when end?]
+    [stop-when end? last]
     [on-key kh]
     ))
 
-; (main "go")
+(main "go")
 ```
+通过阅读后面教程的实现，发现了自己编程的一些问题:
+
+1. state状态对象是变量性质的最小集，它集成了按空格键，倒计时，升空这3种状态，
+即需要在设计时就将变量通过泛化(itemization)的形式纳入到world state中来。这一点在实现倒计时
+功能时没有考虑到，所以刚开始实现较困难。
+
+2. 实现方法时应根据不同的条件先写单元测试(check-expect)(在交互区测试语句), 
+再根据不同条件编写cond表达式，最后组合成方法的实现，这种方式最稳妥，其实也是最快的。
+
+3. 区间的边界情况我的程序中没有加以判断，如倒计时为-1时需要将ws变为height.但由于我考虑的是
+ws从负数一直递增到BGH,中间没有转折。从下面书中的示例可以看出先递增后递减也是可以实现的
+(end? 方法加以判断即可，本质还是因为ws的区间范围是明确划分的，所以先递增后递减也行)。
+但书中也提出，使用负数作为倒计时的设计是比较脆弱的。
+
+下面为书中程序代码:
+```txt
+(require 2htdp/image)
+(require 2htdp/universe)
+(require 2htdp/batch-io)
+
+(define HEIGHT 300) ; distances in pixels 
+(define WIDTH  100)
+(define YDELTA 3)
+ 
+(define BACKG  (empty-scene WIDTH HEIGHT))
+(define ROCKET (rectangle 5 30 "solid" "red"))
+ 
+(define CENTER (/ (image-height ROCKET) 2))
+
+; An LRCD (for launching rocket countdown) is one of:
+; – "resting"
+; – a Number between -3 and -1
+; – a NonnegativeNumber 
+; interpretation a grounded rocket, in countdown mode,
+; a number denotes the number of pixels between the
+; top of the canvas and the rocket (its height)
+
+(check-expect
+ (show HEIGHT)
+ (place-image ROCKET 10 (- HEIGHT CENTER) BACKG))
+ 
+(check-expect
+ (show 53)
+ (place-image ROCKET 10 (- 53 CENTER) BACKG))
+
+(define (show x)
+  (cond
+    [(string? x)
+     (place-image ROCKET 10 (- HEIGHT CENTER) BACKG)]
+    [(<= -3 x -1)
+     (place-image (text (number->string x) 20 "red")
+                  10 (* 3/4 WIDTH)
+                  (place-image ROCKET
+                               10 (- HEIGHT CENTER)
+                               BACKG))]
+    [(>= x 0)
+     (place-image ROCKET 10 (- x CENTER) BACKG)]))
 
 
+(check-expect (launch "resting" " ") -3)
+(check-expect (launch "resting" "a") "resting")
+(check-expect (launch -3 " ") -3)
+(check-expect (launch -1 " ") -1)
+(check-expect (launch 33 " ") 33)
+(check-expect (launch 33 "a") 33)
+
+(define (launch x ke)
+  (cond
+    [(string? x) (if (string=? " " ke) -3 x)]
+    [(<= -3 x -1) x]
+    [(>= x 0) x]))
+
+
+; LRCD -> LRCD
+(define (main1 s)
+  (big-bang s
+    [to-draw show]
+    [on-key launch]))
+
+; LRCD -> LRCD
+; raises the rocket by YDELTA if it is moving already 
+ 
+(check-expect (fly "resting") "resting")
+(check-expect (fly -3) -2)
+(check-expect (fly -2) -1)
+(check-expect (fly -1) HEIGHT)
+(check-expect (fly 10) (- 10 YDELTA))
+(check-expect (fly 22) (- 22 YDELTA))
+ 
+(define (fly x)
+  (cond
+    [(string? x) x]
+    [(<= -3 x -1) (if (= x -1) HEIGHT (+ x 1))]
+    [(>= x 0) (- x YDELTA)]))
+
+
+; ws->image
+(define (last ws) (text "UFO\nfly\naway!" 20 "red"))
+(define (end? ws) (cond 
+                    [(string? ws) #f]
+                    [(<= 0 ws CENTER) #t]
+                    [else false]))
+
+; LRCD -> LRCD
+(define (main2 s)
+  (big-bang s
+    [to-draw show]
+    [on-key launch]
+    [on-tick fly]
+    [stop-when end? last]
+    ))
+(main2 "test")
+```
 
 
 ##
