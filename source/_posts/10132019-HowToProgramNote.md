@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-20 20:57:55
+updated: 2019-10-22 18:15:05
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -437,7 +437,59 @@ of person, 具体语法为(house-price (person-house p)).当层级较多时，�
 5. 编写代码实现方法。
 6. 进行测试。
 
+### 使用vim和tmux搭建编写运行Racket环境
+学(玩)Racket有一段时间了，跟着教程写了不少习题程序，我通常是用vim写好后在drracket中运行，
+这也没太大问题，就是Racket编写括号和括号跳转较麻烦(括号键现在按的很熟了shift+9, 不过
+%号还是够呛...),就想到在网上搜索有没有用vim来写Racket的文章。果然找到了，而且意外找到了
+SICP的LaTex精美排版电子书和H5网站，这书现在还没学习(看完HowToProgram可以看看)，看网页效果
+非常精美，也算意外之福, 由此可见网上好的资源如果搜到了，还是有很多的。
 
+vim环境安装，链接为[crash.net.nz](https://crash.net.nz/posts/2014/08/configuring-vim-for-sicp/)
+
+1. 在应用文章前，我先将%改为,a键，.vimrc中加入:
+```txt
+noremap <Leader>a %
+noremap <Leader>a %
+```
+
+2. 在命令中运行命令`racket -i -p neil/sicp -l xrepl`， neil/sicp是对SICP书进行支持的第三方
+库，xrepl是Racket extended REPL模式。
+
+3. 安装tmux.
+`sudo apt install tmux`.
+基本命令:
+```txt
+; create session
+tmux new -s sessionName
+
+; list all sessions
+tmux ls 
+
+; detach from session
+prefix + d
+
+; attach to tmux  
+tmux attach -t sessionName
+
+; windows operation
+p+c p+& p+p/n/l p+w p+, p+f 
+
+; panes operation
+p+"/% p+x p+o p+ctrl+up/down p+alt+up/down 
+
+; tmux kill server
+tmux kill-server
+```
+修改默认前缀快捷键ctrl+b为ctrl+a, 修改~/.tmux.conf
+```txt
+# remap prefix to Control + a
+set -g prefix C-a
+unbind C-b
+bind C-a send-prefix
+```
+保存后即可，对于已有的session使用命令`tmux source-file ~/.tmux.conf`使配置生效。
+
+6. 使用额外脚本对lisp文件进行格式化，下载scmindent.rkt.
 
 
 
