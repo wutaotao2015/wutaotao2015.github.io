@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-22 18:15:05
+updated: 2019-10-22 23:10:11
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -449,7 +449,9 @@ vim环境安装，链接为[crash.net.nz](https://crash.net.nz/posts/2014/08/con
 1. 在应用文章前，我先将%改为,a键，.vimrc中加入:
 ```txt
 noremap <Leader>a %
-noremap <Leader>a %
+vnoremap <Leader>a %
+   " note that using split can swap 4 file totally, 2 files for each pane
+noremap <Leader>g <C-^>
 ```
 
 2. 在命令中运行命令`racket -i -p neil/sicp -l xrepl`， neil/sicp是对SICP书进行支持的第三方
@@ -488,9 +490,28 @@ unbind C-b
 bind C-a send-prefix
 ```
 保存后即可，对于已有的session使用命令`tmux source-file ~/.tmux.conf`使配置生效。
+注: 不应当修改为ctrl+a, 与全选冲突，弃用！
 
 6. 使用额外脚本对lisp文件进行格式化，下载scmindent.rkt.
+.vimrc中配置
+```txt
+autocmd filetype lisp,scheme,art setlocal equalprg=scmindent.rkt
+```
+使用ggVG=即可。
 
+7. 安装vim插件
+```txt
+Plugin 'tpope/vim-surround'
+Plugin 'sjl/tslime.vim'
+Plugin 'kien/rainbow_parentheses.vim'
+
+" tslime {{{
+let g:tslime_ensure_trailing_newlines = 1
+let g:tslime_normal_mapping = '<leader>m'
+let g:tslime_visual_mapping = '<leader>m'
+let g:tslime_vars_mapping = '<leader>M'
+" }}}
+```
 
 
 ##
