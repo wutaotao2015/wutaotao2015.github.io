@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-10-17 18:02:34
+updated: 2019-10-24 17:55:45
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -379,6 +379,48 @@ dirs -v
 pushd +n // n 是dirs -v显示的序号
 pushd    // 等同于 pushd +0
 ```
+
+## .bashrc和.bash_profile
+由于我想使用xcape修改键盘，按网上博客将相关命令代码放在.bashrc中，代码如下:
+```txt
+# Run xcape once.
+if [ -z $XCAPE ];then
+  export XCAPE=1
+  /usr/bin/xcape -e 'Super_L=Escape;Shift_R=parenleft' 
+fi
+```
+可以看到，它通过判断XCAPE变量长度是否为0进行操作，如果为空，就执行xcape命令，否则就不会重复
+执行。之前没在意这点，后来发现多次打开终端terminator窗口，发现按右shift产生了多个括号，
+开始以为是xcape命令的问题，后来"不小心"发现有多个xcape进程同时运行！
+
+问题就出在.bashrc中没有实现需要的export出全局变量的功能！那么这段代码应该放在哪里？
+
+寻找了好久，试了/etc/profile, .profile, `.bash_profile`, /etc/init.d/rc.local, .xsessionrc,
+全都不行！
+
+经网上资料查找到bash manual, 其中对它们的区别作出了说明。这里翻译一下bash manual相关内容。
+```txt
+1. 通过登录的交互式shell登录， 或是--login参数登录时:
+ 先读取/etc/profile,再是`~/.bash_profile`,`~/.bash_login`, ~/.profile.会顺序执行。执行
+ exit命令退出时，会尝试执行`~/.bash_logout`.
+2. 如果是交互式非登录方式(一般的默认方式).
+ 会执行.bashrc, 即打开一个终端实例，即会执行一次.bashrc, 通常推荐在`.bash_profile`中包含
+ 执行.bashrc文件，为
+```txt
+  if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
+```
+3. 当不是交互式执行bash时，如执行脚本时
+ 终端会执行`$BASH_ENV`变量，执行过程等同与执行以下命令:
+```txt
+  if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
+```
+4. 通过sh命令执行命令
+基本等同于以上步骤，如果是login或--login的终端中执行的sh命令，会读取/etc/profile, ~/.profile;
+如果是交互式shell, 会读取变量ENV.非交互式的Shell执行sh命令不会尝试读取任何其他的启动文件，
+如脚本中的sh命令。
+```
+由上可知，每次打开新的终端窗口，都会执行.bashrc文件，所以我将想只在登录时执行一次的代码
+放到.bash_profile中，可以登录后手动source .bash_profile, 但不能重复执行。
 
 
 
