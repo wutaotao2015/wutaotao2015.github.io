@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-10-24 17:55:45
+updated: 2019-10-25 07:24:15
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -401,19 +401,24 @@ fi
 经网上资料查找到bash manual, 其中对它们的区别作出了说明。这里翻译一下bash manual相关内容。
 ```txt
 1. 通过登录的交互式shell登录， 或是--login参数登录时:
- 先读取/etc/profile,再是`~/.bash_profile`,`~/.bash_login`, ~/.profile.会顺序执行。执行
- exit命令退出时，会尝试执行`~/.bash_logout`.
+ 先读取/etc/profile,再是`~/.bash_profile`,`~/.bash_login`, ~/.profile.会顺序查找执行第一个
+ 找到的可执行文件，剩下的会被忽略。执行exit命令退出时，会尝试执行`~/.bash_logout`.
+ 有些shell没有按照这个顺序查找，如dash,它只看.profile, 所以如果使用其他shell作为
+ login shell时(如使用了命令chsh -s), 这时应当修改.profile才会生效。
+
 2. 如果是交互式非登录方式(一般的默认方式).
  会执行.bashrc, 即打开一个终端实例，即会执行一次.bashrc, 通常推荐在`.bash_profile`中包含
  执行.bashrc文件，为
 ```txt
   if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
 ```
+
 3. 当不是交互式执行bash时，如执行脚本时
  终端会执行`$BASH_ENV`变量，执行过程等同与执行以下命令:
 ```txt
   if [ -n "$BASH_ENV" ]; then . "$BASH_ENV"; fi
 ```
+
 4. 通过sh命令执行命令
 基本等同于以上步骤，如果是login或--login的终端中执行的sh命令，会读取/etc/profile, ~/.profile;
 如果是交互式shell, 会读取变量ENV.非交互式的Shell执行sh命令不会尝试读取任何其他的启动文件，
