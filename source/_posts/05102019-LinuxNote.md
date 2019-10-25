@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-10-25 07:24:15
+updated: 2019-10-25 17:31:17
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -427,6 +427,28 @@ fi
 由上可知，每次打开新的终端窗口，都会执行.bashrc文件，所以我将想只在登录时执行一次的代码
 放到.bash_profile中，可以登录后手动source .bash_profile, 但不能重复执行。
 
+注: /etc/environment是适用于所有用户的，归root用户管理，需要sudo进行修改，不应当修改它，
+它通常只包含一行:
+```txt
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+```
+如果只适用与当前用户的环境变量应当放在.profile中，如果想适用到所有用户，也不应当直接修改
+/etc/profile, 而是应当在/etc/profile.d/下新建可执行的XX.sh脚本。
+
+我使用的xmonad,通过以上方法新建脚本，在其中export相应的环境变量，发现xmonad也能获取到相应的
+环境变量，这样就不用额外执行对应的脚本了。同时在.xsessionrc执行xcape ... & 也能正确响应，
+成功！
+
+注: .xsessionrc在每次X的session启动时都会执行，而/etc/init.d/rc.local说是只有第一次启动时
+会执行，后面xserver重启时就不会执行(待测试)。
+
+## Teminator主题精选
+以下是我精选的Terminator主题，来源是[github](https://github.com/EliverLara/terminator-themes)
+```txt
+Cai, Cobalt2, Dracula(default), Elio, Glacier, Homebrew, Jellybeans, Monokai Vivid, 
+Pandora, pro
+```
+字体选择自带的Nimbus Mono L Bold 13即可。
 
 
 <hr />
