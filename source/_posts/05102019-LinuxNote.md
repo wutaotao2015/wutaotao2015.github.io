@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
 abbrlink: 1604d5df
-updated: 2019-10-25 17:31:17
+updated: 2019-10-26 11:34:56
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -449,6 +449,33 @@ Cai, Cobalt2, Dracula(default), Elio, Glacier, Homebrew, Jellybeans, Monokai Viv
 Pandora, pro
 ```
 字体选择自带的Nimbus Mono L Bold 13即可。
+注: terminator copy and paste: 
+ctrl + shift + c
+ctrl + shift + v
+这适用于提取fish命令到剪切板中。
+
+## kitty and fira-code
+昨天刚刚找了很多Terminator的主题,今天想找到能够区分1和l(lowercase of L)的字体，结果发现了
+fira-code! 感觉非常神奇，但是Terminator还不能支持它，linux上可以装kitty支持它。
+但kitty虽然速度快，但目前还非常小众，没有Terminator的精美样式。
+所以我先装下网上推荐的input字体看看效果，毕竟我本来是要装字体的....
+清晰的字体要能明显区分以下内容:
+```txt
+1 l
+O 0
+S 5
+0 o
+```
+ubuntu上安装过程:
+```txt
+1. 在input页面自己定制字体，尤其是上面的l, i部分
+2. 下载自定义的input包，里面除了自定义的字体包外，有一个可以修改自定义的python脚本，先不管它。
+3. mkdir ~/.fonts
+4. cp -r ~/Downloads/input/* ~/.fonts   // 将所有的ttf格式字体拷贝到.fonts目录下
+5. fc-cache -f -v   // 强制刷新字体缓存，使得新装字体生效 
+6. 在teminator中选择input bold字体，done!
+```
+
 
 
 <hr />
