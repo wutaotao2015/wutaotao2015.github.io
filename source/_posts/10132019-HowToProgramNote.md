@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg'
-updated: 2019-10-22 23:10:11
+updated: 2019-10-27 15:39:50
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -512,6 +512,18 @@ let g:tslime_visual_mapping = '<leader>m'
 let g:tslime_vars_mapping = '<leader>M'
 " }}}
 ```
+
+### 在泛化(itemization)中使用对象(structure)
+当world中有多个独立的对象时，某些对象出现时机可能是动态的，如书中的坦克，UFO和导弹的例子，
+这时的数据定义可以使用泛化来表示2个对象的世界和3个对象的世界状态。
+
+泛化——这个东西很神奇，前面提到过，它就表示函数中的一个变量，其类型不受限制，使用时根据
+具体的值具有不同的类型，如火箭倒计时发射程序中的number类型，string类型。这里将这些基本类型
+替换为structure对象类型，实现了更高的控制，更明确的表示出itemization是一个万花筒，可以真正
+变成任何自己需要的对象。
+
+
+
 
 
 ##
