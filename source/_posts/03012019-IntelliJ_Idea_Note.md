@@ -3,7 +3,7 @@ title: IntelliJ Idea 简明笔记
 categories: Tool
 tags:
   - IntelliJ Idea
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg'
+
 abbrlink: 481236cd
 updated: 2019-09-20 15:35:09
 date: 2019-03-01 10:21:17

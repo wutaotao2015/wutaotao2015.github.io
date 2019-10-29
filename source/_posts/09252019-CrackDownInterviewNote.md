@@ -3,7 +3,7 @@ title: CrackDownInterviewNote
 categories: Interview
 tags:
   - Interview
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190925_1.jpg'
+
 updated: 2019-09-28 22:41:04
 date: 2019-09-25 22:02:43
 abbrlink:

@@ -6,7 +6,7 @@ tags:
   - SpringCloud
   - Linux
   - Tomcat
-image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901301.jpg
+
 updated: 2019-05-07 11:31:48
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17

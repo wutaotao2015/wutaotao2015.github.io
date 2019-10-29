@@ -4,7 +4,7 @@ categories: Java
 tags:
   - Java
   - C++
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190917_1.jpg'
+
 abbrlink: 65ea4e77
 updated: 2019-09-25 14:27:27
 date: 2019-09-17 16:26:16

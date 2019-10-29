@@ -4,7 +4,7 @@ categories: Database
 tags:
   - DataBase
   - Mysql
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190304_1.jpg'
+
 abbrlink: 262e0be1
 updated: 2019-03-06 23:11:19
 date: 2019-03-04 21:19:30

@@ -6,7 +6,7 @@ tags:
   - JDK与JRE
   - Path Variable
   - PostgreSQL
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901312.jpg'
+
 abbrlink: fe2ee907
 updated: 2019-03-01 10:20:23
 date: 2019-02-23 21:03:08

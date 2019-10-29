@@ -3,7 +3,7 @@ title: MacOS 重装笔记
 categories: Mac
 tags:
   - Mac
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190415_1.jpg'
+
 abbrlink: 8b2fd91d
 updated: 2019-04-28 23:06:49
 date: 2019-04-14 15:30:26

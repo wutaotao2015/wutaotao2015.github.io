@@ -5,7 +5,7 @@ tags:
   - Java
   - Char with UTF-16
   - C++
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190512_1.jpg'
+
 abbrlink: 2a1ddb5b
 updated: 2019-09-17 16:31:05
 date: 2019-05-12 20:10:28

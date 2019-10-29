@@ -4,7 +4,7 @@ categories: Linux
 tags:
   - Linux
   - RHEL 7
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg'
+
 abbrlink: 1604d5df
 updated: 2019-10-26 11:34:56
 date: 2019-05-10 09:57:10

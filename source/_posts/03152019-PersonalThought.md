@@ -3,7 +3,7 @@ title: 个人经验总结散记
 categories: Thought
 tags:
   - Thought
-image: 'http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190315_1.jpg'
+
 abbrlink: b703434b
 updated: 2019-03-15 20:33:06
 date: 2019-03-15 20:05:01

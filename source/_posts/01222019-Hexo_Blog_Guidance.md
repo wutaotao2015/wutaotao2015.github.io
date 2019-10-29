@@ -11,8 +11,8 @@ tags:
   - Travis
   - Git submodule
 categories: Hexo
-image: http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/201901293.jpg
-updated: 2019-02-26 21:29:53
+
+updated: 2019-10-29 16:11:38
 abbrlink: 938b0578
 date: 2019-01-22 21:51:18
 ---
@@ -272,7 +272,7 @@ windows和Mac系统都是大小写不敏感的系统，Hexo在生成tags和categ
 ### git命令
 ```txt
 git diff   // workspace and index's diff
-git diff head  // workspace and repo's diff
+git diff HEAD  // workspace and repo's diff
 git diff --cached  // index and repo's diff
 git diff --name-only  // show the changed file names
 git diff <system file path>  // show the file's diff
