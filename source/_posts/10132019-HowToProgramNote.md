@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-10-29 11:14:42
+updated: 2019-10-30 16:14:24
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -570,6 +570,11 @@ let g:tslime_vars_mapping = '<leader>M'
 知识早忘了...), 也可以理解为它们是按y=x这条直线对称的。如y=x^2和x=sqrt(x)就满足这样的条件，
 f(g(x)) == g(f(x)) = x.从这里也可以看出如何求反函数(inverse function), 将x,y位置互换，再
 对y进行求值即可...汗！
+
+spaceWar程序总结:
+1. 单个属性的structure,如(define-struct ufo [p])是没有必要的，单个属性的structure可以用
+该属性类型直接取代。这里ufo即等同于posn类型，没有必要额外定义structure.
+如后面的(posn-x (ufo-p (aim-ufo aim1)))完全可以直接写为(posn-x (aim-ufo aim1))。
 
 
 
