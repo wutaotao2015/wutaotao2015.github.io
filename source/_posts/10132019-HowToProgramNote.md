@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-10-30 16:14:24
+updated: 2019-10-31 17:52:36
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -575,6 +575,22 @@ spaceWar程序总结:
 1. 单个属性的structure,如(define-struct ufo [p])是没有必要的，单个属性的structure可以用
 该属性类型直接取代。这里ufo即等同于posn类型，没有必要额外定义structure.
 如后面的(posn-x (ufo-p (aim-ufo aim1)))完全可以直接写为(posn-x (aim-ufo aim1))。
+
+2. 对于包含不同数据类型(包括基本类型和structure)的泛化的数据定义，通过注释来说明它的取值范围
+明显是没有约束力，容易被忽略和违反约定。所以我们可以对于这样的数据定义自定义一个predicate
+方法来进行约束。如missileOrNot的泛化可以定义如下方法:
+```txt
+ (define (mis? m) (cond
+                    [(or (false? m) (posn? m)) #t]
+                    [else #f]
+                  ))
+```
+对mis进行处理时，可以加上该predicate判断，属于防御性编程的一部分，让程序更健壮, 同时在
+开发中这样做利于在复杂的程序中定位到数据类型不匹配的问题。
+在big-bang表达式中有一个check-with从句(类似on-tick)，它的参数即可以接受这样一个wordstate?
+的predicate方法，使得程序在运行中类型出错能及时停止程序运行并给出提示的功能。这在某种程序
+上其实弥补了world program无法分步调试的缺陷。
+
 
 
 
