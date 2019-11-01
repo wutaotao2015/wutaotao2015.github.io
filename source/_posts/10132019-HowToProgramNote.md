@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-10-31 17:52:36
+updated: 2019-11-01 17:13:42
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -591,11 +591,12 @@ spaceWar程序总结:
 的predicate方法，使得程序在运行中类型出错能及时停止程序运行并给出提示的功能。这在某种程序
 上其实弥补了world program无法分步调试的缺陷。
 
+## 任意多的数据
+第一章讲完了基本数据类型和结构(对象), 这一章开始讲集合。
+因为对象的数量是对象的外部性质，不属于对象本身的属性，所以这就涉及到数据结构的问题。
+Racket也正是通过上面的data definition(其实也可以翻译为数据结构)来实现的集合。
+同java中的内置数组不同，Racket使用了递归定义(自引用)实现了list集合。
 
-
-
-
-##
 ##
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20191013_1.jpg" class="full-image" />
