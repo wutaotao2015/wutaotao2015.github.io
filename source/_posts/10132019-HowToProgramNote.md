@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-11-01 17:13:42
+updated: 2019-11-01 22:06:14
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -456,6 +456,13 @@ noremap <Leader>g <C-^>
 
 2. 在命令中运行命令`racket -i -p neil/sicp -l xrepl`， neil/sicp是对SICP书进行支持的第三方
 库，xrepl是Racket extended REPL模式。
+ 2019-11-01 21:39:01 添加:
+ 加载自己编写的模块程序后，可以同drracket一样在交互区执行命令查看相应结果的命令行为
+ `racket -it self.rkt -l xrepl`, 进入后可以使用`,h`查看xrepl的相关命令，`,e`进入自己模块的
+ 内部命令空间，这时就可以获取到对应的变量值了。
+ 其中，通过,h可以看到使用命令,install!可以将xrepl设置为默认选项，其实就是将
+`(require xrepl)`写入~/.racketrc文件中。这样以上命令可以简化为`racket -it xxx.rkt`即可直接
+使用xrepl.
 
 3. 安装tmux.
 `sudo apt install tmux`.
