@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-11-05 16:50:28
+updated: 2019-11-06 07:02:49
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -651,8 +651,8 @@ Racket也正是通过上面的data definition(其实也可以翻译为数据结�
 ; N string -> list
 ;  get a N's string list
 (define (replist n str) (cond
-                          [(= n 0) '()]
-                          [else (cons str (replist (- n 1) str))]))
+                          [(zero? n) '()]
+                          [(positive? n) (cons str (replist (sub1 n) str))]))
 
 (check-expect (replist a "wtt") (cons "wtt" (cons "wtt" (cons "wtt" '()))))
 (check-expect (replist b "cll") (cons "cll" (cons "cll" '())))
@@ -660,6 +660,20 @@ Racket也正是通过上面的data definition(其实也可以翻译为数据结�
 ```
 从这里自然数的定义也可以看出，这种自引用的机制确实实现了书中的章节题目"无限大的数据"。
 本质上还是利用了递归的无限性从而得到无限大的数据集合。
+
+注：racket中没有方法重载的概念，重复定义相同的方法名会报错。
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
