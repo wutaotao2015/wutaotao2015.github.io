@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-11-07 17:27:55
+updated: 2019-11-19 10:24:29
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -672,6 +672,16 @@ class Rd {
 }
 ```
 
+### 常用的list集合方法
+这里列举出BSL中已经封装好有用的list集合方法:
+```txt
+(empty? null)  // null is '()
+(list 2 4 6)   // simplify the list's initial step
+(length (cons 2 (cons 3 (cons 4 '()))))   // list size
+(member? 2 (cons 2 '()))   // list contains 
+(make-list 4 "wtt")       // quickly make a list with same elements 
+(reverse (list 1 2 3))   // reverse a list
+```
 
 
 
