@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 
-updated: 2019-11-19 10:24:29
+updated: 2019-11-21 07:59:47
 date: 2019-10-13 22:14:01
 abbrlink:
 ---
@@ -681,6 +681,7 @@ class Rd {
 (member? 2 (cons 2 '()))   // list contains 
 (make-list 4 "wtt")       // quickly make a list with same elements 
 (reverse (list 1 2 3))   // reverse a list
+(append (list 2 3) (list 4 5)) // merge lists as arguments order
 ```
 
 
