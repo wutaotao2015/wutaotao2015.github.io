@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2019-10-26 11:34:56
+updated: 2019-12-06 07:21:07
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -475,6 +475,27 @@ ubuntu上安装过程:
 5. fc-cache -f -v   // 强制刷新字体缓存，使得新装字体生效 
 6. 在teminator中选择input bold字体，done!
 ```
+
+## vmware workstation 虚拟机减小硬盘容量(decrease vmware workstation hard disk size)
+vmware虚拟机扩大硬盘容量非常简单，直接在设置中扩容即可，但想要减小容量确不能直接操作。
+在网上搜索到quora中有人提供了3种方法。
+1. vSphere Manager. 经搜索每找到对应的工具
+2. vmware converter. vmware推荐工具, 我最后采用的方法
+3. qemu-img工具。它是属于QEMU的工具。
+
+第3种方法看起来最简单方便，经查看是对单个vmdk包进行大小修改，我的虚拟机中有好几个vmdk文件，
+所有操作起来有一定风险。
+
+第2种方法是官方工具，但使用下来主要是速度非常慢，我失败了1次，第2次成功，前后接近2小时多
+时间才得到转换后的包。下面记录下过程和坑。
+1. 下载vmware converter, 我的版本是6.2.0-8466193.exe版本。支持转换win 10.
+2. 需要关闭windows实时防护等，我自己是关闭所有防火墙。否则转换中会失败。
+3. 用管理员运行converter, 否则选择local merchine时报错permission not allowed.
+4. 开始转换，source 选local machine, destination选vmware workstation, 这里只能选到
+vmware workstation 11/12. 在后面的edit界面中重新选择磁盘大小。
+5. 转换结束，因为我的workstation是15版本，直接启动始终转圈，后面看到有个upgrade选项，
+果断点击clone 升级。
+
 
 
 
