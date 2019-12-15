@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2019-12-06 07:21:07
+updated: 2019-12-15 15:17:34
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -496,8 +496,109 @@ vmware workstation 11/12. 在后面的edit界面中重新选择磁盘大小。
 5. 转换结束，因为我的workstation是15版本，直接启动始终转圈，后面看到有个upgrade选项，
 果断点击clone 升级。
 
+## xfce使用快捷键将窗口在多显示器之间移动
+本来我是用xmonad的，经过不少折腾，基本上能流畅使用了，但xmonad有个问题: 即如果在vim中使用
+如ctrlp插件快速切换多个文本文件时，vim会明显卡住，导致屏幕显示内容出现问题，该问题后来
+没有找到合适的解决方法，个人感觉和xmonad的标准输入记录有关(即上面显示当前工作区和内容的区域),
+怀疑是快速切换时造成xmonad的输入管道堵塞引起(纯粹个人猜测，因为目前还没有去专门学习haskell)。
+Anyway, 后来发现wayland和xfce没有vim的该问题，快速切换时非常流畅，没有卡屏现象; 而且又发现
+xfce提供了windows manager设置功能，完全可以将xmonad的快捷键照搬到其中，非常方便，而且它还
+可以删减工作区(alt + insert/delete即可)，这也是我想要的一个功能，xmonad目前默认9个，想减少
+还没有找到合适方法(同样，没有专门学习haskell). 
 
+那么最后的问题是，如何在xfce中实现多显示屏之间的窗口移动和焦点切换？
+xfce本身没有支持，网上有提供脚本实现，这里记录下尝试过程。
+1. sudo apt install xdotool wmctrl
+2. vi moveWindow.sh
+```txt
+#!/bin/bash
+#
+# Move the current window to the next monitor.
+#
+# Also works only on one X screen (which is the most common case).
+#
+# Props to
+# http://icyrock.com/blog/2012/05/xubuntu-moving-windows-between-monitors/
+#
+# Unfortunately, both "xdotool getwindowgeometry --shell $window_id" and
+# checking "-geometry" of "xwininfo -id $window_id" are not sufficient, as
+# the first command does not respect panel/decoration offsets and the second
+# will sometimes give a "-0-0" geometry. This is why we resort to "xwininfo".
 
+screen_width=$(xdpyinfo | awk -F" |x" '/dimensions:/ { print $7 }')
+screen_height=$(xdpyinfo | awk -F" |x" '/dimensions:/ { print $8 }')
+window_id=$(xdotool getactivewindow)
+
+case $1 in
+    -l )
+        display_width=$((screen_width / 3 * 2)) ;;
+    -r )
+        display_width=$((screen_width / 3)) ;;
+esac
+
+# Remember if it was maximized.
+window_state=$(xprop -id $window_id _NET_WM_STATE | awk '{ print $3 }')
+
+# Un-maximize current window so that we can move it
+wmctrl -ir $window_id -b remove,maximized_vert,maximized_horz
+
+# Read window position
+x=$(xwininfo -id $window_id | awk '/Absolute upper-left X:/ { print $4 }')
+y=$(xwininfo -id $window_id | awk '/Absolute upper-left Y:/ { print $4 }')
+
+# Subtract any offsets caused by window decorations and panels
+x_offset=$(xwininfo -id $window_id | awk '/Relative upper-left X:/ { print $4 }')
+y_offset=$(xwininfo -id $window_id | awk '/Relative upper-left Y:/ { print $4 }')
+x=$((x - x_offset))
+y=$((y - y_offset))
+
+# Fix Chromium app view issue of small un-maximized size
+width=$(xdotool getwindowgeometry $window_id | awk -F" |x" '/Geometry:/ { print $4 }')
+if [ "$width" -lt "150" ]; then
+  display_width=$((display_width + 150))
+fi
+
+# Compute new X position
+new_x=$((x + display_width))
+# Compute new Y position
+new_y=$((y + screen_height))
+
+# If we would move off the right-most monitor, we set it to the left one.
+# We also respect the window's width here: moving a window off more than half its width won't happen.
+if [ $((new_x + width / 2)) -gt $screen_width ]; then
+  new_x=$((new_x - screen_width))
+fi
+
+height=$(xdotool getwindowgeometry $window_id | awk -F" |x" '/Geometry:/ { print $5 }')
+if [ $((new_y + height / 2)) -gt $screen_height ]; then
+  new_y=$((new_y - screen_height))
+fi
+
+# Don't move off the left side.
+if [ $new_x -lt 0 ]; then
+  new_x=0
+fi
+
+# Don't move off the bottom
+if [ $new_y -lt 0 ]; then
+  new_y=0
+fi
+
+# Move the window
+xdotool windowmove $window_id $new_x $new_y
+
+# Maintain if window was maximized or not
+if [ "${window_state}" = "_NET_WM_STATE_MAXIMIZED_HORZ," ]; then
+    wmctrl -ir $window_id -b add,maximized_vert,maximized_horz
+fi
+```
+3. chmod +x moveWindow.sh
+4. application -> settings -> keyboard -> add
+command: sh /home/tao/Documents/moveWindow.sh
+shortcut: super + shift + o
+
+经测试，在双屏显示中完美生效，多次按键相同窗口在左右显示屏中来回切换。
+网上还有针对三屏显示器的改进脚本，这里不再记述。
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />
