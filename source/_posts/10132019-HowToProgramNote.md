@@ -5,10 +5,9 @@ tags:
   - Method
   - Racket
   - Lisp
-
+abbrlink: fff758e4
 updated: 2019-12-04 07:38:53
 date: 2019-10-13 22:14:01
-abbrlink:
 ---
 note of how to program
 <!-- more -->
