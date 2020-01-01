@@ -6,7 +6,7 @@ tags:
   - Racket
   - Lisp
 abbrlink: fff758e4
-updated: 2019-12-04 07:38:53
+updated: 2020-01-01 19:29:23
 date: 2019-10-13 22:14:01
 ---
 note of how to program
@@ -704,6 +704,17 @@ class Rd {
 经测试，对数列进行排序，由于list本身的自引用特性(first, rest方法的使用)，很容易就实现了
 插入排序算法。
 
+注： 经编写prefixes list练习题发现, list和cons的区别：
+```txt
+(cons (list "a") (list "b"))  -> '(("a") "b")
+(list (list "a") (list "b"))  -> '(("a") ("b"))
+```
+可以看到，使用cons时后面的"b"是以元素的形式直接链接到最终结果中，说明cons适合作为同级元素
+连接; 而使用list时后面的"b"被括号包裹起来是作为一个list集合链接到结果中，它是一个整体单元。
+
+而prefixes练习中，`(add-head (first ls) (prefixes (rest ls)))`递归部分明显其中的元素需要被
+填充进来，它不能作为一个整体，所以它需要使用cons与前面的(list (first ls))进行链接。
+即最终结果为`(cons  (list (first ls))  (add-head (first ls) (prefixes (rest ls))) )`.
 
 ### 
 ### 
