@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2019-12-15 15:17:34
+updated: 2020-01-06 15:50:50
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -599,6 +599,14 @@ shortcut: super + shift + o
 
 经测试，在双屏显示中完美生效，多次按键相同窗口在左右显示屏中来回切换。
 网上还有针对三屏显示器的改进脚本，这里不再记述。
+
+## vmware 合并多个vmdk文件
+vmware有个vmware-vdiskmanager工具, mac上的fusion中路径是
+`/Applications/VMware\ Fusion.app/Contents/Library/vmware-vdiskmanager`
+linux上的workstation是`/usr/bin/vmware-vdiskmanager --help`, help中有合并多个为一个的例子
+`即 vmware-vdiskmanager -r source.vmdk -t 0 destination.vmdk`
+
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />

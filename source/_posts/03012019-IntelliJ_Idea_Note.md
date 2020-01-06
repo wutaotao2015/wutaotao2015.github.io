@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2019-09-20 15:35:09
+updated: 2020-01-06 16:20:29
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -655,6 +655,45 @@ _JAVA_AWT_WM_NONREPARENTING=1
   <maven.compiler.target>${java.version}</maven.compiler.target>
 </properties>
 ```
+
+## IntelliJ智能提示方向键重新映射
+Idea的核心操作是键盘流,配合ideaVim插件非常好用, 在实际使用时, 在idea智能提示弹框出现时,
+有时目标就是第二个或以下时(第一个直接回车), 如果要选中它, 这时可以多敲几个特定字符将它
+筛选出来, 但实际上比较繁琐(相对于使用方向键而言, 直接多按2,3下简单直接), 但由于方向键
+位置的天然劣势, 所以以下提出使用 alt + j/k 来映射到 up/down 方向键.
+这本身是一个非常简单的映射, 因为它只特定针对idea进行设置, 用于编写代码开发时使用, 我目前是
+在windows下开发, 所以使用autoHotKey进行修改, 这里附上相应配置文件.
+
+放在开始的启动目录下, 开机自动执行:
+`C:\Users\wutao\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\startUp.ahk`
+
+```txt
+#Persistent
+SetTimer, PressTheKey, 5000
+SetTimer, PressTwoKey, 10000
+Return
+
+PressTheKey:
+Send, {ScrollLock}
+Return
+
+PressTwoKey:
+Send, {NumLock}
+Return
+
+SetCapsLockState, alwaysoff
+Capslock::
+Send, {Esc}
+Return
+
+!k::Send, {UP}
+!j::Send, {DOWN}
+
+F12::run, D:\wtt\cmder\Cmder.exe
+#c::run, C:\Windows\System32\cmd.exe
+```
+ps: 前面的自动点击scrollLock, numLock键是防止自动锁屏, 下面是将capslock映射为esc键.
+然后是就是alt+j/k变为方向键, 最后是快速启动终端和命令行.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
