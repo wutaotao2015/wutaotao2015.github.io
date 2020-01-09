@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-06 16:20:29
+updated: 2020-01-09 16:59:38
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -694,6 +694,11 @@ F12::run, D:\wtt\cmder\Cmder.exe
 ```
 ps: 前面的自动点击scrollLock, numLock键是防止自动锁屏, 下面是将capslock映射为esc键.
 然后是就是alt+j/k变为方向键, 最后是快速启动终端和命令行.
+
+pps: 发现我可以直接修改idea的keymap, 不需要使用ahk.目前没有其他地方需要使用alt+j/k代替
+方向键. 不过这样修改键盘的底层映射适用于那些没有方向键的超小键盘,如66键的键盘---不过
+太贵了, 本人上次发烧买的filco还可以用很久很久....
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
