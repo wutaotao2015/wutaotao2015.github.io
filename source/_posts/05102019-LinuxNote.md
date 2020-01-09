@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-06 15:50:50
+updated: 2020-01-09 14:08:08
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -606,6 +606,16 @@ vmware有个vmware-vdiskmanager工具, mac上的fusion中路径是
 linux上的workstation是`/usr/bin/vmware-vdiskmanager --help`, help中有合并多个为一个的例子
 `即 vmware-vdiskmanager -r source.vmdk -t 0 destination.vmdk`
 
+## linux系统查找系统中的大文件
+windows中有一个sniffspacer的软件可以快速查找出大文件, 而linux系统中直接使用find命令即可.
+如以下命令查找当前目录大于1G的文件, 倒序格式化输出.
+```txt
+sudo find . -type f -size +1G  -print0 | xargs -0 du -h | sort -nr
+```
+对于目录可以使用
+```txt
+sudo du -lh --max-depth=1 | sort -nr | head -30
+```
 
 
 <hr />
