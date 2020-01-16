@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-09 16:59:38
+updated: 2020-01-16 10:29:56
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -699,6 +699,9 @@ pps: 发现我可以直接修改idea的keymap, 不需要使用ahk.目前没有�
 方向键. 不过这样修改键盘的底层映射适用于那些没有方向键的超小键盘,如66键的键盘---不过
 太贵了, 本人上次发烧买的filco还可以用很久很久....
 
+ps: idea下一个方法的快捷键是alt+down, 由于我上面使用alt+j/k代替了方向键, 所以这个快捷键
+按不出来, 所以将不用的inline refactor method的快捷键ctrl + alt + n 追加到 next method
+快捷键中.(本来想使用alt + n, 但ideaVim的multipleCursors扩展插件使用了它, 所以无法使用)
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
