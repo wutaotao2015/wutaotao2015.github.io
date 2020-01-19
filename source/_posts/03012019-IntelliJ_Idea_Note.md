@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-19 09:50:23
+updated: 2020-01-19 11:56:57
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -703,9 +703,48 @@ ppps: idea下一个方法的快捷键是alt+down, 由于我上面使用alt+j/k�
 按不出来, 所以将不用的inline refactor method的快捷键ctrl + alt + n 追加到 next method
 快捷键中.(本来想使用alt + n, 但ideaVim的multipleCursors扩展插件使用了它, 所以无法使用)
 
-pppps: 将alt + h/l同样映射为left and right, 但实际使用时和idea本身的菜单快捷键冲突, 如
+ps: 将alt + h/l同样映射为left and right, 但实际使用时和idea本身的菜单快捷键冲突, 如
 alt + v/h会打开View/Help菜单, 网上搜索可以在settings-> appearance -> disable mnemonics 
 in menu即可.
+
+ps: 这样映射本来是想用在ideaVim的命令行模式中, 但发现idea的keyMap中映射alt + h/l对
+ideaVim的命令行模式不生效. 所以还是要从vimrc的配置入手.具体vimrc配置请查看VimNote.
+
+ps: 经过考虑, 决定统一使用ctrl键代替alt键进行方向键映射, 这样保持一致.
+这样的话, 需要进行如下修改:
+```txt
+1. 将前面的ahk的键位配置注释掉(前面加分号)
+2.  前面的next method可以由默认的alt + down改为ctrl + alt + n, 
+因为ctrl + alt + j是激活aceJump快捷键;
+3. next occurrence可以改回默认的alt + j; 
+4. commit 默认的ctrl + k由于只有在vcs窗口生效, 所以不需要修改.
+5. ctrl + j/k 分别在keymap中映射为down/up.
+6. 修改.ideavimrc添加cnoremap注释:
+   cnoremap <C-h> <left>
+   cnoremap <C-l> <right>
+   cnoremap <C-j> <down>
+   cnoremap <C-k> <up>
+```
+final ps: 经测试发现以上cnoremap无效,而且与split view的carl + j/k冲突, 所以还是得
+用alt键进行统一.
+```txt
+最终键位总结如下:
+1.  前面的next method可以由默认的alt + down改为ctrl + alt + n, 
+因为ctrl + alt + j是激活aceJump快捷键;
+2. add selection for next occurrence可以改为alt + o; 
+3. 因为即使像正常的vim里配置, ideaVim plugin也无法使用alt映射, 所以还是只能使用ahk进行
+底层键盘映射:
+!k::Send, {UP}
+!j::Send, {DOWN}
+!h::Send, {LEFT}
+!l::Send, {RIGHT}
+这样做的话也就不用disable idea菜单了, 因为idea不可能收到alt + h键了, 它只能得到left键. 
+keymap中也不用配置up/down键了.  
+```
+结论: 用于ideaVim plugin的功能限制, vim command mode 不可能和真正的vim相同, 所以normal vim
+可以正常使用的ctrl + h在ideaVim中无法使用, 最终解决办法就是使用ahk修改底层键位映射.
+这样normal vim统一使用ctrl键, idea统一使用alt键(在windows的ahk作用下).
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
