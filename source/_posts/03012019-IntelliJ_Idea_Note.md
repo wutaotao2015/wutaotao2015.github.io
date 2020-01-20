@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-20 12:34:51
+updated: 2020-01-20 17:38:07
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -751,6 +751,10 @@ keymap中也不用配置up/down键了.
 外部vim同以上使用ctrl键映射为上下方向键, idea内部使用keyMap映射alt键为上下方向, ideaVim
 plugin command mode还是只能使用原生方向键, 除非不用ideaVim plugin, 使用external tool使用
 真正的vim, 但明显这样做得不偿失.
+又注: 因为上述的键不一致, 我又跑去尝试了vsCode和它的vim插件, 虽然打开速度快很多, 但可以看
+到vsCode支持Java的插件是和eclipse一致的, 而且vim command mode也不支持, 所以我又把它卸载了.
+最终想到的解决方案是同时打开cmder窗口和idea窗口, 在cmder中使用vim编辑, 在idea中运行, 这样
+鱼和熊掌可以兼得!完美解决!
 
 
 <hr />
