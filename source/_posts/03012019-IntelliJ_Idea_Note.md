@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-19 11:56:57
+updated: 2020-01-20 12:34:51
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -734,16 +734,23 @@ final ps: 经测试发现以上cnoremap无效,而且与split view的carl + j/k�
 2. add selection for next occurrence可以改为alt + o; 
 3. 因为即使像正常的vim里配置, ideaVim plugin也无法使用alt映射, 所以还是只能使用ahk进行
 底层键盘映射:
-!k::Send, {UP}
-!j::Send, {DOWN}
-!h::Send, {LEFT}
-!l::Send, {RIGHT}
+Capslock::Esc
+<!k::Up
+<!j::Down
+<!h::Left
+<!l::Right
 这样做的话也就不用disable idea菜单了, 因为idea不可能收到alt + h键了, 它只能得到left键. 
 keymap中也不用配置up/down键了.  
 ```
 结论: 用于ideaVim plugin的功能限制, vim command mode 不可能和真正的vim相同, 所以normal vim
 可以正常使用的ctrl + h在ideaVim中无法使用, 最终解决办法就是使用ahk修改底层键位映射.
 这样normal vim统一使用ctrl键, idea统一使用alt键(在windows的ahk作用下).
+
+注: 经实际测试经过以上ahk配置后, 正常的vim的command mode可以正常使用alt + h产生left效果,
+但idea中显示为alt + left效果, ideaVimPlugin还是无法抛弃方向键. 所以最终方案是不配置ahk, 
+外部vim同以上使用ctrl键映射为上下方向键, idea内部使用keyMap映射alt键为上下方向, ideaVim
+plugin command mode还是只能使用原生方向键, 除非不用ideaVim plugin, 使用external tool使用
+真正的vim, 但明显这样做得不偿失.
 
 
 <hr />
