@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-20 17:38:07
+updated: 2020-01-20 18:06:41
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -755,6 +755,14 @@ plugin command mode还是只能使用原生方向键, 除非不用ideaVim plugin
 到vsCode支持Java的插件是和eclipse一致的, 而且vim command mode也不支持, 所以我又把它卸载了.
 最终想到的解决方案是同时打开cmder窗口和idea窗口, 在cmder中使用vim编辑, 在idea中运行, 这样
 鱼和熊掌可以兼得!完美解决!
+这样的话, 就涉及到一个修改结果同步的问题:
+```txt
+1. vim -> idea
+当在vim中编辑完使用,w写入时, idea会自动刷新, 非常智能, 毕竟是专业的ide.
+2. idea -> vim
+这一步需要配置下, 所以需要刷新vim buffer, 使用
+nmap <leader>r :e<cr>
+```
 
 
 <hr />
