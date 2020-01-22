@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-09 14:08:08
+updated: 2020-01-22 19:26:57
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -616,6 +616,26 @@ sudo find . -type f -size +1G  -print0 | xargs -0 du -h | sort -nr
 ```txt
 sudo du -lh --max-depth=1 | sort -nr | head -30
 ```
+
+## WSL 初体验
+之前听说过win10现在自带linux了, 但没有尝试. 最近感觉cmder启动太慢, 所以想着可以试试WSL, 
+看看是不是能快很多, 最终结果是打开windows自身命令行窗口超快, 再输入bash, 即可以完美使用
+linux终端了, 使用mount命令可以看到windows系统的c, d盘都能在/mnt/c 或 d盘下找到, 至此即
+可以卸载cmder, 享受原生命令行窗口的超速度.
+下面是一些简单步骤, 具体可以查看网上教程:
+```txt
+1. 在设置-> 安全与更新 -> 打开开发者选项. 这一步开始比较卡, 后面成功了, 没啥问题.
+2. 控制面板-> 程序和功能->启用关闭windows功能->勾选适用于Linux的Windows子系统 
+3. 这一步网上说执行lxrun命令安装linux, 但命令行提示出一个网址, 直接复制后在浏览器打开,
+它会自动打开windows store, 点击安装ubuntu即可, 默认安装位置在c盘, 后面无法移动位置.
+注: 为提高下载速度, 说是要打开设置->更新与安全->传递优化中->打开允许从其他电脑下载->
+选择第2个, 我本地上的电脑和internet上的电脑.
+4. 在安装后的命令窗口中输入用户名和密码即可.
+5. 同真正的ubuntu系统一样, 更新数据源为阿里云
+6. 安装fish, 设置对应的fish别名, 移植vimrc配置  
+```
+注: 原生的cmd窗口毕竟太挫, 网上推荐windows terminal, 后来费劲将windows升级到最新的19, 成功
+安装了windows terminal, 真香!
 
 
 <hr />

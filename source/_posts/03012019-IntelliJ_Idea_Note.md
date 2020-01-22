@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-20 18:06:41
+updated: 2020-01-22 10:04:49
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -762,6 +762,18 @@ plugin command mode还是只能使用原生方向键, 除非不用ideaVim plugin
 2. idea -> vim
 这一步需要配置下, 所以需要刷新vim buffer, 使用
 nmap <leader>r :e<cr>
+```
+注: 经实测发现, 通过ahk配置capslock::Esc的方式或是以下代码段:
+```txt
+SetCapsLockState, alwaysoff
+Capslock::
+Send, {Esc}
+Return
+```
+都存在不稳定的问题, 最后还是采用软件KeyTweak, 只需要配置以下一条即可, 不需要额外配置大写键
+功能:
+```txt
+key #30 remapped to "Esc"(default='Capslock')
 ```
 
 
