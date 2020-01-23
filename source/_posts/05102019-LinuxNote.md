@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-22 19:26:57
+updated: 2020-01-23 12:34:52
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -618,6 +618,7 @@ sudo du -lh --max-depth=1 | sort -nr | head -30
 ```
 
 ## WSL 初体验
+WSL: Windows Subsystem for Linux
 之前听说过win10现在自带linux了, 但没有尝试. 最近感觉cmder启动太慢, 所以想着可以试试WSL, 
 看看是不是能快很多, 最终结果是打开windows自身命令行窗口超快, 再输入bash, 即可以完美使用
 linux终端了, 使用mount命令可以看到windows系统的c, d盘都能在/mnt/c 或 d盘下找到, 至此即
@@ -637,6 +638,56 @@ linux终端了, 使用mount命令可以看到windows系统的c, d盘都能在/mn
 注: 原生的cmd窗口毕竟太挫, 网上推荐windows terminal, 后来费劲将windows升级到最新的19, 成功
 安装了windows terminal, 真香!
 
+重启WSL的方式是在服务中寻找一个名为LxssManager的服务,服务介绍说是在windows上支持运行ELF格式
+文件, 重启该服务即重启了WSL.
+
+WSL不能直接使用windows上的jdk, 需要使用apt下载linux版的jdk, maven倒是不影响, 系统通用.
+测试时发现, settings.xml配置文件中的localRepository也需要进行修改, 确保maven能查找到对应的
+本地仓库, 最好就是将WSL和windows的配置分开, 使用不同的配置文件. 
+对于nodejs也是如此,需要另外下载.
+网上有推荐使用nvm安装nodeJs的, 经测试使用命令
+`curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.2/install.sh | bash`
+报错拒绝连接, 打开vpn并在环境变量配置重启WSL后成功链接上, 但是又报错
+`invalid argument, uv_pipe_open`.
+于是改用apt来装:
+1. 添加apt仓库源:(通过nodesource安装时需要指定版本)
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+2. sudo apt install nodejs
+3. node -v, npm -v, done
+因为之前windows装了windowsNVM来管理不同的node版本, 这里可以使用sudo npm i -g n安装n模块
+来进行管理.
+
+注: 因为之前测试发现npm install时有的依赖如node-sass会根据不同的系统环境安装不同的依赖版本,
+即在linux环境中安装的依赖是不能直接拿到windows中使用的, 所以如果想切换的话需要重新安装,
+这里在使用windows-terminal时, default shell打开WSL, 可以写个启动脚本使用fish shell.
+
+写WSL启动执行脚本步骤:
+```txt
+1. sudo vi /etc/init.wsl
+内容为
+#!/bin/sh
+fish
+
+sudo chmod +x /etc/init.wsl添加可执行权限
+
+2. windows系统中使用windows+r打开startup目录,创建WSL.vbs文件夹, 内容为:
+Set ws = CreateObject("Wscript.Shell")
+ws.run "wsl -d Ubuntu-18.04 -u root /etc/init.wsl", vbhide
+其中 wsl -d 为执行wsl版本, -u用户, 后面是可执行脚本
+
+3. 重启,测试, 发现无效果, 将上面的vbs脚本的vbhide去掉, 直接双击执行,发现弹出了fish窗口, 
+可以想到fish毕竟不是服务, 这种方式只适合启动后台服务, 如ssh, cron等.
+
+4. 所以还是用老老实实使用命令`chsh -s /usr/bin/fish`修改默认shell为fish, 需要bash时直接切换即可.
+注: 我linux主机上是用了terminator的command命令实现的, 现在想来没有必要
+```
+
+## 升级到WSL2失败
+WSL2虽然用了虚拟机技术, 但毕竟版本更新, 支持功能更多, 还是决定升到WSL2
+1. 加入体验计划
+2. 打开或关闭windows功能中勾选虚拟平台, 重启电脑.
+3. wsl --set-version option不存在, 查看到操作系统版本号1909, 但操作系统版本18363, 更新时
+提示已经是最新版, 没啥办法只有等几天看看了, 估计和体验计划有关.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />
