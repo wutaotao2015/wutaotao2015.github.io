@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-23 12:34:52
+updated: 2020-01-23 15:08:54
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -680,6 +680,20 @@ ws.run "wsl -d Ubuntu-18.04 -u root /etc/init.wsl", vbhide
 
 4. 所以还是用老老实实使用命令`chsh -s /usr/bin/fish`修改默认shell为fish, 需要bash时直接切换即可.
 注: 我linux主机上是用了terminator的command命令实现的, 现在想来没有必要
+```
+注: 原来cmder是通过git for windows实现了windows系统上运行linux命令, git for windows的
+/usr/bin中可以看到如bash, mintty等多个shell运行方式.这样在cmder中执行npm install
+安装的依赖自然就是windows环境中的了, 如此看来, windows terminal通过WSL实现了linux命令的
+运行, 但命令的执行环境还是linux(外面是一个完整的ubuntu), 完成自己需要的功能时, 如启动java
+项目, 启动node项目时具体什么环境是无关紧要的(毕竟最重要的是代码), 但如果需要进行迁移操作时,
+这个时候cmder(或者说git for windows bash)还是无法替代的, 毕竟它是"原生"的windows环境.
+而windows terminal还是只有最基础的cmd窗口.
+
+经测试:
+```txt
+同一个node项目, 在WSL中安装node(sudo apt安装)后执行npm install得到的node_modules在
+cmder(git for windows)中无法运行, 执行npm start报错failed to start, npm install报错
+unsupported platform, 删除node_modules后cmder安装自己的依赖即可成功.
 ```
 
 ## 升级到WSL2失败
