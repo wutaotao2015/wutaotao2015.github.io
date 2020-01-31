@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-31 19:35:24
+updated: 2020-01-31 19:48:36
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -725,6 +725,10 @@ xrandr --output Virtual1 --mode "1440x900"
 xrandr --output Virtual2 --mode "1440x2560"
 ```
 可以将它放入.xsessionrc中。
+注: 经测试直接将xrandr命令放入.xsessionrc中无效，目前有效的办法只有在进入xmonad后，确定
+两边屏幕是独立工作空间(切换全屏来实现)后，执行上述2个命令，将上面2个命令放入一个脚本中
+方便执行，目前由于key.sh的键盘映射用不到，所以放入key.sh中即可。
+
 注: 我的键盘设置如capslock to esc, left shift to left parenthesis, space to ctrl的设置在
 macbook kerabiner中全局设置了，所以虚拟机中无需使用key.sh和xcape命令，这里记录下防止以后
 忘记。
