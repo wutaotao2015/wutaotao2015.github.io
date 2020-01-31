@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-23 15:08:54
+updated: 2020-01-31 19:35:24
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -702,6 +702,34 @@ WSL2虽然用了虚拟机技术, 但毕竟版本更新, 支持功能更多, 还�
 2. 打开或关闭windows功能中勾选虚拟平台, 重启电脑.
 3. wsl --set-version option不存在, 查看到操作系统版本号1909, 但操作系统版本18363, 更新时
 提示已经是最新版, 没啥办法只有等几天看看了, 估计和体验计划有关.
+
+## 虚拟机折腾
+因为之前vmware fusion升级后有虚拟机长时间不用自动关机的毛病，后来又转回parallels desktop,
+parallel v15目前没有破解版，但对于linux 内核5.3.26版本的linux经测试只有v15的parallel tool
+才能正常使用，因为我有v14的破解版，所以我升级到v15的试用版后安装好tool, 再重新安装v14(它会
+覆盖v15), 这样就可以正常使用了(后来在github上找到有人提供了修改parallel tools中的文件以支持
+新版本linux内核的办法[github链接](https://gist.github.com/mag911/1a5583a766467d6023584d738cee0d98))。
+但装好parallel tool后发现使用xmonad不支持双屏，但xfce能正常支持。
+注： 后来又发现安装好parallel tool的标志是标题栏中没有ctrl + alt释放鼠标的提示，从这点看
+我还是没有安装成功，包括上面github链接的方法，所以parallel desktop中的ubuntu还是有问题，
+但windows中的游戏运行非常顺畅，说明parallel对windows的支持是非常好的。
+
+所以我还是要转回fusion, 使用vmware fusion的导入功能直接导入parallel的pvm文件后直接启动报错
+找不到系统，所以再链接上iso文件，在原系统中再装一个ubuntu, 进入后使用disk工具将新装的系统
+盘直接删除后重启报错，在grub界面设置root, prefix后normal命令启动，再sudo update-grub, 
+sudo grub-install /dev/sda后即可。
+fusion启动xmonad后可以正常识别外接显示器，但分辨率有问题，
+主屏幕是macbook, 外屏是hkc, 使用xrandr命令可以正常设置。
+```txt
+xrandr --output Virtual1 --mode "1440x900"
+xrandr --output Virtual2 --mode "1440x2560"
+```
+可以将它放入.xsessionrc中。
+注: 我的键盘设置如capslock to esc, left shift to left parenthesis, space to ctrl的设置在
+macbook kerabiner中全局设置了，所以虚拟机中无需使用key.sh和xcape命令，这里记录下防止以后
+忘记。
+
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />
