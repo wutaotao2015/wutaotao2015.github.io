@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-01-31 19:48:36
+updated: 2020-02-09 15:13:27
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -733,6 +733,21 @@ xrandr --output Virtual2 --mode "1440x2560"
 macbook kerabiner中全局设置了，所以虚拟机中无需使用key.sh和xcape命令，这里记录下防止以后
 忘记。
 
+## thinkpad外接显示屏
+最近由于疫情隔离在家远程办公, 工作用的thinkpad在家里派上用场了, 突然想到它也可以外接我的
+大显示器. 原以为需要另外买一根hdmi线, 但是发现thinkpad t540p也是有dp接口的, 插上试试果然可以
+使用, 首先在ubuntu wayland中使用, 同mac系统一样在display中拖拽一下2个屏幕的位置就ok了.
+打开xmonad发现2个屏幕是克隆(即同步显示相同内容)的关系. 使用命令`nvidia-settings`打开nvidia
+设置窗口, 发现它给出提示外接大屏无法被nvidia控制, 于是又切换回ubuntu wayland界面, 在
+software update中将显卡驱动由nvidia改为xorg, 再登录xmonad发现没有克隆了.通过拖拽窗口发现
+2个大屏合并为了一个大屏, 还是没有实现xmonad不同屏幕不同工作空间的功能, 切换屏幕的快捷键
+也无效. 关于双屏设置, 网上有2种方案, 一个就是xrandr命令, 另一个是xorg.config配置文件, 
+因为我对xrandr命令用的比较多, 所以使用xrandr命令, 使用以下命令:
+```txt
+xrandr --auto --output DP-1 --left-of eDP-1
+```
+其中DP-1是大屏代号, eDP-1是thinkpad, 一运行发现就ok了, 屏幕切换的快捷键也可以使用了.
+将这条命令放入.xsessionrc中执行的key.sh脚本中开机自动执行即可.
 
 
 <hr />
