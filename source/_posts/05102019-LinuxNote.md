@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-02-09 15:13:27
+updated: 2020-02-09 20:27:12
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -748,6 +748,14 @@ xrandr --auto --output DP-1 --left-of eDP-1
 ```
 其中DP-1是大屏代号, eDP-1是thinkpad, 一运行发现就ok了, 屏幕切换的快捷键也可以使用了.
 将这条命令放入.xsessionrc中执行的key.sh脚本中开机自动执行即可.
+
+注: 以上是2个屏幕同时水平横置的情况, 写代码时通常需要让大屏垂直放置.这时可以在以上命令
+中加上一个参数即可实现:
+```txt
+xrandr --auto --output DP-1 --rotate right --left-of eDP-1
+```
+其中, rotate参数值有left, right, normal, inverted4种, 具体根据自己屏幕的旋转方向选择.
+
 
 
 <hr />
