@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-02-09 20:27:12
+updated: 2020-02-09 20:52:51
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -755,6 +755,11 @@ xrandr --auto --output DP-1 --left-of eDP-1
 xrandr --auto --output DP-1 --rotate right --left-of eDP-1
 ```
 其中, rotate参数值有left, right, normal, inverted4种, 具体根据自己屏幕的旋转方向选择.
+
+再注: 虚拟机windows系统打开后发现屏幕方向是横向的, 且是灰色状态, 无法修改, 后经搜索, 
+发现只要安装了vmware tools, 它是可以修改的, 但我已经安装了vmware tool, 于是尝试进行全屏
+切换操作, 虚拟机就自动转换为竖屏了, 这里记录下, 对于虚拟机, 切换全屏是让vmware tool生效
+的好方法.
 
 
 
