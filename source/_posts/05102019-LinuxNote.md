@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-02-09 20:52:51
+updated: 2020-02-18 21:26:58
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -760,7 +760,13 @@ xrandr --auto --output DP-1 --rotate right --left-of eDP-1
 发现只要安装了vmware tools, 它是可以修改的, 但我已经安装了vmware tool, 于是尝试进行全屏
 切换操作, 虚拟机就自动转换为竖屏了, 这里记录下, 对于虚拟机, 切换全屏是让vmware tool生效
 的好方法.
-
+注: 用于工作的windows虚拟机又无法在竖屏状态下正确设置分辨率了..., 折腾了半天, 
+关键还是在vmware tool上, vmx里的backdoor还是要设置为false使其成为真正的虚拟机.
+其他设置有:
+1. vmware settings -> display -> autodect host settings for monitor即可. 
+2. view -> autosize -> autofit guest ,  non check autofit window. 
+实际上,可以先将分辨率设置为横屏的2560x1440后再重启切换全屏, 在vmware-tools生效的情况下
+应该就可以正常展示出竖屏效果了.
 
 
 <hr />
