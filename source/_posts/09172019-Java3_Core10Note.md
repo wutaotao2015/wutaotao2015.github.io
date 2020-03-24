@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2019-09-25 14:27:27
+updated: 2020-03-24 18:43:23
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1104,7 +1104,17 @@ should avoid this.
   4.1 Simplest Address Translation 
 
 
+## springboot scheduled cron expression
+秒 分 时 日 月 周 (年)
+0-59 0-59 0-23 1-31 0-11 1-7 1970-2099
+每天凌晨执行一次:  
+`0 0 0 */1 * ?`
 
+每周日凌晨执行一次:  
+`0 0 0 ? * SUN`
+
+每月1号凌晨执行一次:  
+`0 0 0 1 */1 ?`
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190917_1.jpg" class="full-image" />
