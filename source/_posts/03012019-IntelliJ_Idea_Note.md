@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-01-22 10:04:49
+updated: 2020-03-25 16:43:45
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -775,6 +775,16 @@ Return
 ```txt
 key #30 remapped to "Esc"(default='Capslock')
 ```
+
+## 插件string manipulation
+很早以前就装了这个插件,但并没有真正使用它, 无意中发现它非常好用!
+java变量名通常有以下2种形式:
+1. camel case 常见的驼峰式 首字母小写, 后面的独立单词首字母大写
+   pascal case 和驼峰相同, 不过好像pascal case首字母大写
+2. 数据表字段的 snake case 
+   如 `user_tpl_name`
+写mybatis的mapper时需要同时用到这两种形式, 这时string manipulation就非常好用了.
+默认快捷键alt + m, switch case中选择snake case -> camel case即可.
 
 
 <hr />
