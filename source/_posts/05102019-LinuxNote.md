@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-02-18 21:26:58
+updated: 2020-03-30 20:48:33
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -694,6 +694,16 @@ ws.run "wsl -d Ubuntu-18.04 -u root /etc/init.wsl", vbhide
 同一个node项目, 在WSL中安装node(sudo apt安装)后执行npm install得到的node_modules在
 cmder(git for windows)中无法运行, 执行npm start报错failed to start, npm install报错
 unsupported platform, 删除node_modules后cmder安装自己的依赖即可成功.
+```
+
+注: 使用ahk让快捷键F12快速启动cmder时发现问题，ahk脚本命令如下:
+```txt
+F12::run, D:\wtt\cmder\Cmder.exe 
+```
+这时启动cmder发现启动目录是startUp目录(我的脚本是放在启动目录中的), 经搜索可以改为如下命令，
+经测试有效。
+```txt
+F12::run, D:\wtt\cmder\Cmder.exe /START D:\
 ```
 
 ## 升级到WSL2失败
