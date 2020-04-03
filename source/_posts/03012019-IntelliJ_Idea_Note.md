@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-03-25 16:43:45
+updated: 2020-04-03 16:42:18
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -785,6 +785,31 @@ java变量名通常有以下2种形式:
    如 `user_tpl_name`
 写mybatis的mapper时需要同时用到这两种形式, 这时string manipulation就非常好用了.
 默认快捷键alt + m, switch case中选择snake case -> camel case即可.
+
+## live template实用
+idea的live template以前一直知道,到并没有怎么使用, 但无意中看到江南一点雨的视频,其中展示了
+使用它非常实用的技巧, 就像上面的string manipulation一样.这里记录下.
+主要就是这句, 人人都可以看到的日志对象: (这里使用slf4j + log4j2)
+```txt
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+// 定义loggger对象
+private static final logger LOGGER = LoggerFactory.getLogger(xxx.class);
+```
+这句如果手写因为类名不同非常麻烦, 可以用idea live template帮忙自动生成.
+settings -> editor -> live template -> + 
+abbreviation: log  越短越好
+description: 日志
+template text:
+
+private static final logger LOGGER = LoggerFactory.getLogger($className$.class);
+
+这里输入自定义的$className$后, 右边的edit variable变成可点击状态, 可以给自己定义的变量
+指明表达式,默认值等,直接选择className即可.(里面有很多选项,但感觉实用的不多)
+如果勾选了use static import if possible, 那么LoggerFactory会变成静态导入, 生成语句中
+LoggerFactory会省略, 感觉不太好, 还是不要勾选.
+ok! 类里面输入log + tab就ok了!
 
 
 <hr />
