@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-03 16:42:18
+updated: 2020-04-03 16:55:34
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -811,6 +811,9 @@ private static final logger LOGGER = LoggerFactory.getLogger($className$.class);
 LoggerFactory会省略, 感觉不太好, 还是不要勾选.
 ok! 类里面输入log + tab就ok了!
 
+## idea中dao层注入@Autowired报错
+这个问题以前是修改settings里面的inspection级别,但感觉不太好,
+可以在dao层上使用@Repository注解即可解决.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
