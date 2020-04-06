@@ -8,7 +8,7 @@ tags:
   - SLF4J
 
 abbrlink: 7fd48667
-updated: 2019-04-09 22:04:36
+updated: 2020-04-06 20:04:31
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
@@ -325,6 +325,13 @@ apache官方宣布Log4J已经停止支持，现在需要转向新的Log4J2日志
     LOGGER.info("{}", object);
   注： log4j2性能提高了很多，配置更清晰化，slf4j + log4j2方案目前可以使用。
 8. LogBack
+   2020-04-06 11:44:42 添加:
+Springboot默认集成了logBack, 即spring-boot-starter-logging包中集成了logBack的实现。
+在application.yml中配置logging.file=xxx.log或logging.path=/var/log/xx.log即可生成日志文件，
+但涉及到文件大小或日期控制，或不同环境不同的log配置时，就需要用到自定义的配置文件如
+logback.xml或logback-spring.xml(推荐).
+(可以通过如logging.config=classpath: logging-config.xml指定配置文件的名称，但这样做意义不大)
+
    1. 依赖
    
    ```txt
@@ -334,8 +341,69 @@ apache官方宣布Log4J已经停止支持，现在需要转向新的Log4J2日志
         <version>1.2.3</version>
     </dependency>
    ```
-   2. resources下新建配置文件logback.xml
-   ```txt
+   2. resources下新建配置文件logback-spring.xml(只有这样才能使用springProfile标签)
+```txt
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+<!--    <contextName>logback</contextName>-->
+    <property name="log.path" value="/home/tao/Documents/note/"/>
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+      </encoder>
+    </appender>
+
+    <springProfile name="dev">
+
+      <root level="debug">
+        <appender-ref ref="console"/>
+      </root>
+
+    </springProfile>
+
+   <!-- put logger in springProfile to avoid create empty log files -->
+    <springProfile name="test,prod">
+
+      <!--输出到文件-->
+<!--      <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--          <fileNamePattern>${log.path}/logback.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--          <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--      </appender>-->
+
+      <appender name="rolling" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+          <!-- rollover daily -->
+          <fileNamePattern>${log.path}/%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
+          <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+          <maxFileSize>100MB</maxFileSize>
+          <!-- 14 days-->
+          <maxHistory>14</maxHistory>
+          <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+      </appender>
+
+      <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="rolling"/>
+      </root>
+    </springProfile>
+
+  </configuration>
+```
+注: 经测试，当文件大小设置过小时，如5kb，文件大小切分不均匀，增大到20kb时文件大小就在
+20kb时，文件大小就切分的比较好，大概在20-30kb间，最后一个文件大小是50kb, 由此可以看出
+切分文件是异步过程。这里设置为100MB，后续观察实际使用情况。
+
+another example: 
+```txt
 <?xml version="1.0" encoding="UTF-8"?>
 <!--scan:
             当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
