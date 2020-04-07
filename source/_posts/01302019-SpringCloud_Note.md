@@ -7,7 +7,7 @@ tags:
   - Linux
   - Tomcat
 
-updated: 2019-05-07 11:31:48
+updated: 2020-04-07 14:05:16
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -53,6 +53,12 @@ management:
 
 注： 最简单的springboot项目hello world需要配置controller,使用@RestController(内含
 @ResponseBody)来输出Hello World.
+
+ 2020-04-07 14:01:58 添加:
+使用idea启动springboot项目之前好好的,突然报错failed to determine a suitable driver class, 
+可driver-class的配置没有修改, 经网上搜索发现target/classes包中没有将application.yml等配置
+文件打入包中, 删除target后重新编译项目就ok了, 应该是idea的问题,这里记录下, 以防以后碰到
+同样问题.
 
 ### springCloud微服务
 
