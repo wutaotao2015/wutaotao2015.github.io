@@ -8,7 +8,7 @@ tags:
   - SLF4J
 
 abbrlink: 7fd48667
-updated: 2020-04-06 20:04:31
+updated: 2020-04-07 11:13:36
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
@@ -347,10 +347,23 @@ logback.xml或logback-spring.xml(推荐).
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
 <!--    <contextName>logback</contextName>-->
     <property name="log.path" value="/home/tao/Documents/note/"/>
+
+    <!--日志格式控制 -->
+    <!-- %-50loggger{50} 中 -50 是格式化类名左对齐,右边空白, 这样类名和消息隔开,
+         利于查看. 
+         50是最小长度, 如果写法为%20.30, 则控制了最大长度30, 它会截取字符串,
+         这会将类名截取掉.
+    我们用logger{50} 是控制类名缩写, 它软性控制了最大长度, 因为不会截取类名, 所以类名过长
+    时会超出限制, 所以这个最大值不能过小, 这里设置为50即可.
+     p: priority
+     t: thread
+    -->
+    <property name="pattern" value="[APP][%d{yyyy-MM-dd HH:mm:ss SSS}][%-5p][%t][%-50logger{50}]%m%n"/>
     <!--输出到控制台-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
       <encoder>
-        <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        <pattern>${pattern}</pattern>
+        <charset>utf-8</charset>
       </encoder>
     </appender>
 
@@ -362,7 +375,6 @@ logback.xml或logback-spring.xml(推荐).
 
     </springProfile>
 
-   <!-- put logger in springProfile to avoid create empty log files -->
     <springProfile name="test,prod">
 
       <!--输出到文件-->
@@ -386,7 +398,8 @@ logback.xml或logback-spring.xml(推荐).
           <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-          <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+          <pattern>${pattern}</pattern>
+          <charset>utf-8</charset>
         </encoder>
       </appender>
 
