@@ -8,7 +8,7 @@ tags:
   - SLF4J
 
 abbrlink: 7fd48667
-updated: 2020-04-07 11:13:36
+updated: 2020-04-07 14:35:12
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
@@ -369,9 +369,13 @@ logback.xml或logback-spring.xml(推荐).
 
     <springProfile name="dev">
 
-      <root level="debug">
+      <root level="info">
         <appender-ref ref="console"/>
       </root>
+      <!-- print sql with using dao logger -->
+      <logger name="com.ccb.backend.dao" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+      </logger>
 
     </springProfile>
 
@@ -404,12 +408,17 @@ logback.xml或logback-spring.xml(推荐).
       </appender>
 
       <root level="info">
-        <appender-ref ref="console"/>
         <appender-ref ref="rolling"/>
       </root>
+
+      <!-- print sql with using dao logger -->
+      <logger name="com.ccb.backend.dao" level="debug" additivity="false">
+        <appender-ref ref="rolling"/>
+      </logger>
     </springProfile>
 
   </configuration>
+
 ```
 注: 经测试，当文件大小设置过小时，如5kb，文件大小切分不均匀，增大到20kb时文件大小就在
 20kb时，文件大小就切分的比较好，大概在20-30kb间，最后一个文件大小是50kb, 由此可以看出
