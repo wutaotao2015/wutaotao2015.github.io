@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-04-17 19:50:48
+updated: 2020-04-19 08:51:39
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1145,15 +1145,6 @@ should avoid this.
 每月最后一天23点执行一次：0 0 23 L * ?
 每周星期天凌晨1点实行一次：0 0 1 ? * L
 ```
-
-1. mybatis batch insert  with executionType = batch
-idea need to clean database connections
-2. 
-org.json.JSONArray
-jsonObject.getJsonArray
-3. toArray
-4. for axios insert
-5. scheculed task cron to yml
 
 
 <hr />
