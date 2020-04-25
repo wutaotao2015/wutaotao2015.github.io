@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-03 16:55:34
+updated: 2020-04-25 11:37:02
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -814,6 +814,27 @@ ok! 类里面输入log + tab就ok了!
 ## idea中dao层注入@Autowired报错
 这个问题以前是修改settings里面的inspection级别,但感觉不太好,
 可以在dao层上使用@Repository注解即可解决.
+
+## ideaVim plugin close split window
+ideaVim plugin中使用:sp或:vs打开一个新窗口, 但:q不能退出, 使用ctrl+w,c可以关闭.
+但这样idea的智能选择ctrl + w就冲突了，可以将它修改为ctrl + s.
+idea默认自动保存，这样其实会影响性能，并且在开发前端时，自动保存触发了webpack-dev-server
+不必要的热部署，所以可以将自动保存去除。
+在settings - appearance & behavior - systemSettings - synchronization中
+去除勾选 synchronize files on frame or editor tab activation (激活idea或切换tab时保存)
+去除勾选 save files on frame deactivation   (切换应用时保存)
+勾选save files automatically if application is idle for 30 sec (这一步主要是保险起见)
+修改save all快捷键为ctrl + shift +s. (通过增加保存的按键难度，这样也避免了多按s的问题，
+这样保存时先按住ctrl + shift, 按下s后松开，再松开2个修饰键，避免了多按s的错误)
+
+这样智能选择就是ctrl + s, 保存是ctrl + shift + s, close vim split window是ctrl+w, c
+close other vim windows是ctrl+w,o
+
+全部关闭后不要使用ctrl + shift + backspace回到上次修改的地方，这样还需要鼠标点击激活，
+应使用ctrl + tab切换回上次编辑的tab页。
+jump to last tool window之前我设置的是F10，发现改为波浪线~backreferece键更方便，
+主要是用于package Manager和editor之间切换，适用于开发时需要大量新建文件夹和文件的时候。
+使用~和escape进行窗口切换，使用alt+j/k或直接输入英文在package manager中进行选择.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
