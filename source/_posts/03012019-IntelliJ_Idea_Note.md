@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-27 22:16:36
+updated: 2020-04-27 22:20:23
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -836,7 +836,7 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 主要是用于package Manager和editor之间切换，适用于开发时需要大量新建文件夹和文件的时候。
 使用~和escape进行窗口切换，使用alt+j/k或直接输入英文在package manager中进行选择.
 注：以上配置中，反引号就无法打印出来了，如mysql的字段，前台的es6模板字符串解析都需要用到
-这个符号，所以idea中应设置为ctrl + 反引号.
+这个符号，所以idea中应设置为alt + 反引号.这样更顺手。
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
