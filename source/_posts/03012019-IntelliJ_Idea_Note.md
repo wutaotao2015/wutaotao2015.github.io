@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-29 06:04:57
+updated: 2020-04-29 07:03:14
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -844,6 +844,10 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 文本为`private String $input$;`, 这里的变量只是一个占位符，不用定义它。
 也找了一下后缀表达式补全(postfix completion), 但没有定义成功，就用live template吧。
 网上有自定义的后缀补全插件(试用了一下，自定义没有成功, 还是先用live template吧)。
+
+## mac重装idea无法启动问题解决
+这里需要删除mac中的.intelliJ20xx用户配置目录，位于/Usres/xxx/资源库/Preferences/intelliJ20xx
+目录中, 删除即可。
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
