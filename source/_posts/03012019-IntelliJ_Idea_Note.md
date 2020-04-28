@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-27 22:20:23
+updated: 2020-04-29 06:04:57
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -837,6 +837,13 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 使用~和escape进行窗口切换，使用alt+j/k或直接输入英文在package manager中进行选择.
 注：以上配置中，反引号就无法打印出来了，如mysql的字段，前台的es6模板字符串解析都需要用到
 这个符号，所以idea中应设置为alt + 反引号.这样更顺手。
+
+## private String 
+也许是我太初级了，但是java写这个privte String时，idea对String要全部打完才会显示出来，它
+默认最先提示strictp...., 今天终于不能忍，自定义了一个live template, pst + tab即可显示出来，
+文本为`private String $input$;`, 这里的变量只是一个占位符，不用定义它。
+也找了一下后缀表达式补全(postfix completion), 但没有定义成功，就用live template吧。
+网上有自定义的后缀补全插件(试用了一下，自定义没有成功, 还是先用live template吧)。
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
