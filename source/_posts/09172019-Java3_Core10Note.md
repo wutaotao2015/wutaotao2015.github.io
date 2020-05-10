@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-04-19 08:51:39
+updated: 2020-05-11 07:41:23
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1145,6 +1145,156 @@ should avoid this.
 每月最后一天23点执行一次：0 0 23 L * ?
 每周星期天凌晨1点实行一次：0 0 1 ? * L
 ```
+
+## move forward to jdk 11
+jdk9  modules    minimize runtime size
+ var
+jdk 10
+   List,Set,Map.copyOf
+   Collectors.toUnmodifiableList/Map/Set  for stream
+jdk 11
+   Http Client   同步异步都有
+      HttpClient
+      HttpRequest
+      HttpResponse
+      WebSocket
+
+lambda expression support var   used for adding annotation in lambda expression
+
+launch single java source code file  
+  no need to compile to class file first, it will execute the main function
+
+using code above the class Name with Shebang  #!
+   #!$JAVA_HOME/bin/java --source 11
+make the source file executable and ./Factorial 4 will get the result! just like python and js...  
+   to be tested with importing other classes.
+
+nullInputStream
+nullOutputStream
+nullReader()
+nullWriter()
+  equals to linux /dev/null  throw away the output of a stream
+
+Optional isEmpty()
+
+
+String methods:
+isBlank()
+Stream lines()    return the lines of multi-line streams
+String repeat(int)
+String strip()
+String stripLeading()
+String stripTrailing()
+    similar function with trim(), strip difines whitespaces differently with trim() methods
+
+Predicate not(Predicate)
+    lines.stream().filter(s -> !s.isBlank())
+       change to
+    lines.stream().filter(Predicate.not(String::isBlank))
+
+lambda leftovers   _ for unused parameters
+
+raw string literals   jdk12
+   `` i a /sd/sd`isdfds`df ``
+
+switch support type test
+    String s;
+    switch(obj) {
+       case Integer i: s = String.format("%d", i); break;
+       case Double d: s = String.format("%f", d); break;
+       case String s: s = String.format("%s", i); break;
+       default:  d = obj.toString(); 
+    }
+switch expression   switch语句有返回值
+   int num = switch(day) {
+      case mon, fri,sun -> 6;
+      case tue -> 7;
+      case thu, sat -> 8;
+      case wed -> 9;
+      default -> throw new IllegalStateException("wrong date value with " + day);
+   }
+
+
+
+@Deprecated 
+  since: the beginning time of deprecating,  
+  forRemoval=true:  the next version it will probably gone
+
+java9  
+ fast initializtion:   unmodifiable
+   Map<String, String> map = Map.of("key", "value");
+ modifiable  in constructor
+   Map<String, String> map = new HashMap<>();
+   {
+     map.put("key", "value");
+   }
+  
+jdk 5
+  type witness
+  EasyMock class
+    T anyObj();
+  Test class
+   void foo(List<String> list)
+   void foo(Set<String> set)
+foo(EasyMock.anyObj()) compilation error
+
+foo((List<String>)EasyMock.anyObj())     gets compilation warning about unsafe cast
+type witness
+foo(EasyMock.<List<String>>anyObj())   tell the compiler the T type
+
+jdk 6  faster
+jdk 7  
+ syntax suger
+ invokeDynamic,  forkJoin, 
+   switch on string    suger, using hash to compare, low level implementation is complicated
+  diamond operator
+    List<String> list = new Arraylist<>();
+  number underscores  
+     int i = 1_000_000
+
+  multiple catches  
+     try{...}catch(IOException | SQLException e) {
+       log.error("my error", e)
+     }
+
+  auto closeable   try with resource
+    try(InputStream in = new FileInputStream("aa.txt")) {...}
+    autoClose will execute the close method in the right places and suppress the 
+      close method function, output the business exception
+
+   java.nio.file
+       List<String> lines = Files.readAllLines(Paths.get("path", "to", "a.txt"));
+      file watcher, symbolic links, file locks, copy...
+
+jdk 8  2014
+     
+    lambda....
+    java.util.Base64
+      String text = "Base64 in java8";
+      Strng encoded = Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+      String decoded = Base64.getDecoder().decode(encoded, StandardCharsets.UTF_8);
+  
+    time api       
+       immutable
+       A time is time , date is date, not mixed like java.util.Date
+      
+      LocalDate, LocalTime, LocalDateTime   -> local, no time zone
+
+     OffsetDateTime, OffsetTime   -> Time with an offset from greenwich 
+     ZonedDateTime  ->  LocalDateTime with a time zone
+      
+      Duration, Period  -> Time span
+      Instant  -> Timestamp
+      Formatting -> Easy and thread-safe formatting
+
+
+
+
+
+EasyMock for Java
+  write junit tests easily 
+
+
 
 
 <hr />
