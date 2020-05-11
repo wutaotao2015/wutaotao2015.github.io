@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-11 07:41:23
+updated: 2020-05-11 22:48:04
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1286,6 +1286,111 @@ jdk 8  2014
       Duration, Period  -> Time span
       Instant  -> Timestamp
       Formatting -> Easy and thread-safe formatting
+
+      example:
+        LocalDateTime now = LocalDateTime.now();
+        String otherDay = now.withDayOfMonth(1).atZone(ZoneId.of("Europe/Paris")).plus(Duration.ofDays(5))
+        .format(DateTimeFormatter.ISO_ZONEID_DATE_TIME);
+
+   lambda
+      function with no name
+      classic:     list.forEach(e -> System.out.println(e));
+      typed:     list.forEach((String e) -> System.out.println(e));   // specify the parameter type
+      closure:     
+         String greeting = "hello";  // no need to write final, implicitly referred
+         list.forEach(e -> System.out.println(greeting + e));   // greeting is final in lambda
+
+   interface default methods    
+       default implementation for most implementors
+   interface static methods
+       replace the need for factory helper
+
+   // the magic here is new Object(){...} anonymous class create a new type(not Object) 
+   // for the next stream forEach tuple.
+    Map<Long, Person> map = Map.of(
+       1L, new Person(12, "wtt"),
+       2L, new Person(13, "cll")
+    );
+    map.entrySet().stream().map(entry -> new Object() {
+         long id = entry.getKey();
+         String name= entry.getValue().getName();
+      }).forEach(tuple -> {
+          System.out.println(tuple.id + ":" + tuple.name);
+        });
+    // here we get the long type indexId and  String type name
+
+   method reference
+     it is the simplification of lambda expression, 
+    my own example:
+```txt
+@FunctionalInterface
+interface OI<T>{        // 使用泛型处理不同类型参数
+  T oper(T x, T y);
+}
+public class Test{
+ public static void main(String[] args) {
+   printInteger(Math::max, 3, 5);     // 5
+   printDouble(Math::max, 33.2l, 5.3);  // 33.21
+   printInteger(Test::ss, 3, 10);      // 19
+ }  
+ // 这里函数式接口需要指明泛型类型，否则默认Object,编译报错找不到Math.max(Object,Object)
+ private static void printInteger(OI<Integer> oi, int x, int y) {   // 操作逻辑，操作数
+   System.out.println(oi.oper(x,y));  
+ }
+ private static void printDouble(OI<Double> oi, double x, double y) {   // 操作逻辑，操作数
+   System.out.println(oi.oper(x,y));  
+ }
+ private static int ss(int x, int y) {
+   return (x * x) + y;   //这是一个简单的运算，只有复杂的操作提取才有意义  
+ }
+}
+```
+   difference between lambda and method reference
+String s = null;
+IntSupplier r = () -> s.length();   // run good,  lambda will not execute when created
+IntSupplier r = s::length;   // error! method reference need the instance existed and not null
+
+
+jdk 9
+ httpClient  
+ immutable collections
+  xml and nio debugging  with unified JVM logging
+
+   try with resource no need to put the declaration in try block any more, like
+      ByteArrayOutputStream in = new ByteArrayOutputStream();
+      try(in) {...}
+
+    jdk7   
+    old reflection need to check and set the accessible, very slow
+       MethodHandle class, powerful tool for reflection
+       Field field = Test.class.getDeclaredField("title");
+       MethodHandle setter = MethodHandles.lookup().unreflectSetter(field);
+       setter.invokeExact(this, "Sir");
+
+  jdk9  add findVarHanle()
+     MethodHandles.lookup().findVarHandle()
+
+  modules
+        module path can be directories and main function can be class name not main function name
+    java  --module-path  app/target/classes:lib/target/classes -m pros.app/pro.App
+     maven-jar-plugin   auto module name change module name 
+     module-info.java    exports  and requires, opens for reflection
+
+  java 10  2018.3
+     var 
+      var var = 1;
+      var var = foo();  // this is bad, because it's ambiguous
+      ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+       simplifies to 
+      var map = new ConcurrentHashMap<String, String>();
+
+
+
+
+
+
+
+
 
 
 
