@@ -5,9 +5,9 @@ tags:
   - Container
   - Docker
   - K8s
+abbrlink: b53499ee
 updated: 2020-05-10 10:02:59
 date: 2020-04-30 07:48:09
-abbrlink:
 ---
 Docker and Kubernetes note
 <!-- more -->
