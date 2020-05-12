@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-12 21:07:28
+updated: 2020-05-12 21:24:37
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1195,7 +1195,9 @@ Predicate not(Predicate)
 lambda leftovers   _ for unused parameters
 
 raw string literals   jdk12
+```txt
    `` i a /sd/sd`isdfds`df ``
+```
 
 switch support type test
     String s;
