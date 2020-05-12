@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-11 22:48:04
+updated: 2020-05-12 07:37:56
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1319,6 +1319,13 @@ jdk 8  2014
         });
     // here we get the long type indexId and  String type name
 
+    var list = map.entrySet().stream().map(entry -> new Object() {
+         long id = entry.getKey();
+         String name= entry.getValue().getName();
+      }).collect(Collectors.toList());
+      System.out.println(list.get(0).name)
+      // we can use var type to write the unknown type of new Object 
+
    method reference
      it is the simplification of lambda expression, 
     my own example:
@@ -1383,21 +1390,27 @@ jdk 9
       ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
        simplifies to 
       var map = new ConcurrentHashMap<String, String>();
+      // map now is a ConcurrentHashMap type, not a Map type-interface
+     //  using  var with lambda parameters can make it be able to be annotated
 
+  java 11 2018.9 
+     a single file program
+     java.sh  #!$Java_home/bin/java --source 11
 
+    http://www.lamgdafaq.org
+    http://files.zeroturnaround.com/pdf/RebelLabs-Java-9-modules-cheat-sheet.pdf
+    http://openjdk.java.net/projects/amber/LVTIstyle.html
+    https://javaspecialists.teachable.com/courses
 
+    Modern Java in Action
+   Mastering Lambdas/Generics
+   Java 9 Modularity
 
-
-
-
-
-
-
-
-
+   http://blog.tremblay.pro
 
 EasyMock for Java
   write junit tests easily 
+
 
 
 
