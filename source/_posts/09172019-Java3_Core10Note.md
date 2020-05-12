@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-12 16:31:11
+updated: 2020-05-12 21:07:28
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1411,7 +1411,7 @@ jdk 9
 EasyMock for Java
   write junit tests easily 
 
-good luck
+good luck2
 
 
 
