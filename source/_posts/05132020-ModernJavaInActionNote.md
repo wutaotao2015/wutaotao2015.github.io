@@ -3,18 +3,38 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-13 07:16:25
+updated: 2020-05-14 07:45:23
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
 just the title
 <!-- more -->
+
 ## General
 programming language climate changes
 1. programmers need to deal with big data, it need to use the multicore cpu and parallel 
 computing.  (stream api)
 2. integrate old large subsystem with the new system (java9 module system and interface 
 default method)
+
+stream processing
+   like unix pipeline commands or sql query, stream use concurrent processing. 
+behavior parameterization
+   将方法作为参数 
+并行和共享的可变更数据
+   需要并行处理时每一个操作步骤都必须是纯方法，无副作用或无状态方法。
+   并发处理中使用synchronized性能损失非常大
+使用java8 提高了java 程序员的竞争力
+
+funtion和整型，对象引用等一样是一等公民 类也可以是(在js中已实现)
+方法引用： 如 new File(".").listFiles(File::isHidden);
+**方法引用和对象引用一样，方法和对象都是值, 方法作为值进行传递**
+    在方法引用以前，需要传递方法只能将方法包裹在一个实例对象(匿名内部类)中进行传递, 现在
+    可以直接传递方法。
+方法引用只支持具名函数，即有名字的方法，没名字的只能使用匿名函数，或者lambda表达式。
+
+**和对象使用接口类型进行传递一样，方法可以使用函数式接口(functional interface)进行传递**
+如Predicate, Supplier, Consumer等，顶层是Function接口
 
 ##
 ##
