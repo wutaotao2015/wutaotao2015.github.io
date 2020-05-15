@@ -3,7 +3,7 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-14 07:45:23
+updated: 2020-05-15 07:15:14
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
@@ -36,7 +36,16 @@ funtion和整型，对象引用等一样是一等公民 类也可以是(在js中
 **和对象使用接口类型进行传递一样，方法可以使用函数式接口(functional interface)进行传递**
 如Predicate, Supplier, Consumer等，顶层是Function接口
 
-##
+低频使用'方法值'是lambda表达式，多次或'方法值'很长就需要方法引用语法
+
+use stream.collect(groupingBy(Cst::getSliceTime)) to group a list with sliceTime
+将展开的结果列表分组聚合，特别适用于树形数据的聚合！
+
+自己使用for循环逐个遍历处理是外部遍历，使用stream不具体处理遍历过程是内部遍历
+stream利用了多核cpu的并行计算能力。
+
+
+#
 ##
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20200513_1.jpg" class="full-image" />

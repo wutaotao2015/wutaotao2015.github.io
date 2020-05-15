@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-05-15 16:04:52
+updated: 2020-05-15 20:21:10
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -853,6 +853,7 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 在pom.xml中添加lombok依赖后, 可以使用常见的@Data, @Log, 这时如果不添加插件, 编写代码时调用
 set, get方法没有提示!无法编码, install lombok plugin后, idea会提示是否启用
 annotation processor(这是lombok的关键技术), 启用后即可正常使用了. 
+注: @Log 查看源码使用的是java.util.logging.Logger, 使用slf4j时应使用@Slf4j注解。 
 
 
 <hr />
