@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-04-29 07:03:14
+updated: 2020-05-15 16:04:52
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -848,6 +848,12 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 ## mac重装idea无法启动问题解决
 这里需要删除mac中的.intelliJ20xx用户配置目录，位于/Usres/xxx/资源库/Preferences/intelliJ20xx
 目录中, 删除即可。
+
+## lombok
+在pom.xml中添加lombok依赖后, 可以使用常见的@Data, @Log, 这时如果不添加插件, 编写代码时调用
+set, get方法没有提示!无法编码, install lombok plugin后, idea会提示是否启用
+annotation processor(这是lombok的关键技术), 启用后即可正常使用了. 
+
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190301_1.jpg" class="full-image" />
