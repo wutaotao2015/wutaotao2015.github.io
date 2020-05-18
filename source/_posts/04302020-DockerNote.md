@@ -295,8 +295,87 @@ db.movieDetails.updateOne({
     }
   })
 
+// updateMany
+// batch update many documents
+db.movieDetails.updateMany({
+  "awards.wins": 2
+   }, {
+  $inc: {
+     "awards.wins": 1
+  }
+})
+// upset
+// 类似saveOrUpdate, 条件不满足时新增document
+db.movieDetails.updateOne({
+   "id": detail.id
+}, {
+      $set: detail
+}, {
+    upsert: true
+})
+
+**mongo shell实际上是js解析器，同console类似，可以在上面执行js语句**
+// replaceOne命令与updateOne类似，但它替换的是整个匹配到的document对象
+let filter = {title: 'Wild Wild West'}
+let doc = db.movieDetails.findOne(filter)   // 不能使用find()方法
+doc.updatedBy = 'wtt'
+db.movieDetails.replaceOne(filter, doc)   // update succeed
+
+// deleteOne
+// deleteMany
+
+query operators
+$eq $gt $gte $lt $lte  $ne(not equal include field do not exist at all)
+$in $nin(the value type is an array)
+
+// use $in to judge the array contains a or b
+db.movieDetails.find({writers: {$in: ['a', 'b']}}).count()
+// arrayName: [] match the overall array, and arrayName: {} judges the array elements
+
+//element query operators
+$exists   filter a field exists in documents  {name: {$exists: true}}
+$type   filter a specific type field in documents  {name: {$type: bool}}
+// {name: null} will get the null value field documents and non-existed field documents
+
+//logical operators
+$or   selectors only need one is true, value is an array, contains all selectors
+     db.test.find({$or: [{'sex': 'm'}, {'age': 30}]})  // sex is man or age = 30
+
+$and   because filtors are default and, so $and is used for same field name needing to be used
+      more than once:
+        db.test.find({$and: [{'name': {$ne: null}}, {'name': {exists: true}}]})
+         //  find documents whose name value is not null and does exist
+
+// array operators
+$all  {arrayName: {$all: ['b', 'c']}}
+  // need the array contains b and c element
+
+$size  {arrayName: {$size: 2}}
+  // match the array whose size is 2
+
+$elemMatch  
+    // this query only need the array contains an item whose name = wtt, and contais
+    // another item's age = 30, do not need to be the same item
+   db.test.find({arrayName: {'name': 'wtt', 'age': 30}})
+
+   // when we need the same item to be matched, use $elemMatch
+   // $elemMatch match for one item, so it uses {}(like document) to get result
+   db.test.find({arrayName: {$elemMatch: {'name': 'wtt', 'age': 30}}})
+
+$regex
+   // 想想可以在sql中使用正则表达式！
+   // mysql  regexp 关键字(同like类似)
+   // `select * from my_user where name regexp '^[0-9]{3}$'`
+   // oracle中有`regexp_like, regexp_instr, regexp_substr, regexp_replace`关键字
+   // use regular expression for text string match
+可以写为 db.test.find({name: {$regex: 'pattern', $options: 'options'}})
+或 db.test.find({name: {$regex: /pattern/options}})
+或最简单实用的 直接省略$regex关键字
+db.test.find({name: /pattern/options})  
+  //在某些场景下必须使用$regex或必须使用/pattern/语法, 具体见文档
 
 
+   
 
 
 
