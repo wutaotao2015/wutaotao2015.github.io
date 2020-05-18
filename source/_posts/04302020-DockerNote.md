@@ -6,7 +6,7 @@ tags:
   - Docker
   - K8s
 abbrlink: b53499ee
-updated: 2020-05-16 16:08:59
+u`pdated: 2020-05-17 21:39:55
 date: 2020-04-30 07:48:09
 ---
 Docker and Kubernetes note
@@ -55,9 +55,251 @@ docker run -d -p 1521:1521 -v /Users/wutaotao/stuff/oracleData/:/u01/app/oracle 
 docker pull mongo
 docker run --name mongo -p 27017:27017 -v /Users/wutaotao/stuff/mongodb:/data/db -d mongo --auth
 
+// create admin
+use admin
+db.createUser(
+  {
+    user: "admin",
+    pwd: "admin",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+exit   // exit mongo shell
+docker exec -it mongo mongo -u 'admin' -p 'admin' --authenticationDatabase 'admin
+
+// create test 
+ues test
+db.createUser(
+  {
+    user: "wtt",
+    pwd: "wtt",
+    roles: [ { role: "readWrite", db: "test" } ]
+  }
+)
+exit
+docker exec -it mongo mongo -u 'wtt' -p 'wtt' --authenticationDatabase 'test'
+
+
 mongo university atlas learning cluster
-docker exec -it mongo mongo "mongodb+srv://cluster0-jxeqq.mongodb.net/test" 
---username m001-student -password m001-mongodb-basics
+docker exec -it mongo mongo "mongodb+srv://cluster0-jxeqq.mongodb.net/test" --username m001-student -password m001-mongodb-basics
+
+atlas 是数据库服务平台，多个服务实例复制相同的数据实现可用性，每个集群只有一个主服务.
+database - collection
+database.collection 构成了命名空间 
+这里感觉collection和表的概念差不多，后面再验证
+
+show dbs
+use video
+show collections  -- collectionName is movies
+db.movies.find().pretty()   -- db.collectionName.find().pretty()
+
+create atlas account and use free tier
+all ip whitelist and database users(admin rights)
+download the load.js file
+move the load.js file to the host mongodb directory for docker to use, inside
+mongo container the mapped location(as above commannd) is /data/db
+
+docker exec -it mongo /bin/bash
+mv /db/load.js /home/
+mongo "mongodb+srv://sandbox-pbr9e.mongodb.net/test" --username wtt 
+enter password  (ignore log warn)
+load('/home/load.js')   // return true
+
+use video
+create collection test in compass
+db.test.insertOne({name: 'wtt', age: 30, salary: 2333.44})
+//  `each _id value is unique in each collection, like table primary key`
+// default ordered is true, so when error reported, mongodb will not insert any more
+`db.test.insertMany([{_id: '001',name: 'wtt', age: 30, salary: 2333.44},
+{_id: '001',name: 'wtt', age: 30}, {name: 'test'}])`
+
+// when ordered is false, it will insert any data that is good
+`db.test.insertMany([{_id: '001',name: 'wtt', age: 30, salary: 2333.44},
+{_id: '001',name: 'wtt', age: 30}, {name: 'test'}], {ordered: false})`
+
+query
+db.collectionName.find().pretty()
+db.collectionName.find({'name': 'wtt'}).pretty()
+// hierarchical query using dot notation and quote the key to query
+db.collectionName.find({'wind.direction.angle': 999}).pretty()
+
+lab answer:
+db.movieDetails.find({'awards.wins': 2, 'awards.nominations': 2}).count()
+db.movieDetails.find({'rated': 'PG', 'awards.nominations': 10}).count()
+
+**mongo shell: ctrl + u is clearing the input text**
+**mongodb中document和object是相同的意思，即文档类型就是Object对象类型**
+
+array query
+// match the whole array
+db.coll.find({'array': ['a', 'b']}).pretty()
+
+// match one of the array elements, with a included
+db.coll.find({'array': 'a'}).pretty()
+
+// match a at the specific position
+db.coll.find({'array.1': 'a'}).pretty()
+
+find()方法返回的是一个迭代器, mongo shell中默认每次迭代展示20条记录
+find()方法可以传递第二个参数，对返回的结果集中的字段进行限定，类似select语句的限定字段，
+它叫projection, 值为0代表不包含，1代表包含, `_id`默认是包含的
+`db.coll.find({'array.1': 'a'}, {title: 1, _id: 0}).pretty()`
+
+updateOne
+db.coll.updateOne({
+  title: 'test'
+}, {
+  $set: {user: 'ss'}
+})
+// updateOne will update only the first record matching the title = test, usually we
+pass the `_id` to get the only one record needed to be update once.
+// the second argument is the newItem, it will add new field if the old one do not exist
+or update the old field if it existed
+
+update other operators
+
+// $set   update or add fields
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $set: {
+       updateBy: 'wtt',
+       updateTime: '20200518'
+      } 
+  })
+
+// unset     remove fields, value can be anything, do not matter
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $unset: {
+       updateBy: 'xx',
+       updateTime: 'xx'
+      } 
+  })
+
+// $rename  rename fields name
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $rename: {
+       updateBy: 'newUpdate',
+       updateTime: 'newUpdateTime'
+      } 
+  })
+// $inc $max $min $mul   used for numeric field values to increase some number
+// or get the maxValue of the old, new one,  get the minValue of the old, new one
+// multiply the value by set value
+
+// $currentDate
+// the result gets updateBy: ISODate("2020...")
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $currentDate: {
+       updateBy: true,
+       updateTime: true
+      } 
+  })
+// this gets the same result
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $currentDate: {
+       updateBy: {$type: 'date'},
+       updateTime: {$type: 'date'}
+      } 
+  })
+// this gets timeStamp result
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $currentDate: {
+       updateBy: {$type: 'timestamp'},
+       updateTime: {$type: 'timestamp'}
+      } 
+  })
+
+// array
+// **mongodb 作用最大的树级结构数据存储，嵌套属性是必须的，所以array update 操作符很实用**
+// push to an  array, it will create the array field if not existed
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $push: {
+      myArr: {
+        name: 'wtt',
+        age: 30,
+        sex: 'M'
+      }
+    }
+  })
+// push many items once to an array
+// using $each modifier, its value is an array below
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $push: {
+      myArr: {
+        $each: [
+          {
+            name: 'wtt',
+            age: 30,
+            sex: 'M'
+          }, 
+          {
+            name: 'cll',
+            age: 27,
+            sex: 'F'
+          }, 
+          {
+            name: 'wwt',
+            age: 25,
+            sex: 'M'
+          }
+        ]
+      }
+    }
+  })
+
+// pop  pop expects 1 or -1
+// 1 means the last item, -1 means the first item
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $pop: {
+      myArr: -1
+    }
+  })
+
+// $pull
+// remove all items of myArr whose sex is M
+// pull use query condition
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $pull: {
+      myArr: {
+        "sex": "M"
+      }
+    }
+  })
+
+// $pullAll remove items in a list from an array
+// useful with repeated elements in an array
+db.movieDetails.updateOne({
+   title: 'Star Trek'
+  }, {
+    $pullAll: {
+      myArr: [{...}, {...}]
+    }
+  })
+
+
+
+
+
+
 
 ```
 
