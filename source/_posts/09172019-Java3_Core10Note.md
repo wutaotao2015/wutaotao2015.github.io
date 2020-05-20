@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-12 21:24:37
+updated: 2020-05-20 18:02:12
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1144,6 +1144,11 @@ should avoid this.
 每月1号凌晨1点执行一次：0 0 1 1 * ?
 每月最后一天23点执行一次：0 0 23 L * ?
 每周星期天凌晨1点实行一次：0 0 1 ? * L
+```
+注: application.yml文件中可以使用${propertyName}相互引用,如
+```txt
+url: http://xxx.xx.xx.xx:8000
+jsp: ${url}/test/index.html
 ```
 
 ## move forward to jdk 11
