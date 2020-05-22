@@ -3,7 +3,7 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-15 07:15:14
+updated: 2020-05-22 17:56:40
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
@@ -44,8 +44,28 @@ use stream.collect(groupingBy(Cst::getSliceTime)) to group a list with sliceTime
 自己使用for循环逐个遍历处理是外部遍历，使用stream不具体处理遍历过程是内部遍历
 stream利用了多核cpu的并行计算能力。
 
+list.stream().filter(...).collect(Collectors.toList());
+和
+list.parallelStream().filter(...).collect(Collectors.toList());
+性能差异, 后者随着测试数据量增大和中间操作步骤增多, 性能优势体现明显.
+注: 并行执行要求无共享的可变状态对象 mutable shared state
 
-#
+`optional<T>` can avoid null pointer exception
+
+pattern matching:  can decompose type object to its components,such as 
+`obj instanceof String s`  
+`switch(obj) case String s: ...; Double d: ...`  
+    // also called visitor patterns, walk through a family classes and do sth to each one
+
+## passing code with behavior parameterization
+### 经常变动的需求
+挑选苹果 
+  绿色, 红色 -> color parameter
+  轻重   -> weight parameter
+ 以上条件有重复的模板代码, 如果需要优化挑选的代码性能, 需要修改每一个方法!
+
+
+
 ##
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20200513_1.jpg" class="full-image" />
