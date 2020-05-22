@@ -55,29 +55,39 @@ docker run -d -p 1521:1521 -v /Users/wutaotao/stuff/oracleData/:/u01/app/oracle 
 docker pull mongo
 docker run --name mongo -p 27017:27017 -v /Users/wutaotao/stuff/mongodb:/data/db -d mongo --auth
 
+// enter into container
+docker exec -it mongo /bin/bash
+mongo   //or mongo --port 27017  
+
 // create admin
 use admin
 db.createUser(
   {
     user: "admin",
-    pwd: "admin",
-    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
   }
 )
 exit   // exit mongo shell
-docker exec -it mongo mongo -u 'admin' -p 'admin' --authenticationDatabase 'admin
+mongo -u 'admin' -p 'admin' --authenticationDatabase 'admin'
+// or auth after connected 
+mongo
+use admin  // change database
+show dbs  // nothing
+db.auth('admin', 'admin')
+show dbs  // successfully show dbs
 
-// create test 
-ues test
+// add extra user wtt with auth to database vue
+ues vue
 db.createUser(
   {
     user: "wtt",
-    pwd: "wtt",
-    roles: [ { role: "readWrite", db: "test" } ]
+    pwd:  passwordPrompt(),   // or cleartext password
+    roles: [{ role: "readWrite", db: "vue" }]
   }
 )
 exit
-docker exec -it mongo mongo -u 'wtt' -p 'wtt' --authenticationDatabase 'test'
+docker exec -it mongo mongo -u 'wtt' -p 'wtt' --authenticationDatabase 'vue'
 
 
 mongo university atlas learning cluster
