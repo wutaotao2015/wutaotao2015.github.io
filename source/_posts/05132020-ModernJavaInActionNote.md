@@ -3,7 +3,7 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-22 17:56:40
+updated: 2020-05-25 11:17:10
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
@@ -63,6 +63,11 @@ pattern matching:  can decompose type object to its components,such as
   绿色, 红色 -> color parameter
   轻重   -> weight parameter
  以上条件有重复的模板代码, 如果需要优化挑选的代码性能, 需要修改每一个方法!
+ 
+ 本质需求:输入是一个苹果, 根据苹果的某些性质输出一个boolean值, 所以可以采用策略模式, 将其
+ 定义为一个接口类型predicate, 应用方法接受该接口作为参数进行处理.
+
+
 
 
 
