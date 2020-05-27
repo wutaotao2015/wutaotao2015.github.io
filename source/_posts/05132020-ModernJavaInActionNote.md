@@ -3,7 +3,7 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-25 11:17:10
+updated: 2020-05-27 17:55:52
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
@@ -66,6 +66,27 @@ pattern matching:  can decompose type object to its components,such as
  
  本质需求:输入是一个苹果, 根据苹果的某些性质输出一个boolean值, 所以可以采用策略模式, 将其
  定义为一个接口类型predicate, 应用方法接受该接口作为参数进行处理.
+### real examples
+1. comparator
+  `Collections.sort(cstDtos, Comparator.comparing(CstDto::getBeginDate));`
+
+2. java.lang.Runnable
+   // because thread.run method is void run(), no parameters and no return value
+  `Thread t = new Thread(() -> System.out.println("hello"));` 
+
+3. java.util.concurrent.Callable
+```txt
+  // Callable is also a functional interface,  it has V call()
+  ExecutorService executor = Executors.newCachedThreadPool();
+  Future<String> threadName = executor.submit(() -> Thread.currentThread.getName());
+```
+
+4. gui event handler 
+void handle(ActionEvent event){}
+代码略
+
+
+
 
 
 
