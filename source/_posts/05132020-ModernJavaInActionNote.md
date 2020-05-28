@@ -3,14 +3,15 @@ title: ModernJavaInActionNote
 categories: Java
 tags:
   - Java
-updated: 2020-05-27 17:55:52
+updated: 2020-05-28 16:39:38
 date: 2020-05-13 07:08:24
 abbrlink:
 ---
 just the title
 <!-- more -->
 
-## General
+## part1 general
+### Java 9 to 11
 programming language climate changes
 1. programmers need to deal with big data, it need to use the multicore cpu and parallel 
 computing.  (stream api)
@@ -57,8 +58,8 @@ pattern matching:  can decompose type object to its components,such as
 `switch(obj) case String s: ...; Double d: ...`  
     // also called visitor patterns, walk through a family classes and do sth to each one
 
-## passing code with behavior parameterization
-### 经常变动的需求
+### passing code with behavior parameterization
+#### 经常变动的需求
 挑选苹果 
   绿色, 红色 -> color parameter
   轻重   -> weight parameter
@@ -66,7 +67,7 @@ pattern matching:  can decompose type object to its components,such as
  
  本质需求:输入是一个苹果, 根据苹果的某些性质输出一个boolean值, 所以可以采用策略模式, 将其
  定义为一个接口类型predicate, 应用方法接受该接口作为参数进行处理.
-### real examples
+#### real examples
 1. comparator
   `Collections.sort(cstDtos, Comparator.comparing(CstDto::getBeginDate));`
 
@@ -85,6 +86,17 @@ pattern matching:  can decompose type object to its components,such as
 void handle(ActionEvent event){}
 代码略
 
+### lambda expression
+
+## part2 stream
+
+## part3 lambda and stream
+
+## part4 everyDay Java
+
+## part5 concurrency
+
+## part6 function programming and java future
 
 
 
