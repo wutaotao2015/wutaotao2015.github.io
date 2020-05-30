@@ -392,6 +392,43 @@ db.test.find({name: /pattern/options})
 
 ```
 
+## ubuntu in docker
+1. docker pull ubuntu   // 现在默认是20.04 LTS版本
+2. docker run --name ubuntu -v /Users/wutaotao/stuff/ubuntu/:/home/ \
+ -it -e LANG=C.UTF-8 -e LC_ALL=C.UTF-8 ubuntu 
+3. apt update
+4. apt install vim
+5. cp /etc/apt/sources.lst /etc/apt/sources.lst.bak
+   vim /etc/apt/sources.list
+   // 20.04的源
+```txt
+deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+```
+6. apt install git curl 
+7. adduser tao
+8. apt install sudo -y
+9. passwd  // change root user passwd
+9. `echo "Set disable_coredump false" >> /etc/sudo.conf`  // fix the sudo warning bug  
+9. su - tao
+10. sudo ls   // check sudo command, first time need to input password 
+11. git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+12. copy .vimrc
+13. :PluginInstall 
+14. sudo apt install fcitx fcitx-pinyin  // bad
+
 
 ## 常用命令
 docker image ls
