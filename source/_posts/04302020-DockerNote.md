@@ -427,8 +427,66 @@ deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted univer
 11. git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 12. copy .vimrc
 13. :PluginInstall 
-14. sudo apt install fcitx fcitx-pinyin  // bad
+14. sudo apt install fcitx fcitx-pinyin  // need gui to config fcitx, let's do this!
+15. in mac terminal:(version 10.15.2 catalina)
+```txt
+brew cask install xquartz
+open -a XQuartz
+check security - allow connect from network
+brew install socat
+// login as tao, not root
+docker exec -it ubuntu /bin/bash -c 'su - tao && /bin/bash'
+vi .bash_profile
+// export EDITOR=/usr/bin/vim
+// export DISPLAY=192.168.x.x:0  # the host machine's ip
+// export LANG=C.UTF-8
+exit
+docker stop ubuntu
+docker start ubuntu
+// with xquartz opened, install socat and start it to connect xquartz and docker eontainer
+brew install socat
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+```
+16. docker exec -it ubuntu /bin/bash -c 'su - tao && /bin/bash'
+fcitx-configtool
+17. open xquartz, use command + alt + a to show its window
+18. **input method list is empty, and fcitx error**
+19. sudo apt remove fcitx fcitx-pinyin
+20. sudo apt autoremove
+21. sudo apt autoclean
 
+由以上测试可以看出，docker ubuntu想要完全替代虚拟机还是不可行的，但我只是想用ubuntu里的
+fcitx-vim插件方便在vim中输入中文而已(因为上面记载的mac版fcitx-vim插件有bug)，
+然后我发现了下面这个插件: **vimIM**.
+```txt
+brew install wget
+// download the specific version berkeley-db and manual make it accessible to homebrew
+sudo su -
+wget http://download.oracle.com/berkeley-db/db-6.1.26.tar.gz
+tar xvf db-6.1.26.tar.gz
+cd db-6.1.26/build_unix
+mkdir -p /usr/local/Cellar/berkeley-db/6.1.26
+../dist/configure --prefix=/usr/local/Cellar/berkeley-db/6.1.26
+make
+make install
+// ctrl + d exit to normal user
+brew link berkeley-db
+
+sudo su -
+easy_install pip
+YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION=1 BERKELEYDB_DIR=/usr/local/Cellar/berkeley-db/6.1.26 pip install bsddb3
+
+// ctrl + d exit to normal user
+// edit .vimrc and add vimIM plugin to vundle
+// but when in insert mode, after ctrl /, vim报错找不到模式，个人感觉是词典的问题。而且
+// vimIM不一定有我想要的小鹤双拼输入法。
+
+// 后来github上找到一个基于小鹤双拼的vimIM插件修改版，经测试可以使用，但是它的词库
+// 选词太少了，又在网上找到一个小鹤双拼的词库，稍微多一点，但还是容量有限，感觉没有
+// 真正的小鹤双拼输入法好用。这时找到emacs编辑器中有个pyim的插件可以完美解决中英文输入的
+// 问题，试试吧。
+// 具体的emacs实验过程转移到vim tips文章。
+```
 
 ## 常用命令
 docker image ls
