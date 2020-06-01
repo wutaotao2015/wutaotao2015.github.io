@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-05-15 20:21:10
+updated: 2020-06-01 11:38:20
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -854,6 +854,12 @@ jump to last tool window之前我设置的是F10，发现改为波浪线~backref
 set, get方法没有提示!无法编码, install lombok plugin后, idea会提示是否启用
 annotation processor(这是lombok的关键技术), 启用后即可正常使用了. 
 注: @Log 查看源码使用的是java.util.logging.Logger, 使用slf4j时应使用@Slf4j注解。 
+
+## idea git diff and merge color 
+idea color theme好用的是gapStyle color, 但它自带的git diff/merge color背景色不清晰, 没有
+github那种删除背景色是红色, 新增背景色是绿色, 一目了然, 这点可以在idea - settings
+- editor - color scheme - diff & merge中设置, 只修改important即可. 亮度调为150-160之间.
+
 
 
 <hr />
