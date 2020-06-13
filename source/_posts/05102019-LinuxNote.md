@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-03-30 20:48:33
+updated: 2020-06-13 23:57:44
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -777,6 +777,92 @@ xrandr --auto --output DP-1 --rotate right --left-of eDP-1
 2. view -> autosize -> autofit guest ,  non check autofit window. 
 实际上,可以先将分辨率设置为横屏的2560x1440后再重启切换全屏, 在vmware-tools生效的情况下
 应该就可以正常展示出竖屏效果了.
+
+## old mac install manjaro
+pacman command:
+sudo pacman -S 软件名　# 安装
+sudo pacman -R 软件名　# 删除单个软件包，保留其全部已经安装的依赖关系
+sudo pacman -Rs 软件名 # 除指定软件包，及其所有没有被其他已安装软件包使用的依赖关系
+sudo pacman -Ss 软件名  # 查找软件
+sudo pacman -Sc # 清空并且下载新数据
+sudo pacman -Syu　# 升级所有软件包
+sudo pacman -Qs # 搜索已安装的包
+
+yay command:
+yay -S package # 从 AUR 安装软件包
+yay -Rns package # 删除包
+yay -Syu # 升级所有已安装的包
+yay -Ps # 打印系统统计信息
+yay -Qi package # 检查安装的版本
+
+1. install
+2. sudo pacman-mirrors -c China -m rank
+3. update source: archlinuxcn antergos arch4edu
+```txt
+[archlinuxcn]
+SigLevel = Optional TrustedOnly
+#中科大源
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+#清华源
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+
+[antergos]
+SigLevel = TrustAll
+Server = https://mirrors.tuna.tsinghua.edu.cn/antergos/$repo/$arch
+
+[arch4edu]
+SigLevel = TrustAll
+Server = https://mirrors.tuna.tsinghua.edu.cn/arch4edu/$arch
+```
+4. sudo pacman-mirrors -g
+5. sudo pacman -Syyu
+6. sudo pacman -S archlinuxcn-keyring
+7. sudo pacman -S antergos-keyring
+8. before install fcitx, change locale to chinese
+sudo pacman -S fcitx-im // install all
+sudo pacman -S fcitx-configtool
+ 
+9. vi ~/.xprofile
+```txt
+export GTK_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+```
+10. sudo pacman -S yay
+11. yay --aururl "https://aur.tuna.tsinghua.edu.cn" --save
+12. yay -P -g  // confirm the change
+13. yay -Syu  // update like pacman
+14. before install v2ray, git... etc, install graphic driver for
+manjaro on mac according to archLinux wiki for mac
+lspci | grep VGA    // intel corporation ...
+sudo pacman -S xf86-video-intel
+
+15. yay -S xmonad xmonad-contrib
+16. yay -S vim fish git
+17. which fish // /usr/bin/fish
+   chsh -s /usr/bin/fish
+18. git config --global user.name "wutaotao"
+git config --global user.email "531618500@qq.com"
+ssh-keygen -t rst -C "531618500@qq.com"
+19. git clone  xxx.xmonad.config ~/.xmonad
+20. yay -S xmobar dmenu xscreensaver stalonetray feh
+21. copy .vimrc
+22. yay -S curl
+23. yay -S v2ray  // systemctl enable it and change config
+24. yay -S proxychains-ng
+sudo vim /etc/proxychains.conf 
+socks5 127.0.0.1 1080  // modify the old example
+proxychains curl www.google.com   // usage and test
+25. yay -S google-chrome
+26. google-chrome-stable --proxy-server=socks5://127.0.0.1:1080    // can not add / at last position!
+27. proxychains git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+28. proxychains vim
+29. :PluginInstall
+
+
+
+
+
 
 
 <hr />
