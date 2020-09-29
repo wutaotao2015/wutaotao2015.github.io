@@ -502,6 +502,34 @@ docker stop containerName
 docker rm containerName
 docker rmi imageId
 
+## kubernete install
+1. install ubuntu 18.04 server vmware workstation guest system on win10
+   pay attention to the network setting, use bridged network to make it accessible to network
+2. install docker using apt
+   add current user tao to usergroup docker, edit aliyun mirror
+3. install kubectl using curl
+   move it to /usr/local/bin
+4. install minikube using curl
+   install it to /usr/local/bin, verify it with minicube version
+5. error: requires conntrack to be installed in root's path
+   fix: sudo apt install conntrack
+   then run the command again
+   sudo minikube start --vm-driver=docker --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+6. chown -R tao ~/.kube ~/.minikube  // use this to avoid using sudo 
+   create a service to test the minicube:
+   kubectl create deployment hello --image=tomcat
+7. kubectl expose deployment hello --type=NodePort --port=8080
+8. kubectl get pod
+9. minikube service hello --url
+   ps: kubectl bash completion set:
+   `echo 'source <(kubectl completion bash)' >>~/.bashrc)`
+   at this time, we visit the result url at win10 host machine, it returns 404
+11. kubectl dashboard
+   we can use kubectl proxy to make the host to be able to visit dashboard:
+     kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
+   and the output is stuck like using python httpServer, we can visit it with vmware url:
+     http://{vmware guest ip}:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/overview?namespace=default
+11. 
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20200505_1.jpg" class="full-image" />
