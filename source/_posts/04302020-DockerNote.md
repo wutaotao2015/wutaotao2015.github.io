@@ -529,7 +529,12 @@ docker rmi imageId
      kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
    and the output is stuck like using python httpServer, we can visit it with vmware url:
      http://{vmware guest ip}:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/overview?namespace=default
-11. 
+     ps: initial judgement is security reason, the tomcat webpage can not be visited, need
+     to be tested on archlinux with google chrome.
+12. vmware tools install grey and disabled problem:
+ set the guest machine dvd, dvd2, software as hardware and auto-detect. 
+ after clicking the reinstall button, use lsblk -f command to check it and mount it, execute
+ the vmware-install.pl script.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20200505_1.jpg" class="full-image" />
