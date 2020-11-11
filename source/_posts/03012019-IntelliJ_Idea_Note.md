@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-06-01 11:38:20
+updated: 2020-11-11 14:12:45
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -860,6 +860,21 @@ idea color theme好用的是gapStyle color, 但它自带的git diff/merge color�
 github那种删除背景色是红色, 新增背景色是绿色, 一目了然, 这点可以在idea - settings
 - editor - color scheme - diff & merge中设置, 只修改important即可. 亮度调为150-160之间.
 
+## idea tomcat visit uploaded files configuration
+local tomcat store uploaded files in local computer, its path is like H://GisFiles/,
+so we need to config it in tomcat. it is called virtual directory in tomcat, and it also 
+applys for war file.Here we use it to visit uploaded files.
+There are two ways to config it.
+1. modify the ${tomcatInstance}/conf/server.xml, add
+`<Context path="" docBase="H:/GisFile/"></Context>` in Host tag
+2. add a gisFile.xml in ${tomcatInstance}/conf/Catalina/localhost, content same as above
+one.
+Idea's tomcat instance configuration is like 
+`C:\Users\wutao\AppData\Local\JetBrains\IntelliJIdea2020.2\tomcat\Unnamed_xxxx`, we can
+see it when the tomcat start up, but we do not need to manually modify its files, idea 
+make it easy to add virtual path:
+**In tomcat configuration's deployment, add plus icon, and we can add the uploaded files
+or war file location, use the default Application context, and it is done!**
 
 
 <hr />
