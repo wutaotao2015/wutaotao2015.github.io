@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-06-13 23:57:44
+updated: 2020-10-09 14:59:45
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -859,9 +859,28 @@ proxychains curl www.google.com   // usage and test
 28. proxychains vim
 29. :PluginInstall
 
-
-
-
+## ubuntu server 18.04 resize disk size
+this is the way to enlarge the ubuntu file disk size.
+1. enlarge the vmware guest system SCSI disk size from 20G to 40G.
+2. fdisk /dev/sda to create a new partition 20G, linux file system type.
+   it can also be done using cfdisk etc.
+   here the original disk partition is /dev/sda3, new one is /dev/sda4
+3. create physical volume on new created partition /dev/sda4
+   `pvcreate /dev/sda4`
+   use pvdisplay to check the result.
+4. extend the logical volume group to use the new physical volume too.
+   `sudo vgs`, `sudo vgdisplay`   // get the logical volume group name
+   `sudo vgextend ubuntu-vg /dev/sda4` 
+   use sudo vgs to check results
+5. extend the logical volume to use the newly extended size
+   `sudo lvs`, `sudo lvdisplay`   // get the logical volume path
+   `sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv`
+   use sudo lvs to check results
+6. resize logical volume
+   `sudo resize2fs /dev/ubuntu-vg/ubuntu-lv` // still use the lv path
+7. check result
+   `df -lh`
+done!
 
 
 

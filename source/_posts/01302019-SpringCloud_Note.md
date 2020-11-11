@@ -7,7 +7,7 @@ tags:
   - Linux
   - Tomcat
 
-updated: 2020-04-07 14:05:16
+updated: 2020-09-29 15:53:00
 abbrlink: 7bee19a4
 date: 2019-01-30 17:17:17
 ---
@@ -285,7 +285,7 @@ spring:
       config:
           server:
               git:
-                  uri: http://128.160.184.165/wutaotao/configrepo.git
+                  uri: http://xx.xx.xx.xx/wutaotao/configrepo.git
                   clone-on-start: true
                   force-pull: true      # 强制更新
                   basedir: D:\\code\\pra-config-server-dir  

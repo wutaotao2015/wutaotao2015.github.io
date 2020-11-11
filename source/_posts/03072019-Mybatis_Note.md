@@ -8,7 +8,7 @@ tags:
   - SLF4J
 
 abbrlink: 7fd48667
-updated: 2020-04-07 14:35:12
+updated: 2020-09-29 15:52:16
 date: 2019-03-07 15:59:42
 ---
 Mybatis note, Log4J, Log4J2, SLF4J,  
@@ -488,7 +488,7 @@ configuration 子节点为 appender、logger、root
 
     <!--将日志输出到logstack-->
     <!--<appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>47.93.173.81:7002</destination>
+        <destination>xx.xx.xx.xx:7002</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <charset>UTF-8</charset>
         </encoder>
