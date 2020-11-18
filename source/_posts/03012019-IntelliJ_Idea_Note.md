@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-11-18 15:58:42
+updated: 2020-11-18 17:40:15
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -875,6 +875,21 @@ see it when the tomcat start up, but we do not need to manually modify its files
 make it easy to add virtual path:
 **In tomcat configuration's deployment, add plus icon, and we can add the uploaded files
 or war file location, use the default Application context, and it is done!**
+
+ 2020-11-18 17:31:51 added:
+ by default, tomcat autodeploy in conf/server.xml is true, so after testing,
+ when I modify the java file and use command
+ `mvn clean compile war:exploded` to repackage the war, the server will report error first
+ and then autodeploy and make the changes take effect.
+ Here we must clean or remove the target directory first, otherwise the tomcat will not 
+ redeploy. This is the command line hotDeploy code.
+ On the other hand, in idea tomcat, after changing code,just save the changes and rebuild
+ the code, the idea has a function called hotswap in settings -> build, execution, deployment
+ -> debugger -> hotSwap, it will make the changes classes to exploded war file and make
+ tomcat recognize it. Quite convenient.
+
+ PS: use the tomcatBaseDir/bin/catalina.sh run in command line will see the real-time output
+ of tomcat, no need to tail -f logs/catalina.out anymore.
 
 ## old lib jars project change to use maven
 Recently I work in a new company and its project use old lib jars without maven, I feel 
