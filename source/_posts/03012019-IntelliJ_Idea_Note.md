@@ -5,7 +5,7 @@ tags:
   - IntelliJ Idea
 
 abbrlink: 481236cd
-updated: 2020-11-11 14:12:45
+updated: 2020-11-18 15:58:42
 date: 2019-03-01 10:21:17
 ---
 IntelliJ Idea Note
@@ -875,6 +875,71 @@ see it when the tomcat start up, but we do not need to manually modify its files
 make it easy to add virtual path:
 **In tomcat configuration's deployment, add plus icon, and we can add the uploaded files
 or war file location, use the default Application context, and it is done!**
+
+## old lib jars project change to use maven
+Recently I work in a new company and its project use old lib jars without maven, I feel 
+it cubersome to add new jars, so I decided to make it a maven project.
+1. in idea select the project root project and choose add framework support and select
+maven.
+2. mannually add pom.xml files, with parent and child modules.
+3. view -> tool windows -> maven, and add these new pom files.
+4. use this script below to import local lib jar file be recognized by maven:
+```txt
+        <dependency>
+            <groupId>com.wtt</groupId>
+            <artifactId>AAA</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/aliyun-java-sdk-core-4.4.2.jar
+            </systemPath>
+        </dependency>
+```
+because we have many jar files in lib directory, so we need to use perl to replace the 
+artifactId AAA to incremental numbers, check my vimnote post to see the one-line script.
+And when we set up the project file structure as maven demanded, like
+```txt
+src/main
+src/main/java
+src/main/resources
+src/main/webapp
+src/test
+src/test/java
+src/test/resources
+target
+pom.xml
+```
+ps: the default maven compile path is target/classes and target/test-classes.
+
+when the structure is done, then the idea will generate a perfectly war and war-exploded 
+artifact for us, do not need to mannually create one like what I have done before. We can 
+use this artifact to deploy in tomcat and it will work good. After test, the tomcat before
+launch just need to use build artifact option only, do not need to build in advance.
+
+However, we can also use maven to help us to package our needed war files, add the 
+maven-war-plugin as below:
+```txt
+ <build>
+        <finalName>warName</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+```
+after we install maven-war-plugin, as maven has three life phases: clean default site, we
+can just one option (like artifact): run maven goal --> clean compile war:exploded
+compile will compile test java files, we can make sure test classes compiles also good, 
+so we can use maven goal --> clean test-compile war:exploded to make sure our test classes
+are also good. After setting this, tomcat is good to go! 
+
+And you can use command line to 
+package your project war file now without opening idea if you install maven in command
+line and set up the corresponding maven environment, just add the maven home bin to system
+path is enough, after jdk is installed.
+
+
 
 
 <hr />
