@@ -6,7 +6,7 @@ tags:
   - Docker
   - K8s
 abbrlink: b53499ee
-u`pdated: 2020-05-17 21:39:55
+updated: 2020-12-21 08:58:49
 date: 2020-04-30 07:48:09
 ---
 Docker and Kubernetes note
