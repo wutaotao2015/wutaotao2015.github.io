@@ -5,7 +5,7 @@ tags:
   - Thought
 
 abbrlink: b703434b
-updated: 2019-03-15 20:33:06
+updated: 2020-12-25 07:23:45
 date: 2019-03-15 20:05:01
 ---
 Test-driven Coding
@@ -28,6 +28,20 @@ Test-driven Coding
 > 工作的正确和稳定性，相当于快速迭代开发。如建房子一样，先打好地基，一步一步稳步前行，这样
 > 才能及时发现问题，保证工作质量。
 
-##
+## 上线总结
+after I changed my career path, this kind of publish code online activities will be less 
+in the future. So it is reasonable and valuable to record the lessons learned from the 
+mistakes I have made.
+
+ 2020-12-25 07:18:47 added:
+Last night, after about 2.5 months developing time, the gis 2.0 web site finally go online,
+here is two lessons I learned:
+1.  press ctrl + z in one directory in windows server affects other directories as well, 
+as it rolls back my uploaded code in other directories.
+2. if simply change data in database is difficult, like change different fields in different
+tables, but it have fixed pattern, like uploaded files path, then just modify the 
+**sql script** with replaceAll method is convenient, **always remember the text file power**
+
+
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190315_1.jpg" class="full-image" />
