@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2020-10-09 14:59:45
+updated: 2021-02-18 15:51:11
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -882,7 +882,20 @@ this is the way to enlarge the ubuntu file disk size.
    `df -lh`
 done!
 
-
+## dual boot with ubuntu server and centos server with remote ssh
+1. install ubuntu server first, 3 partitions, /, /boot, swap
+2. then install centos server, need to remove ubuntu swap first, then it's possible to 
+create centos /boot partition, and we can only create swap in centos os.
+3. use the following command to set the default bootable os
+``txt
+awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+grub2-editenv list
+grub2-set-default 2
+grub2-editenv list
+```
+after reboot, we can find the default os is 2, ubuntu, we can choose back to centos in
+startup menu, i have not found a way to set the default value after entering ubuntu system.
+so it's necessary to use monitor and keyboard to switch oses.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190510_1.jpg" class="full-image" />
