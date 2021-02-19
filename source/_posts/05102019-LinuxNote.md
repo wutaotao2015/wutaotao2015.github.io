@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2021-02-18 15:51:11
+updated: 2021-02-19 10:36:57
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -883,7 +883,8 @@ this is the way to enlarge the ubuntu file disk size.
 done!
 
 ## dual boot with ubuntu server and centos server with remote ssh
-1. install ubuntu server first, 3 partitions, /, /boot, swap
+1. install ubuntu server first, 2 partitions, /, /boot, the /boot can not be omitted for
+the dual boot installation.
 2. then install centos server, need to remove ubuntu swap first, then it's possible to 
 create centos /boot partition, and we can only create swap in centos os.
 3. use the following command to set the default bootable os
