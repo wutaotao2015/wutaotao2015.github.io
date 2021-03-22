@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2020-05-20 18:02:12
+updated: 2021-03-22 21:42:16
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1420,6 +1420,16 @@ EasyMock for Java
 
 good luck2
 
+## hibernate4 Could not obtain transaction-synchronized Session for current thread
+this bug appears when I try to config dual datasource to spring+hibernate project, 
+now is 21:36, all the web page search result said I need to add @transactional 
+annotation, but there is another project which I did not add it but it also works good, too.
+After all, I add spring @Transactional annotation to commonDaoImpl, and add 
+`<tx:annotation-driven transaction-manager="transactionManagerComm" />` to make the 
+transactional annotation work, so it works ok now. The error is clear, but the spring
+and hibernate config terrifies me, after all these years, it almost becomes a ghost, 
+that means, all the technical debt will remain to be paid back if you are still using it,
+hahahaha.
 
 
 <hr />
