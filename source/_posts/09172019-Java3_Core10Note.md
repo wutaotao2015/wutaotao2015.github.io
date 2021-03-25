@@ -6,7 +6,7 @@ tags:
   - C++
 
 abbrlink: 65ea4e77
-updated: 2021-03-22 21:42:16
+updated: 2021-03-25 15:18:02
 date: 2019-09-17 16:26:16
 ---
 Java, Char with UTF-16, C++, 数组，  
@@ -1430,6 +1430,13 @@ transactional annotation work, so it works ok now. The error is clear, but the s
 and hibernate config terrifies me, after all these years, it almost becomes a ghost, 
 that means, all the technical debt will remain to be paid back if you are still using it,
 hahahaha.
+
+ 2021-03-25 15:13:44 added: 
+ today I found the above error's real problem, and it shows the cause why the same
+ configuration works in one project and not working in another one, as I found out later, 
+ I copy the aop pointCut execution expression is wrong, and add transactional annotation 
+ bypass the wrongness, so finally just use default transaction is fine, no need to use
+ transactional in purpose.
 
 
 <hr />
