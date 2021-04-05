@@ -6,7 +6,7 @@ tags:
   - RHEL 7
 
 abbrlink: 1604d5df
-updated: 2021-02-19 10:36:57
+updated: 2021-04-05 13:49:09
 date: 2019-05-10 09:57:10
 ---
 Linux, RHEL 7
@@ -712,6 +712,50 @@ WSL2虽然用了虚拟机技术, 但毕竟版本更新, 支持功能更多, 还�
 2. 打开或关闭windows功能中勾选虚拟平台, 重启电脑.
 3. wsl --set-version option不存在, 查看到操作系统版本号1909, 但操作系统版本18363, 更新时
 提示已经是最新版, 没啥办法只有等几天看看了, 估计和体验计划有关.
+
+ 2021-04-05 13:11:07 added:
+ recently I got a new laptop and that is lenovo legion with company offering the partial
+ cost, in order to use emacs org mode, I install WSL2 with ubuntu system in it. Here is 
+ what I learned from the machine installation process.
+
+ 1. only win10 professional system version has hyper-V, which is needed for WSL to run.
+ so the initial family version with legion is useless, and in order to use vmware
+ workstation, we need to install the workstation version bigger than 15.5 as I searched
+ online, I installed the lastest 15.5.7, and tested it on old thinkpad, and it worked 
+ well together with WSL2, the latest version is 15.6, but it may have activation problem.
+
+ 2. disk partition, the computer has two disks, I make the first disk the whole C partition,
+ as WSL default installed on it, and make C partition big enough is convenient, and the 
+ second disk splits into two parts, first is D, and it contains software, and the second
+ E partition contains my code and documents. And I distinguished between work doc and code,
+ and my personal doc and code, and only one note directory.
+
+ 3. first upgrade win10 to 20H2 version, 19042 latest build, this takes time, it needs 
+ patient, and when it is done,  we can install WSL2 as tutorial, then install office,
+ and other necessary software, and that is quite a lot. Finally, transferring my code
+ and document, set up idea settings and upload ssh pub key, and need to use npm install to 
+ make the project can run successfully. 
+
+ 4. I initially wanted to use emacs on real linux system, so I installed WSL2. and fish 
+ shell is quite convenient. But I later found out git status command will work differently
+ on windows and linux system. For stability reason, I choose to use git command on 
+ windows environment to avoid wierd trouble.
+
+ 5. And my little project need to use local mysql or mariadb database, I want to install
+ it in WSL, but I failed to connect to it. and later I started a springboot project and 
+ failed to visit its http service page from windows host, even though I later found out
+ it was the project code problem(had not run npm build in frontend project), but the 
+ network connection and ports, firewall restriction between WSL and windows is troublesome,
+ but the benefit of putting database in WSL is trivial, so I installed mariadb on
+ windows instead at last.
+
+ 6. git can not be used in linux here, and run `kill -9 $(ps -ef | grep java 
+ | awk '{print $2}')`has bug running, finally I found out it need to be put in a function
+ rather than  only alias command, it is the same with git commit command which needs to use
+ $1 parameter to work.
+
+ 7. so after testing, the WSL only effect is emacs org mode note, the fish shell has little
+ usage in my working laptop now.
 
 ## 虚拟机折腾
 因为之前vmware fusion升级后有虚拟机长时间不用自动关机的毛病，后来又转回parallels desktop,
