@@ -5,7 +5,7 @@ tags:
   - Thought
 
 abbrlink: b703434b
-updated: 2020-12-25 07:23:45
+updated: 2021-08-10 14:11:34
 date: 2019-03-15 20:05:01
 ---
 Test-driven Coding
@@ -41,6 +41,18 @@ as it rolls back my uploaded code in other directories.
 2. if simply change data in database is difficult, like change different fields in different
 tables, but it have fixed pattern, like uploaded files path, then just modify the 
 **sql script** with replaceAll method is convenient, **always remember the text file power**
+
+## how to write recursive method easily
+
+yesterday I write a tree-building class with ruby, I use recursive method to build it,
+after working hard I finally made it, and I summarize the points to write recursive method:
+
+1. do your own job first
+2. handle your children's job nicely
+PS: the input to you and to your children is the same!
+
+It feels like the Chinese traditional philosophy, pursuit the inner saint and outer king.
+The truth is the same.
 
 
 <hr />
