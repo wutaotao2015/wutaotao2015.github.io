@@ -5,7 +5,7 @@ tags:
   - Thought
 
 abbrlink: b703434b
-updated: 2021-08-10 14:11:34
+updated: 2021-08-10 14:31:22
 date: 2019-03-15 20:05:01
 ---
 Test-driven Coding
@@ -52,7 +52,7 @@ after working hard I finally made it, and I summarize the points to write recurs
 PS: the input to you and to your children is the same!
 
 It feels like the Chinese traditional philosophy, pursuit the inner saint and outer king.
-The truth is the same.
+The truth is the same. Not only to hierarchical data but also network data as well.
 
 
 <hr />
