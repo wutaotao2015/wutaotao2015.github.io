@@ -5,7 +5,7 @@ tags:
   - Thought
 
 abbrlink: b703434b
-updated: 2021-08-10 14:31:22
+updated: 2021-09-28 10:42:53
 date: 2019-03-15 20:05:01
 ---
 Test-driven Coding
@@ -54,6 +54,16 @@ PS: the input to you and to your children is the same!
 It feels like the Chinese traditional philosophy, pursuit the inner saint and outer king.
 The truth is the same. Not only to hierarchical data but also network data as well.
 
+## consciousness about coding
+
+I have been coding for 5 years, not designing, like labour worker vs architect differences,
+a few days ago I watched supermap's conference video, as thinking about career path meanwhile,
+then the question came to me what exactly is designing a software after all, just jumping 
+out of coding farmersrestriction does not mean you can think outside it, this needs 
+cousciousness in a flash.
+Changing view positions can mean something, for learning computer technology/software design
+/product design/system design like my reading other books like philosophy and math, the 
+key point here is peaceful mind and little steady progress forward.
 
 <hr />
 <img src="http://wutaotaospace.oss-cn-beijing.aliyuncs.com/image/20190315_1.jpg" class="full-image" />
